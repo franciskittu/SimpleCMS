@@ -1,16 +1,13 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<html>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width">
+        <title>${page_title!"Untitled page"?html}</title>
+        <!--<link rel="stylesheet" href="style/default.css" type="text/css"/>-->
     </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+    
+    <#include content_tpl>
+    <div>Copyright &copy; 2013 ${defaults.author}.</div>
 </html>

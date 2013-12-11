@@ -19,13 +19,15 @@ import java.util.logging.Logger;
 
 public class ProgettoDataLayerImpl implements ProgettoDataLayer{
     private Statement g_all_table;
-    private PreparedStatement gTab;
+    private PreparedStatement gTab, dTab, aTab;
     private String query_g_all_table;
     
     public ProgettoDataLayerImpl(Connection connection) throws SQLException {
         query_g_all_table = "SELECT * FROM tab";
         g_all_table = connection.createStatement();
         gTab = connection.prepareStatement("SELECT * FROM tab WHERE chiave=?");
+        dTab = connection.prepareStatement("DELETE FROM tab WHERE chiave=?");
+        aTab = connection.prepareStatement("INSERT INTO tab (nome,cognome) VALUES(?,?);");
     }
     
     public Tab createTab(){
@@ -74,10 +76,39 @@ public class ProgettoDataLayerImpl implements ProgettoDataLayer{
     }
     
     public Tab deleteTab(Tab tab){
-        
+        try{
+            dTab.setInt(1, tab.getChiave());
+            if(dTab.executeUpdate() == 1){
+                return tab;
+            }
+        } catch (SQLException ex){
+            Logger.getLogger(ProgettoDataLayer.class.getName()).log(Level.SEVERE,null,ex);
+        }
+        return null;
     }
     
     public Tab addTab(Tab tab){
-        
+        TabImpl imtab = (TabImpl) tab;
+        ResultSet chiavegen = null;
+        try{
+            aTab.setString(1,imtab.getNome());
+            aTab.setString(2,imtab.getCognome());
+            
+            if(aTab.executeUpdate() == 1){
+                chiavegen = aTab.getGeneratedKeys();
+                if(chiavegen.next()){
+                    return getTab(chiavegen.getInt(1));
+                }
+            }
+        } catch (SQLException ex){
+            Logger.getLogger(ProgettoDataLayer.class.getName()).log(Level.SEVERE,null,ex);
+        } finally {
+            try{
+                chiavegen.close();
+            } catch (SQLException ex) {
+                //
+            }
+        }
+        return null;
     }
 }
