@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <context-param>
+        <param-name>data.source</param-name>
+        <param-value>java:comp/env/jdbc/cms</param-value>
+    </context-param>
+    <listener>
+        <description>Inizializza il pool di connesioni per il database fornendo il datasource alle altre servlet</description>
+        <listener-class>it.lufraproini.cms.ContextInitializer</listener-class>
+    </listener>
+    <servlet>
+        <servlet-name>EsempioDS</servlet-name>
+        <servlet-class>it.lufraproini.cms.EsempioDS</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ProvaFreemarkereDB</servlet-name>
+        <servlet-class>it.lufraproini.cms.ProvaFreemarkereDB</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EsempioDS</servlet-name>
+        <url-pattern>/EsempioDS</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProvaFreemarkereDB</servlet-name>
+        <url-pattern>/ProvaFreemarkereDB</url-pattern>
+    </servlet-mapping>
+    <context-param>
+        <param-name>view.date_format</param-name>
+        <param-value>dd/MM/yyyy hh:mm:ss</param-value>
+    </context-param>
+    <context-param>
+        <param-name>view.debug</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>view.template_directory</param-name>
+        <param-value>templates</param-value>
+    </context-param>
+    <context-param>
+        <param-name>view.outline_template</param-name>
+        <param-value/>
+    </context-param>
+    <context-param>
+        <param-name>view.data.author</param-name>
+        <param-value>Luca Traini e Francesco Proietti</param-value>
+    </context-param>
+    <context-param>
+        <param-name>view.encoding</param-name>
+        <param-value>UTF-8</param-value>
+    </context-param>
+    <context-param>
+        <param-name>view.outline_template</param-name>
+        <param-value>outline.ftl.html</param-value>
+    </context-param>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    <resource-ref>
+        <res-ref-name>jdbc/cms</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+        <res-sharing-scope>Shareable</res-sharing-scope>
+    </resource-ref>
+    <welcome-file-list>
+        <welcome-file>Homepage.html</welcome-file>
+    </welcome-file-list>
+</web-app>

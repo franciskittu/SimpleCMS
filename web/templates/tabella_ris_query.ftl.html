@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Contenuto tabella</title>
+    </head>
+    <body>
+        <#if (risultati?size > 0)>
+        <h2>La tabella contiene</h2>
+        <ul>
+            <#list risultati as riga>
+            <li>${riga.chiave} | ${riga.nome?lower_case?cap_first?html} | ${riga.cognome?lower_case?cap_first?html}</li>
+            </#list>
+        </ul>
+        <#else>
+        <h2>La tabella è vuota</h2>
+        </#if>
+    </body>
+</html>
