@@ -1,7 +1,11 @@
 package it.lufraproini.cms.security;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
+import java.util.Random;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -168,5 +172,39 @@ public class SecurityLayer {
                 throw new ServletException("Cannot redirect to https!");
             }
         }
+    }
+    
+    //questa funzione crea una password con lo username e applicando
+    //l'algoritmo SHA-1 di Java
+    public static String criptaPassword(String pwd, String username){
+        String sha1 = "";
+        String argsha1 = pwd + username;
+        try{
+            MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+            crypt.reset();
+            crypt.update(argsha1.getBytes("UTF-8"));
+            byte[] digest = crypt.digest();
+            for(byte b : digest){
+                sha1 += String.valueOf(b);
+            }
+        } catch (NoSuchAlgorithmException e){
+        
+        } catch (UnsupportedEncodingException e){
+        
+        }
+        return sha1;
+    }
+    
+    //questa funzione genera una nuova password random, utile per gli utenti
+    //che le dimenticano e non vogliono creare un nuovo account
+    public static String randPassword(String username){
+        String alfabeto = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghilmnopqrstuvz";
+        Random rand = new Random(System.currentTimeMillis());
+        int lunghezza = 8;
+        StringBuilder sb = new StringBuilder(lunghezza);
+        for(int i = 0; i < 8; i++){
+            sb.append(alfabeto.charAt(rand.nextInt(alfabeto.length())));
+        }
+        return sb.toString();
     }
 }
