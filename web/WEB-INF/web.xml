@@ -4,6 +4,10 @@
         <param-name>data.source</param-name>
         <param-value>java:comp/env/jdbc/cms</param-value>
     </context-param>
+    <context-param>
+        <param-name>system.css_directory</param-name>
+        <param-value>css</param-value>
+    </context-param>
     <listener>
         <description>Inizializza il pool di connesioni per il database fornendo il datasource alle altre servlet</description>
         <listener-class>it.lufraproini.cms.ContextInitializer</listener-class>
@@ -15,6 +19,10 @@
     <servlet>
         <servlet-name>ProvaFreemarkereDB</servlet-name>
         <servlet-class>it.lufraproini.cms.ProvaFreemarkereDB</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AggiungiCSS</servlet-name>
+        <servlet-class>it.lufraproini.cms.AggiungiCSS</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>EsempioDS</servlet-name>
@@ -52,6 +60,10 @@
         <param-name>view.outline_template</param-name>
         <param-value>outline.ftl.html</param-value>
     </context-param>
+    <servlet-mapping>
+        <servlet-name>AggiungiCSS</servlet-name>
+        <url-pattern>/AggiungiCSS</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30

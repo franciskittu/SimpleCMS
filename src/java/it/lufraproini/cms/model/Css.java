@@ -11,14 +11,14 @@ package it.lufraproini.cms.model;
  * @author fsfskittu
  */
 public interface Css {
-    int getID();
+    long getID();
     
     String getNome();
     void setNome(String nome);
     
     String getDescrizione();
-    void setDescrizione();
+    void setDescrizione(String descrizione);
     
     String getFile();
-    void setFile();
+    void setFile(String path_to_file);
 }

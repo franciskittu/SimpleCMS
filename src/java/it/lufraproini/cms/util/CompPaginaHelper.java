@@ -16,10 +16,13 @@
  */
 package it.lufraproini.cms.util;
 
-/**
- *
- * @author fsfskittu
- */
+import it.lufraproini.cms.model.impl.CMSDataLayerImpl;
+import it.lufraproini.cms.model.Pagina;
+
 public class CompPaginaHelper {
-    
+
+    public static String componiPagina(Pagina p){
+        CMSDataLayerImpl datalayer;
+        return null;
+    }
 }

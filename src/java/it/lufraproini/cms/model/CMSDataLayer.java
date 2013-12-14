@@ -32,6 +32,8 @@ public interface CMSDataLayer {
     /* CSS */
     Css createCSS();
     
+    Css getCSS(long i);
+    
     Css addCSS(Css O);
     
     Css updateCSS(Css O);
