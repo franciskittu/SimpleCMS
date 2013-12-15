@@ -19,12 +19,40 @@ package it.lufraproini.cms.model.impl;
 import it.lufraproini.cms.model.Utente;
 //import it.lufraproini.cms.security.SecurityLayer FACCIAMO GESTIRE LA CRITTOGRAFIA E LE VARIE FUNZIONI DI SICUREZZA AL CONTROLLER
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 
 public class UtenteImpl implements Utente {
     private long id, spazio_disp_img;
     private String username, password, nome, cognome, email;
     private Date data_di_nascita;
+    
+    private CMSDataLayerImpl datalayer;
+    
+    public UtenteImpl(CMSDataLayerImpl datalayer){
+        id = 0;
+        username = "";
+        password = "";
+        nome = "";
+        cognome = "";
+        email = "";
+        data_di_nascita = null;
+        spazio_disp_img = 0;
+        this.datalayer = datalayer;
+    }
+    
+    public UtenteImpl(CMSDataLayerImpl datalayer, ResultSet data) throws SQLException {
+        id = data.getLong("id");
+        username = data.getString("username");
+        password = data.getString("password");
+        nome = data.getString("nome");
+        cognome = data.getString("cognome");
+        email = data.getString("email");
+        data_di_nascita = data.getDate("data_di_nascita");//data.getDate(email, null)
+        spazio_disp_img = data.getLong("spazio_disp_img");
+        this.datalayer = datalayer;
+    }
     
     @Override
     public long getID() {

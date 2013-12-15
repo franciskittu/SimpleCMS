@@ -16,6 +16,8 @@
  */
 package it.lufraproini.cms.model;
 
+import java.sql.Timestamp;
+
 /**
  *
  * @author fsfskittu
@@ -26,8 +28,8 @@ public interface Immagine {
     String getNome();
     void setNome(String s);
     
-    long getDim();
-    void setDim(long i);
+    long getDimensione();
+    void setDimensione(long i);
     
     String getTipo();
     void setTipo(String s);
@@ -38,8 +40,8 @@ public interface Immagine {
     String getDigest();
     void setDigest(String s);
     
-    String getData_upload();//da recuperare con java.sql.Date.valueOf( String s ); es: java.sql.Date jsqlD = java.sql.Date.valueOf( "2008-12-15" );
-    void setData_upload();
+    Timestamp getData_upload();//da recuperare con java.sql.Date.valueOf( String s ); es: java.sql.Date jsqlD = java.sql.Date.valueOf( "2008-12-15" );
+    void setData_upload(Timestamp t);
     
     Utente getUtente();
     void setUtente(Utente U);

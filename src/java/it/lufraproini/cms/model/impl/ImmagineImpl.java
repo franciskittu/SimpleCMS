@@ -18,83 +18,119 @@ package it.lufraproini.cms.model.impl;
 
 import it.lufraproini.cms.model.Immagine;
 import it.lufraproini.cms.model.Utente;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 
 
 public class ImmagineImpl implements Immagine {
+    private CMSDataLayerImpl datalayer;
+    private long id, dimensione, id_utente;
+    private String nome, tipo, file, digest;
+    private Timestamp data_upload;
+    private Utente utente;
+    
+    public ImmagineImpl(CMSDataLayerImpl datalayer){
+        id = 0;
+        dimensione = 0;
+        id_utente = 0;
+        nome = "";
+        tipo = "";
+        file = "";
+        digest = "";
+        data_upload = null;
+        this.datalayer = datalayer;
+        
+    }
+    
+    public ImmagineImpl(CMSDataLayerImpl datalayer, ResultSet rs) throws SQLException{
+        id = rs.getLong("id");
+        dimensione = rs.getLong("dimensione");
+        id_utente = rs.getLong("id_utente");
+        nome = rs.getString("nome");
+        tipo = rs.getString("tipo");
+        file = rs.getString("file");
+        digest = rs.getString("digest");
+        data_upload = rs.getTimestamp("data_upload");
+        this.datalayer = datalayer;
+    }
     
     @Override
     public long getID() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return id;
     }
 
     @Override
     public String getNome() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return nome;
     }
 
     @Override
     public void setNome(String s) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        nome = s;
     }
 
     @Override
-    public long getDim() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public long getDimensione() {
+        return dimensione;
     }
 
     @Override
-    public void setDim(long i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setDimensione(long i) {
+        dimensione = i;
     }
 
     @Override
     public String getTipo() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return tipo;
     }
 
     @Override
     public void setTipo(String s) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        tipo = s;
     }
 
     @Override
     public String getFile() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return file;
     }
 
     @Override
     public void setFile(String s) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        file = s;
     }
 
     @Override
     public String getDigest() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return digest;
     }
 
     @Override
     public void setDigest(String s) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        digest = s;
     }
 
     @Override
-    public String getData_upload() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Timestamp getData_upload() {
+        return data_upload;
     }
 
     @Override
-    public void setData_upload() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setData_upload(Timestamp t) {
+        data_upload = t;
     }
 
     @Override
     public Utente getUtente() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(utente == null){
+            utente = datalayer.getUtente(id_utente);
+        }
+        return utente;
     }
 
     @Override
     public void setUtente(Utente U) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        utente = U;
     }
     
 }
