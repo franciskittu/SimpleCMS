@@ -8,6 +8,10 @@
         <param-name>system.css_directory</param-name>
         <param-value>css</param-value>
     </context-param>
+    <context-param>
+        <param-name>system.image_directory</param-name>
+        <param-value>images</param-value>
+    </context-param>
     <listener>
         <description>Inizializza il pool di connesioni per il database fornendo il datasource alle altre servlet</description>
         <listener-class>it.lufraproini.cms.ContextInitializer</listener-class>
@@ -23,6 +27,10 @@
     <servlet>
         <servlet-name>AggiungiCSS</servlet-name>
         <servlet-class>it.lufraproini.cms.AggiungiCSS</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Upload</servlet-name>
+        <servlet-class>it.lufraproini.cms.Upload</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>EsempioDS</servlet-name>
@@ -63,6 +71,10 @@
     <servlet-mapping>
         <servlet-name>AggiungiCSS</servlet-name>
         <url-pattern>/AggiungiCSS</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Upload</servlet-name>
+        <url-pattern>/Upload</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

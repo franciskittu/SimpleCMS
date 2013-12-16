@@ -37,4 +37,7 @@ public interface Pagina {
     
     Pagina getPadre();
     void setPadre(Pagina p);
+    
+    Sito getSito();
+    void setSito(Sito s);
 }

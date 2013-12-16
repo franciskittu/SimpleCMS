@@ -24,10 +24,12 @@ import java.sql.Timestamp;
 
 
 public class ImmagineImpl implements Immagine {
+    
     private CMSDataLayerImpl datalayer;
-    private long id, dimensione, id_utente;
-    private String nome, tipo, file, digest;
+    private long id, dimensione, id_utente/*chiave*/;
+    private String nome, file, digest;
     private Timestamp data_upload;
+    
     private Utente utente;
     
     public ImmagineImpl(CMSDataLayerImpl datalayer){
@@ -35,7 +37,6 @@ public class ImmagineImpl implements Immagine {
         dimensione = 0;
         id_utente = 0;
         nome = "";
-        tipo = "";
         file = "";
         digest = "";
         data_upload = null;
@@ -48,7 +49,6 @@ public class ImmagineImpl implements Immagine {
         dimensione = rs.getLong("dimensione");
         id_utente = rs.getLong("id_utente");
         nome = rs.getString("nome");
-        tipo = rs.getString("tipo");
         file = rs.getString("file");
         digest = rs.getString("digest");
         data_upload = rs.getTimestamp("data_upload");
@@ -78,16 +78,6 @@ public class ImmagineImpl implements Immagine {
     @Override
     public void setDimensione(long i) {
         dimensione = i;
-    }
-
-    @Override
-    public String getTipo() {
-        return tipo;
-    }
-
-    @Override
-    public void setTipo(String s) {
-        tipo = s;
     }
 
     @Override

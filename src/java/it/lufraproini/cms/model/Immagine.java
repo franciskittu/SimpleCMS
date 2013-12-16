@@ -31,9 +31,6 @@ public interface Immagine {
     long getDimensione();
     void setDimensione(long i);
     
-    String getTipo();
-    void setTipo(String s);
-    
     String getFile();
     void setFile(String s);
     

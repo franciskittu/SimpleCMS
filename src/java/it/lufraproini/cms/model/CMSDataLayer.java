@@ -79,7 +79,9 @@ public interface CMSDataLayer {
     
     List<Pagina> getFiglie(Pagina p);
     
-    Pagina getHomepage(Sito s);
+    Pagina getHomepage(long i);
+    
+    Pagina getPagina(long i);
     
     /* SITO */
     
@@ -93,4 +95,5 @@ public interface CMSDataLayer {
     
     List<Sito> getSitobyUtente(Utente U);//per le url senza specifica del sito si può stabilire un default
 
+    Sito getSito(long i);
 }

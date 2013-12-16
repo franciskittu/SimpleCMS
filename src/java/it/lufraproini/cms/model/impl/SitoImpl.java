@@ -19,53 +19,86 @@ package it.lufraproini.cms.model.impl;
 import it.lufraproini.cms.model.Pagina;
 import it.lufraproini.cms.model.Sito;
 import it.lufraproini.cms.model.Utente;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 
 public class SitoImpl implements Sito {
 
+    private CMSDataLayerImpl datalayer;
+    private long id, id_utente/*chiave*/, id_homepage/*chiave*/;
+    private String header, footer;
+    
+    private Pagina homepage;
+    private Utente utente;
+    
+    public SitoImpl(CMSDataLayerImpl datalayer){
+        id = 0;
+        id_utente = 0;
+        id_homepage = 0;
+        header = "";
+        footer = "";
+        this.datalayer = datalayer;
+    }
+    
+    public SitoImpl(CMSDataLayerImpl datalayer, ResultSet data) throws SQLException{
+        id = data.getLong("id");
+        id_utente = data.getLong("id_utente");
+        id_homepage = data.getLong("id_homepage");
+        header = data.getString("header");
+        footer = data.getString("footer");
+        this.datalayer = datalayer;
+    }
+    
     @Override
     public long getID() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return id;
     }
 
     @Override
     public String getHeader() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return header;
     }
 
     @Override
     public void setHeader(String s) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        header = s;
     }
 
     @Override
     public String getFooter() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return footer;
     }
 
     @Override
-    public void setFooter() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setFooter(String s) {
+        footer = s;
     }
 
     @Override
     public Utente getUtente() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(utente == null){
+            utente = datalayer.getUtente(id_utente);
+        }
+        return utente;
     }
 
     @Override
     public void setUtente(Utente U) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        utente = U;
     }
     
     @Override
     public void setHomepage(Pagina p) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        homepage = p;
     }
 
     @Override
     public Pagina getHomepage() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(homepage == null){
+            homepage = datalayer.getHomepage(id_homepage);
+        }
+        return homepage;
     }
     
 }

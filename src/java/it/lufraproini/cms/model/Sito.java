@@ -27,7 +27,7 @@ public interface Sito {
     void setHeader(String s);
     
     String getFooter();
-    void setFooter();
+    void setFooter(String s);
     
     Utente getUtente();
     void setUtente(Utente U);
