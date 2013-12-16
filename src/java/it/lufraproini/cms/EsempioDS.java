@@ -2,8 +2,7 @@
  * ATTENZIONE: il codice di questa classe dipende dalla corretta definizione delle
  * risorse presente nei file context.xml (Resource) e web.xml (resource-ref)
  * 
- * WARNING: this class needs the definition of an external data source to work correctly.
- * See the Resource element in context.xml and the resource-ref element in web.xml
+ * Inoltre per fare la prova basta creare una tabella di prova e fare select * from tabella come query di prova
  * 
  */
 package it.lufraproini.cms;
