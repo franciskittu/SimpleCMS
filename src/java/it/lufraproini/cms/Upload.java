@@ -57,7 +57,7 @@ import org.apache.commons.io.FilenameUtils;
 public class Upload extends HttpServlet {
 
     private String estensione;
-    /*FUNZIONE GENERICA PER PRENDERE TUTTE LE INFORMAZIONI E I FILES NELLE FORM DI UPLOAD*/
+    /*FUNZIONE GENERICA PER PRENDERE TUTTE LE INFORMAZIONI E IL FILE NELLE FORM DI UPLOAD*/
     private Map prendiInfo(HttpServletRequest request) throws FileUploadException{
         Map info = new HashMap();
         Map files = new HashMap();
@@ -72,7 +72,7 @@ public class Upload extends HttpServlet {
             /**/
             for (FileItem item : items) {
                 String name = item.getFieldName();
-                if(name.startsWith("file_to_upload")){/*le form che prevedono l'upload di un file devono avere il campo del file chiamato in questo modo seguito da un numero nel caso ci sia più di un campo di upload*/
+                if(name.startsWith("file_to_upload")){/*le form che prevedono l'upload di un file devono avere il campo del file chiamato in questo modo*/
                     files.put(name, item);
                 } else {
                     info.put(name, item.getString());
@@ -156,6 +156,7 @@ public class Upload extends HttpServlet {
         Utente U = datalayer.getUtentebyUsername("franciskittu");
         Immagine img_upload = datalayer.createImmagine();
         Immagine img_result;
+        //se l'utente non ha spazio a sufficienza per fare l'upload questo viene rifiutato
         long spazio_risultante = U.getSpazio_disp_img() -fi.getSize();
         if(spazio_risultante < 0){
             return null;
