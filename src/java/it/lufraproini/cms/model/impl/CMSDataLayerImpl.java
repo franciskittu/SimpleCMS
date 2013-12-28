@@ -39,8 +39,8 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     private PreparedStatement gCss, aCss, uCss, dCss;
     private PreparedStatement gUtente, gUtente_by_Username, aUtente, uUtente, dUtente;
     private PreparedStatement gImmagine, gImmagini, aImmagine, uImmagine, dImmagine;
-    private PreparedStatement gPagina, aPagina;
-    private PreparedStatement gSito, aSito;
+    private PreparedStatement gPagina, aPagina, gFiglie;
+    private PreparedStatement gSito, aSito, gSitobyUtente;
     
     public CMSDataLayerImpl(Connection c) throws SQLException{
         gCss = c.prepareStatement("SELECT * FROM css WHERE id = ?");
@@ -61,6 +61,8 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         aPagina = c.prepareStatement("INSERT INTO pagina (titolo, body, css, id_padre, id_sito, modello) VALUES(?,?,?,?,?,?) RETURNING id");
         aSito = c.prepareStatement("INSERT INTO sito (header, footer, id_utente, homepage) VALUES (?,?,?,?)RETURNING id");
         gSito = c.prepareStatement("SELECT * FROM sito WHERE id = ?");
+        gSitobyUtente = c.prepareStatement("SELECT * FROM sito WHERE id_utente = ?");
+        gFiglie = c.prepareStatement("SELECT * FROM pagina WHERE id_padre = ?");
     }
     
     @Override
@@ -427,12 +429,47 @@ public class CMSDataLayerImpl implements CMSDataLayer {
 
     @Override
     public List<Pagina> getFiglie(Pagina p) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        PaginaImpl padre = (PaginaImpl) p;
+        List<Pagina> ris = null;
+        ResultSet rs = null;
+        try{
+            gFiglie.setLong(1, padre.getID());
+            rs = gFiglie.executeQuery();
+            while(rs.next()){
+                ris.add(new PaginaImpl(this,rs));
+            }
+        } catch(SQLException ex){
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally{
+            try{
+                rs.close();
+            } catch(SQLException ex){
+                //
+            }
+        }
+        return ris;
     }
 
     @Override
     public Pagina getHomepage(long i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ResultSet rs = null;
+        Pagina ris = null;
+        try{
+            gPagina.setLong(1,i);
+            rs = gPagina.executeQuery();
+            if(rs.next()){
+                return new PaginaImpl(this,rs);
+            }
+        } catch (SQLException ex){
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try{
+                rs.close();
+            } catch (SQLException ex){
+                
+            }
+        }
+        return ris;
     }
 
     @Override
@@ -499,7 +536,24 @@ public class CMSDataLayerImpl implements CMSDataLayer {
 
     @Override
     public List<Sito> getSitobyUtente(Utente U) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Sito> ris = new ArrayList();
+        ResultSet rs = null;
+        try{
+            gSitobyUtente.setLong(1, U.getID());
+            rs = gSitobyUtente.executeQuery();
+            while(rs.next()){
+                ris.add(new SitoImpl(this,rs));
+            }
+        } catch (SQLException ex){
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try{
+                rs.close();
+            } catch (SQLException ex){
+                
+            }
+        }
+        return ris;
     }
     
     @Override

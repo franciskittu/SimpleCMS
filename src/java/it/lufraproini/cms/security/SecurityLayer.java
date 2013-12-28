@@ -18,29 +18,22 @@ public class SecurityLayer {
     //sulla sessione corrente. Se la sessione non è valida, la cancella
     //e ritorna null, altrimenti la aggiorna e la restituisce
     
-    //this method executed a set of standard chacks on the current session.
-    //If the session exists and is valid, it is rerutned, otherwise
-    //the session is invalidated and the method returns null
     public static HttpSession checkSession(HttpServletRequest r) {
         boolean check = true;
 
         HttpSession s = r.getSession(false);
         //per prima cosa vediamo se la sessione è attiva
-        //first, let's see is the sessione is active
         if (s == null) {
             return null;
         }
 
         //check sulla validità  della sessione
-        //second, check is the session contains valid data
         if (s.getAttribute("userid") == null) {
             check = false;
             //check sull'ip del client
-            //check if the client ip chaged
         } else if ((s.getAttribute("ip") == null) || !((String) s.getAttribute("ip")).equals(r.getRemoteHost())) {
             check = false;
             //check sulle date
-            //check if the session is timed out
         } else {
             //inizio sessione
             //session start timestamp
@@ -84,7 +77,7 @@ public class SecurityLayer {
         }
     }
 
-    public static HttpSession createSession(HttpServletRequest request, String username, int userid) {
+    public static HttpSession createSession(HttpServletRequest request, String username, long userid) {
         HttpSession s = request.getSession(true);
         s.setAttribute("username", username);
         s.setAttribute("ip", request.getRemoteHost());
