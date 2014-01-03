@@ -44,7 +44,7 @@ public class SitoImpl implements Sito {
     public SitoImpl(CMSDataLayerImpl datalayer, ResultSet data) throws SQLException{
         id = data.getLong("id");
         id_utente = data.getLong("id_utente");
-        id_homepage = data.getLong("id_homepage");
+        id_homepage = data.getLong("homepage");
         header = data.getString("header");
         footer = data.getString("footer");
         this.datalayer = datalayer;

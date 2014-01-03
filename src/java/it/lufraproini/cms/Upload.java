@@ -40,8 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -62,9 +60,11 @@ import org.apache.commons.io.FilenameUtils;
 public class Upload extends HttpServlet {
 
     private String estensione;
+    private String nomefile;
     private String error_message;
     private final String caratteri_non_ammessi = "['\"/\\\\]";
-    /*FUNZIONE GENERICA PER PRENDERE TUTTE LE INFORMAZIONI E IL FILE NELLE FORM DI UPLOAD*/
+    
+    /*FUNZIONE GENERICA PER PRENDERE TUTTI I CAMPI E IL FILE NELLE FORM DI UPLOAD*/
 
     private Map prendiInfo(HttpServletRequest request) throws FileUploadException {
         Map info = new HashMap();
@@ -80,8 +80,8 @@ public class Upload extends HttpServlet {
             /**/
             for (FileItem item : items) {
                 String name = item.getFieldName();
-                if (name.startsWith("file_to_upload")) {/*le form che prevedono l'upload di un file devono avere il campo del file chiamato in questo modo*/
-
+                /*le form che prevedono l'upload di un file devono avere il campo del file chiamato in questo modo*/
+                if (name.startsWith("file_to_upload")) {
                     files.put(name, item);
                 } else {
                     info.put(name, item.getString());
@@ -142,14 +142,14 @@ public class Upload extends HttpServlet {
             sdigest += String.valueOf(b);
         }
 
-        String nomefile = "";
         this.estensione = estensione;
         if (estensione.equals("css")) {
-            nomefile = data.get("nome").toString();
+            this.nomefile = data.get("nome").toString();
         } else {
-            nomefile = sdigest;
+            this.nomefile = sdigest;
         }
-        File uploaded_file = new File(getServletContext().getRealPath(cartella) + File.separatorChar + nomefile + "." + estensione);
+        //L'immagine sarà salvata con il digest + l'estensione del file mentre il css sarà salvato con il nome inserito nella form
+        File uploaded_file = new File(getServletContext().getRealPath(cartella) + File.separatorChar + this.nomefile + "." + estensione);
         if (!uploaded_file.exists()) {
             temp_file.renameTo(uploaded_file);
         } else {
@@ -174,6 +174,11 @@ public class Upload extends HttpServlet {
         //se l'utente non ha spazio a sufficienza per fare l'upload questo viene rifiutato
         long spazio_risultante = U.getSpazio_disp_img() - fi.getSize();
         if (spazio_risultante < 0) {
+            //viene eliminato il file appena memorizzato in action_upload
+            File uploaded_file = new File(getServletContext().getRealPath("system.image_directory") + File.separatorChar + this.nomefile + "." + this.estensione);
+            if(uploaded_file.exists()){
+                uploaded_file.delete();
+            }
             error_message = "L'utente non ha spazio disponibile sufficiente per caricare l'immagine!";
             error_message += " Byte disponibili: " + U.getSpazio_disp_img();
             error_message += " - Byte immagine: " + fi.getSize();
@@ -275,7 +280,7 @@ public class Upload extends HttpServlet {
             html = "show_css.ftl.html";
             action_upload(request, info).getBytes();//potrebbe generare una nullpointerexception
             css = memorizzaCss(info, datalayer);
-            css.setDescrizione(SecurityLayer.stripSlashes(css.getDescrizione()));
+            css.setDescrizione(SecurityLayer.stripSlashes(css.getDescrizione()));//potrebbe generare una nullpointerexception
             css.setNome(SecurityLayer.stripSlashes(css.getNome()));
             template_data.put("css", css);
             template_data.put("identifier", css.getID());
