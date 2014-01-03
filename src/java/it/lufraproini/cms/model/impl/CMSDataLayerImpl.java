@@ -39,7 +39,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     private PreparedStatement gCss, aCss, uCss, dCss;
     private PreparedStatement gUtente, gUtente_by_Username, aUtente, uUtente, dUtente;
     private PreparedStatement gImmagine, gImmagini, aImmagine, uImmagine, dImmagine;
-    private PreparedStatement gPagina, aPagina, gFiglie;
+    private PreparedStatement gPagina, aPagina, gFiglie, gPaginabyTitolo;
     private PreparedStatement gSito, aSito, gSitobyUtente;
     
     public CMSDataLayerImpl(Connection c) throws SQLException{
@@ -63,6 +63,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         gSito = c.prepareStatement("SELECT * FROM sito WHERE id = ?");
         gSitobyUtente = c.prepareStatement("SELECT * FROM sito WHERE id_utente = ?");
         gFiglie = c.prepareStatement("SELECT * FROM pagina WHERE id_padre = ?");
+        gPaginabyTitolo = c.prepareStatement("SELECT id FROM pagina WHERE titolo = ? AND id_sito = ?");
     }
     
     @Override
@@ -430,7 +431,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     @Override
     public List<Pagina> getFiglie(Pagina p) {
         PaginaImpl padre = (PaginaImpl) p;
-        List<Pagina> ris = null;
+        List<Pagina> ris = new ArrayList();
         ResultSet rs = null;
         try{
             gFiglie.setLong(1, padre.getID());
@@ -495,6 +496,29 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     }
     
     @Override
+    public long getLinkPagebyTitle(Sito s, String titolo){
+        SitoImpl sito = (SitoImpl) s;
+        ResultSet rs = null;
+        try{
+            gPaginabyTitolo.setString(1, titolo);
+            gPaginabyTitolo.setLong(2,s.getID());
+            rs = gPaginabyTitolo.executeQuery();
+            if(rs.next()){
+                return rs.getLong("id");
+            }
+        } catch (SQLException ex){
+            
+        } finally {
+            try{
+                rs.close();
+            } catch (SQLException ex){
+                
+            }
+        }
+        return 0;
+    }
+    
+    @Override
     public Sito createSito() {
         return new SitoImpl(this);
     }
@@ -542,7 +566,8 @@ public class CMSDataLayerImpl implements CMSDataLayer {
             gSitobyUtente.setLong(1, U.getID());
             rs = gSitobyUtente.executeQuery();
             while(rs.next()){
-                ris.add(new SitoImpl(this,rs));
+                Sito s = new SitoImpl(this,rs);
+                ris.add(s);
             }
         } catch (SQLException ex){
             Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);

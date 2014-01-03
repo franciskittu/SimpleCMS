@@ -9,14 +9,14 @@
     </head>
     <body>
         <#if (menu?size > 0) >
-        <ul>
+        <ul class="menu">
         <#list menu as item>
-        <li>${item}</li>
+        <a href='site?user=${nomeutente}&page=${item.id}'><li>${item.titolo?html}</li></a>
         </#list>
         </ul>
         </#if>
-        ${header?html}
-        ${body?html}
-        ${footer?html}
+        ${header}
+        ${body}
+        ${footer}
     </body>
 </html>

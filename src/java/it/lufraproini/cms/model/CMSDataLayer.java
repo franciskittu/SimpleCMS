@@ -83,6 +83,8 @@ public interface CMSDataLayer {
     
     Pagina getPagina(long i);
     
+    long getLinkPagebyTitle(Sito s, String titolo);
+    
     /* SITO */
     
     Sito createSito();
