@@ -49,6 +49,7 @@ public class site extends HttpServlet {
 
     private String error_message;
 
+    /*la funzione ritorna in una lista tutte le componenti della pagina, in ordine: titolo,header body e footer*/
     private List<String> componiPagina(Sito s, Pagina p) {
         List<String> title_header_body_footer = new ArrayList();
         //controllo se la pagina richiesta è nell'albero del sito richiesto
@@ -61,17 +62,6 @@ public class site extends HttpServlet {
             error_message = "la pagina " + p.getTitolo() + " non appartiene al sito " + s.getUtente().getUsername() + "!";
         }
         return title_header_body_footer;
-    }
-
-    private List pageLink(List<String> menu, Sito s, CMSDataLayerImpl datalayer){
-        if(menu == null){
-            return null;
-        }
-        List links = new ArrayList();
-        for(String titolo:menu){
-            links.add(datalayer.getLinkPagebyTitle(s,titolo));
-        }
-        return links;
     }
     
     /*la seguente funzione ordina alfabeticamente per titolo il menu della pagina*/
@@ -106,6 +96,7 @@ public class site extends HttpServlet {
         }
         return menu_ordinato_per_titolo;
     }
+    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -123,21 +114,19 @@ public class site extends HttpServlet {
         Connection connection = ds.getConnection();
         /**/
         CMSDataLayerImpl datalayer = new CMSDataLayerImpl(connection);
-        
+
         Map template_data = new HashMap();
         
+        /*controllo parametri*/
         String site = request.getParameter("user");
-        long image = 0;//valore non valido
-        if(request.getParameter("image") != null){
-            image = SecurityLayer.checkNumeric(request.getParameter("image"));
-        }
         long page = 0;//valore non valido
         if(request.getParameter("page") != null){
             page = SecurityLayer.checkNumeric(request.getParameter("page"));
         }
+        /**/
         try {
             if (site == null) {
-                error_message = "Non è stato specificato alcun sito su cui accere!";
+                error_message = "Non è stato specificato alcun sito su cui accedere!";
                 site.getBytes();//eccezione
             }
             List<String> title_header_body_footer = new ArrayList();//pagina html
@@ -147,7 +136,7 @@ public class site extends HttpServlet {
             if (sito.size() < 1) {
                 error_message = "L'utente non ha alcun sito!";
             }
-            if (image == 0 && page == 0) {
+            if (page == 0) {
                 /*in questo caso si sta accedendo alla homepage del sito in quanto non è stata specificata una pagina precisa nell'URL*/
                 title_header_body_footer = componiPagina(sito.get(0)/*primo sito*/, sito.get(0).getHomepage()/*homepage del sito*/);
                 title_header_body_footer.get(0).getBytes();//possibile eccezione
@@ -165,8 +154,8 @@ public class site extends HttpServlet {
                 /*il menu è stato caricato e adesso siamo pronti per l'output*/
                 TemplateResult tr = new TemplateResult(getServletContext());
                 tr.activate("pagina_costruttore.ftl.html", template_data, response);
-            } else if (page != 0) {
-                /*title_header_body_footer = componiPagina(sito.get(0), datalayer.getPagina(page));
+            } else {
+                title_header_body_footer = componiPagina(sito.get(0), datalayer.getPagina(page));
                 title_header_body_footer.get(0).getBytes();//possibile eccezione
                 template_data.put("nomeutente", site);
                 template_data.put("title", title_header_body_footer.get(0));
@@ -174,10 +163,13 @@ public class site extends HttpServlet {
                 template_data.put("body", title_header_body_footer.get(2));
                 template_data.put("footer", title_header_body_footer.get(3));
                 template_data.put("outline_tpl", "");
+                template_data.put("style","path to css");
+                /*preparo il menu*/
+                menu_ordinato = componiMenu(sito.get(0), datalayer.getPagina(page)/*pagina richiesta*/, datalayer);
+                template_data.put("menu", menu_ordinato);
+                /*il menu è stato caricato e adesso siamo pronti per l'output*/
                 TemplateResult tr = new TemplateResult(getServletContext());
-                tr.activate("pagina_costruttore.ftl.html", template_data, response);*/
-            } else if (image != 0) {
-                /*download*/
+                tr.activate("pagina_costruttore.ftl.html", template_data, response);
             }
         } catch (NullPointerException ex) {
             /*visualizzazione della pagina di errore predefinita con il messaggio di errore riscontrato*/

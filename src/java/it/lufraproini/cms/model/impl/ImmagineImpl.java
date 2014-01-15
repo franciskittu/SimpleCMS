@@ -27,7 +27,7 @@ public class ImmagineImpl implements Immagine {
     
     private CMSDataLayerImpl datalayer;
     private long id, dimensione, id_utente/*chiave*/;
-    private String nome, file, digest;
+    private String nome, file, digest, tipo;
     private Timestamp data_upload;
     
     private Utente utente;
@@ -36,6 +36,7 @@ public class ImmagineImpl implements Immagine {
         id = 0;
         dimensione = 0;
         id_utente = 0;
+        tipo = "";
         nome = "";
         file = "";
         digest = "";
@@ -48,6 +49,7 @@ public class ImmagineImpl implements Immagine {
         id = rs.getLong("id");
         dimensione = rs.getLong("dimensione");
         id_utente = rs.getLong("id_utente");
+        tipo = rs.getString("tipo");
         nome = rs.getString("nome");
         file = rs.getString("file");
         digest = rs.getString("digest");
@@ -78,6 +80,16 @@ public class ImmagineImpl implements Immagine {
     @Override
     public void setDimensione(long i) {
         dimensione = i;
+    }
+    
+    @Override
+    public String getTipo(){
+        return tipo;
+    }
+    
+    @Override
+    public void setTipo(String s){
+        tipo = s;
     }
 
     @Override

@@ -55,7 +55,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         uUtente = c.prepareStatement("UPDATE utente SET username=?, password=?, nome=?, cognome=?, email=?, data_di_nascita=?, spazio_disp_img=? WHERE id = ?");
         dUtente = c.prepareStatement("DELETE FROM utente WHERE id = ?");
         gImmagine = c.prepareStatement("SELECT * FROM immagine WHERE id = ?");
-        aImmagine = c.prepareStatement("INSERT INTO immagine (nome,dimensione,file,digest,data_upload,id_utente) VALUES (?,?,?,?,?,?) RETURNING id");
+        aImmagine = c.prepareStatement("INSERT INTO immagine (nome,dimensione,tipo,file,digest,data_upload,id_utente) VALUES (?,?,?,?,?,?,?) RETURNING id");
         dImmagine = c.prepareStatement("DELETE FROM immagine WHERE id = ?");
         uImmagine = c.prepareStatement("UPDATE immagine SET nome = ?, dimensione = ?, tipo = ?, file = ?, digest = ?, data_upload = ?, id_utente = ?");
         gImmagini = c.prepareStatement("SELECT * FROM immagine WHERE id_utente = ?");
@@ -318,10 +318,11 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         try{
             aImmagine.setString(1,img.getNome());
             aImmagine.setLong(2,img.getDimensione());
-            aImmagine.setString(3,img.getFile());
-            aImmagine.setString(4,img.getDigest());
-            aImmagine.setTimestamp(5,img.getData_upload());
-            aImmagine.setLong(6,img.getUtente().getID());
+            aImmagine.setString(3,img.getTipo());
+            aImmagine.setString(4,img.getFile());
+            aImmagine.setString(5,img.getDigest());
+            aImmagine.setTimestamp(6,img.getData_upload());
+            aImmagine.setLong(7,img.getUtente().getID());
             chiave = aImmagine.executeQuery();
             if(chiave.next()){
                 return getImmagine(chiave.getLong("id"));
