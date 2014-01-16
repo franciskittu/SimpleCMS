@@ -21,6 +21,7 @@ import it.lufraproini.cms.model.Css;
 import it.lufraproini.cms.model.Immagine;
 import it.lufraproini.cms.model.Pagina;
 import it.lufraproini.cms.model.Sito;
+import it.lufraproini.cms.model.Slide;
 import it.lufraproini.cms.model.Utente;
 import java.io.File;
 import java.sql.Connection;
@@ -39,8 +40,9 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     private PreparedStatement gCss, aCss, uCss, dCss;
     private PreparedStatement gUtente, gUtente_by_Username, aUtente, uUtente, dUtente;
     private PreparedStatement gImmagine, gImmagini, aImmagine, uImmagine, dImmagine;
-    private PreparedStatement gPagina, aPagina;
-    private PreparedStatement gSito, aSito;
+    private PreparedStatement gPagina, aPagina, dPagina;
+    private PreparedStatement gSito, aSito, dSito;
+    private PreparedStatement gSlide, aSlide, uSlide, dSlide;
     
     public CMSDataLayerImpl(Connection c) throws SQLException{
         gCss = c.prepareStatement("SELECT * FROM css WHERE id = ?");
@@ -55,12 +57,17 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         gImmagine = c.prepareStatement("SELECT * FROM immagine WHERE id = ?");
         aImmagine = c.prepareStatement("INSERT INTO immagine (nome,dimensione,file,digest,data_upload,id_utente) VALUES (?,?,?,?,?,?) RETURNING id");
         dImmagine = c.prepareStatement("DELETE FROM immagine WHERE id = ?");
-        uImmagine = c.prepareStatement("UPDATE immagine SET nome = ? AND dimensione = ? AND file = ? AND digest = ? AND data_upload = ? AND id_utente = ?");
+        uImmagine = c.prepareStatement("UPDATE immagine SET nome = ?, dimensione = ?, file = ?, digest = ?, data_upload = ?, id_utente = ?");
         gImmagini = c.prepareStatement("SELECT * FROM immagine WHERE id_utente = ?");
         gPagina = c.prepareStatement("SELECT * FROM pagina WHERE id = ?");
-        aPagina = c.prepareStatement("INSERT INTO pagina (titolo, body, css, id_padre, id_sito, modello) VALUES(?,?,?,?,?,?) RETURNING id");
-        aSito = c.prepareStatement("INSERT INTO sito (header, footer, id_utente, homepage) VALUES (?,?,?,?)RETURNING id");
+        aPagina = c.prepareStatement("INSERT INTO pagina (titolo, body, id_padre, id_sito, modello) VALUES(?,?,?,?,?) RETURNING id");
+        dPagina = c.prepareStatement("DELETE FROM pagina WHERE id = ?");
+        aSito = c.prepareStatement("INSERT INTO sito (descrizione, header, footer, id_utente, homepage, id_css) VALUES (?,?,?,?,?,?)RETURNING id");
         gSito = c.prepareStatement("SELECT * FROM sito WHERE id = ?");
+        gSlide = c.prepareStatement("SELECT * FROM slide WHERE id = ?");
+        aSlide = c.prepareStatement("INSERT INTO slide (descrizione, posizione, file) VALUES(?,?,?) RETURNING id");
+        uSlide = c.prepareStatement("UPDATE slide SET descrizione = ?, posizione = ?, file = ?");
+        dSlide = c.prepareStatement("DELETE FROM slide WHERE id = ?");
     }
     
     @Override
@@ -417,7 +424,15 @@ public class CMSDataLayerImpl implements CMSDataLayer {
 
     @Override
     public Pagina deletePagina(Pagina p) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try{
+            dPagina.setLong(1,p.getID());
+            if(dPagina.executeUpdate() == 1){
+                return p;
+            }
+        } catch (SQLException ex){
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
@@ -489,7 +504,15 @@ public class CMSDataLayerImpl implements CMSDataLayer {
 
     @Override
     public Sito deleteSito(Sito s) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try{
+            dSito.setLong(1,s.getID());
+            if(dSito.executeUpdate() == 1){// il DBMS eliminerà le tuple corrispondenti alle pagine del sito
+                return s;
+            }
+        } catch (SQLException ex){
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
@@ -511,6 +534,84 @@ public class CMSDataLayerImpl implements CMSDataLayer {
             rs = gSito.executeQuery();
             if(rs.next()){
                 ris = new SitoImpl(this, rs);
+            }
+        } catch (SQLException ex){
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try{
+                rs.close();
+            } catch (SQLException ex){
+                
+            }
+        }
+        return ris;
+    }
+    
+    @Override
+    public Slide createSlide(){
+        return new SlideImpl(this);
+    }
+    
+    @Override
+    public Slide addSlide(Slide s){
+        ResultSet chiave = null;
+        SlideImpl s_agg = (SlideImpl) s;
+        try{
+            aSlide.setString(1,s_agg.getDescrizione());
+            aSlide.setLong(2, s_agg.getPosizione());
+            aSlide.setString(3,s_agg.getFile());
+            chiave = aSlide.executeQuery();
+            if(chiave.next()){
+                return getSlide(chiave.getLong("id"));
+            }
+        } catch(SQLException ex){
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try{
+                chiave.close();
+            } catch (SQLException ex){
+                
+            }
+        }
+        return null;
+    }
+    
+    private void deleteSlideFile(Slide S){
+        if(S != null){
+            File f = new File(S.getFile());// forse da fare getRealPath
+            if(f.exists()){
+                f.delete();
+            }
+        }
+    }
+    
+    @Override
+    public Slide deleteSlide(Slide s){
+        try{
+            dSlide.setLong(1, s.getID());
+            if(dSlide.executeUpdate() == 1){
+                deleteSlideFile(s);
+                return s;
+            }
+        } catch (SQLException ex){
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    @Override
+    public Slide updateSlide(Slide s){
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public Slide getSlide(long i){
+        ResultSet rs = null;
+        Slide ris = null;
+        try{
+            gSlide.setLong(1, i);
+            rs = gSlide.executeQuery();
+            if(rs.next()){
+                ris = new SlideImpl(this, rs);
             }
         } catch (SQLException ex){
             Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);

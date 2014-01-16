@@ -96,4 +96,16 @@ public interface CMSDataLayer {
     List<Sito> getSitobyUtente(Utente U);//per le url senza specifica del sito si può stabilire un default
 
     Sito getSito(long i);
+    
+    /* SLIDES */
+    
+    Slide createSlide();
+    
+    Slide addSlide(Slide s);
+    
+    Slide deleteSlide(Slide s);
+    
+    Slide updateSlide(Slide s);
+    
+    Slide getSlide(long i);
 }
