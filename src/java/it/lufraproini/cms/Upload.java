@@ -45,6 +45,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -62,10 +63,9 @@ public class Upload extends HttpServlet {
     private String estensione;
     private String nomefile;
     private String error_message;
-    private final String caratteri_non_ammessi = "['\"/\\\\]";
-    
-    /*FUNZIONE GENERICA PER PRENDERE TUTTI I CAMPI E IL FILE NELLE FORM DI UPLOAD*/
+    private final String caratteri_non_ammessi = "['\"/\\\\]";//slash, apici singoli e apici doppi
 
+    /*FUNZIONE GENERICA PER PRENDERE TUTTI I CAMPI E IL FILE NELLE FORM DI UPLOAD*/
     private Map prendiInfo(HttpServletRequest request) throws FileUploadException {
         Map info = new HashMap();
         Map files = new HashMap();
@@ -93,6 +93,7 @@ public class Upload extends HttpServlet {
         return null;
     }
 
+    /*questa funzione*/
     private String action_upload(HttpServletRequest request, Map data) throws SQLException, IOException, NamingException, NoSuchAlgorithmException, Exception {
 
         FileItem fi = null;
@@ -158,7 +159,7 @@ public class Upload extends HttpServlet {
         return sdigest;
     }
 
-    private Immagine memorizzaImmagine(Map data, CMSDataLayerImpl datalayer, String digest) throws SQLException {
+    private Immagine memorizzaImmagine(Map data, CMSDataLayerImpl datalayer, String digest, long id_user) throws SQLException {
         Map files = new HashMap();
         FileItem fi = null;
         files = (HashMap) data.get("files");
@@ -168,15 +169,15 @@ public class Upload extends HttpServlet {
         Date now = calendar.getTime();
         Timestamp current_timestamp = new Timestamp(now.getTime());
         /**/
-        Utente U = datalayer.getUtentebyUsername("franciskittu");
+        Utente U = datalayer.getUtente(id_user);
         Immagine img_upload = datalayer.createImmagine();
         Immagine img_result;
         //se l'utente non ha spazio a sufficienza per fare l'upload questo viene rifiutato
         long spazio_risultante = U.getSpazio_disp_img() - fi.getSize();
         if (spazio_risultante < 0) {
             //viene eliminato il file appena memorizzato in action_upload
-            File uploaded_file = new File(getServletContext().getRealPath("system.image_directory") + File.separatorChar + this.nomefile + "." + this.estensione);
-            if(uploaded_file.exists()){
+            File uploaded_file = new File(getServletContext().getRealPath(getServletContext().getInitParameter("system.image_directory")) + File.separatorChar + this.nomefile + "." + this.estensione);
+            if (uploaded_file.exists()) {
                 uploaded_file.delete();
             }
             error_message = "L'utente non ha spazio disponibile sufficiente per caricare l'immagine!";
@@ -186,6 +187,7 @@ public class Upload extends HttpServlet {
         }
         img_upload.setNome(SecurityLayer.addSlashes(data.get("nome").toString()));
         img_upload.setDimensione(fi.getSize());
+        img_upload.setTipo(fi.getContentType());
         img_upload.setFile(getServletContext().getInitParameter("system.image_directory") + File.separatorChar + digest + "." + estensione);
         img_upload.setDigest(digest);
         img_upload.setData_upload(current_timestamp);
@@ -214,7 +216,7 @@ public class Upload extends HttpServlet {
         fi = (FileItem) files.get("file_to_upload");
         Css css_upload = datalayer.createCSS();
         Css css_result;
-        
+
         css_upload.setFile(getServletContext().getInitParameter("system.css_directory") + File.separatorChar + data.get("nome").toString() + "." + estensione);
         css_upload.setNome(SecurityLayer.addSlashes(data.get("nome").toString()));
         if (data.get("descrizione").toString() != null) {
@@ -232,8 +234,8 @@ public class Upload extends HttpServlet {
         if (fields.get("nome") == null || fields.get("nome").toString().matches(".*" + caratteri_non_ammessi + ".*")) {
             campi_errati += " nome ";
         }
-        if(fields.containsKey("descrizione")){
-            if(fields.get("descrizione").toString().equals("")){
+        if (fields.containsKey("descrizione")) {
+            if (fields.get("descrizione").toString().equals("")) {
                 campi_errati += " descrizione ";
             }
         }
@@ -248,78 +250,82 @@ public class Upload extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
+     * @throws org.apache.commons.fileupload.FileUploadException
+     * @throws java.sql.SQLException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, FileUploadException, SQLException, Exception {
-        /*DBMS*/
-        DataSource ds = (DataSource) getServletContext().getAttribute("datasource");
-        Connection connection = ds.getConnection();
-        /**/
-        CMSDataLayerImpl datalayer = new CMSDataLayerImpl(connection);
-        String digest = "";
-        String html = "";
-        String tipo = "";
-        Map template_data = new HashMap();
-        Map info = new HashMap();
-        info = prendiInfo(request);
-        tipo = info.get("submit").toString();
-        try{
-        /*flusso immagine*/
-        if (tipo.equals("immagine")) {
-            Immagine img;
-            html = "show_immagine.ftl.html";
-            digest = action_upload(request, info);
-            digest.getBytes();//potrebbe generare una nullpointerexception
-            img = memorizzaImmagine(info, datalayer, digest);
-            img.setNome(SecurityLayer.stripSlashes(img.getNome()));//potrebbe causare eccezione su img è null
-            template_data.put("immagine", img);
-            template_data.put("id", img.getID());
-            template_data.put("id_utente", 2);
-        } /*flusso css*/ else {
-            Css css = null;
-            html = "show_css.ftl.html";
-            action_upload(request, info).getBytes();//potrebbe generare una nullpointerexception
-            css = memorizzaCss(info, datalayer);
-            css.setDescrizione(SecurityLayer.stripSlashes(css.getDescrizione()));//potrebbe generare una nullpointerexception
-            css.setNome(SecurityLayer.stripSlashes(css.getNome()));
-            template_data.put("css", css);
-            template_data.put("identifier", css.getID());
+        /*verifica validità sessione*/
+        HttpSession s = SecurityLayer.checkSession(request);
+        if (s != null) {
+
+            /*DBMS*/
+            DataSource ds = (DataSource) getServletContext().getAttribute("datasource");
+            Connection connection = ds.getConnection();
+            /**/
+            CMSDataLayerImpl datalayer = new CMSDataLayerImpl(connection);
+            String digest = "";
+            String html = "";
+            String tipo = "";
+            Map template_data = new HashMap();
+            Map info = new HashMap();
+            info = prendiInfo(request);
+            tipo = info.get("submit").toString();
+            try {
+                /*flusso immagine*/
+                if (tipo.equals("immagine")) {
+                    Immagine img;
+                    html = "show_immagine.ftl.html";
+                    digest = action_upload(request, info);
+                    digest.getBytes();//potrebbe generare una nullpointerexception
+                    img = memorizzaImmagine(info, datalayer, digest, (Long) s.getAttribute("userid"));
+                    img.setNome(SecurityLayer.stripSlashes(img.getNome()));//potrebbe causare eccezione su img è null
+                    template_data.put("immagine", img);
+                    template_data.put("id", img.getID());
+                    template_data.put("id_utente", 2);
+                } /*flusso css*/ else {
+                    Css css = null;
+                    html = "show_css.ftl.html";
+                    action_upload(request, info).getBytes();//potrebbe generare una nullpointerexception
+                    css = memorizzaCss(info, datalayer);
+                    css.setDescrizione(SecurityLayer.stripSlashes(css.getDescrizione()));//potrebbe generare una nullpointerexception
+                    css.setNome(SecurityLayer.stripSlashes(css.getNome()));
+                    template_data.put("css", css);
+                    template_data.put("identifier", css.getID());
+                }
+                template_data.put("outline_tpl", "");
+                TemplateResult tr = new TemplateResult(getServletContext());
+                tr.activate(html, template_data, response);
+            } catch (NullPointerException ex) {
+                FailureResult res = new FailureResult(getServletContext());
+                res.activate(error_message, request, response);
+            }
+        } else {
+            response.sendRedirect("Homepage.html");
         }
-        template_data.put("outline_tpl", "");
-        TemplateResult tr = new TemplateResult(getServletContext());
-        tr.activate(html, template_data, response);
-    } catch (NullPointerException ex){
-        FailureResult res = new FailureResult(getServletContext());
-        res.activate(error_message, request, response);
     }
-}
 
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-/**
- * Handles the HTTP <code>GET</code> method.
- *
- * @param request servlet request
- * @param response servlet response
- * @throws ServletException if a servlet-specific error occurs
- * @throws IOException if an I/O error occurs
- */
-@Override
-        protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             processRequest(request, response);
-        
 
-} catch (SQLException ex) {
-            Logger.getLogger(Upload.class  
-
-.getName()).log(Level.SEVERE, null, ex);
-        } 
-
-catch (Exception ex) {
-            Logger.getLogger(Upload.class  
-
-.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Upload.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(Upload.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -332,22 +338,17 @@ catch (Exception ex) {
      * @throws IOException if an I/O error occurs
      */
     @Override
-        protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             processRequest(request, response);
-        
 
-} catch (SQLException ex) {
-            Logger.getLogger(Upload.class  
-
-.getName()).log(Level.SEVERE, null, ex);
-        } 
-
-catch (Exception ex) {
-            Logger.getLogger(Upload.class  
-
-.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Upload.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(Upload.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -357,7 +358,7 @@ catch (Exception ex) {
      * @return a String containing servlet description
      */
     @Override
-        public String getServletInfo() {
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 

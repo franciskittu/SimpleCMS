@@ -1,18 +1,25 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/*   SimpleCMS - un semplice content management system di pagine statiche
+ *    Copyright (C) 2013  Francesco Proietti, Luca Traini
+ *
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Affero General Public License as
+ *    published by the Free Software Foundation, either version 3 of the
+ *    License, or (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Affero General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Affero General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-
 package it.lufraproini.cms;
 
-import it.lufraproini.cms.framework.result.TemplateResult;
-import it.lufraproini.cms.bean.Tab;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,15 +29,23 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author fsfskittu
  */
-public class ProvaFreemarkereDB extends HttpServlet {
+public class registration extends HttpServlet {
 
-    private List ContenutoTab(){
-        List<Tab> risultati = new ArrayList();
-        int i = 0;
-        for(i=0; i < 5; i++){
-            risultati.add(new Tab(i,"n","c"));
+    private String caratteri_non_ammessi = "['\"/\\\\]";
+    
+    private String verificaCampi(HttpServletRequest request){
+        Map m = request.getParameterMap();
+        Set<Entry<String,String[]>> fieldset = m.entrySet();
+        for(Entry<String,String[]> field:fieldset){
+            String nome = field.getKey();
+            String[] valori = field.getValue();
+            if (valori.length > 0) {
+                if (valori.length == 1) {
+                    if(!valori[0].isEmpty()){
+                        
+                    }
+                }
         }
-        return risultati;
     }
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,12 +58,7 @@ public class ProvaFreemarkereDB extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Map data = new HashMap();
-        data.put("risultati", ContenutoTab());
-        //disabilitiamo il template di outline
-        data.put("outline_tpl", "");
-        TemplateResult res = new TemplateResult(getServletContext());
-        res.activate("tabella_ris_query.ftl.html", data, response);
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

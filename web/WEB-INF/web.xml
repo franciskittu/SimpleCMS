@@ -44,6 +44,14 @@
         <servlet-name>site</servlet-name>
         <servlet-class>it.lufraproini.cms.site</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>image</servlet-name>
+        <servlet-class>it.lufraproini.cms.image</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>registration</servlet-name>
+        <servlet-class>it.lufraproini.cms.registration</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>EsempioDS</servlet-name>
         <url-pattern>/EsempioDS</url-pattern>
@@ -103,6 +111,14 @@
     <servlet-mapping>
         <servlet-name>site</servlet-name>
         <url-pattern>/site</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>image</servlet-name>
+        <url-pattern>/image</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>registration</servlet-name>
+        <url-pattern>/registration</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

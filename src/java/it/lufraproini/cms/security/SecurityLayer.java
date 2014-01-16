@@ -5,6 +5,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -111,6 +113,18 @@ public class SecurityLayer {
         return s.replaceAll("\\\\(['\"\\\\])", "$1");
     }
 
+    /*questa funzione (utilizzata per lo più per analizzare la correttezza dei campi stringa in una form)
+    restituisce il nome dei campi che sono nulli o il cui valore contiene caratteri non ammessi*/
+    public static String checkString(List<String> nomi, List<String> valori, String caratteri_non_ammessi){
+        String valori_errati = "";
+        for(int i = 0; i < nomi.size(); i++){
+            if(valori.get(i) == null || valori.get(i).matches(".*"+ caratteri_non_ammessi +".*")){
+                valori_errati += nomi.get(i);
+            }
+        }
+        return valori_errati;
+    }
+    
     public static int checkNumeric(String s) throws NumberFormatException {
         //convertiamo la stringa in numero, ma assicuriamoci prima che sia valida
         //convert the string to a number, ensuring its validity
