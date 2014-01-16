@@ -83,6 +83,8 @@ public interface CMSDataLayer {
     
     Pagina getPagina(long i);
     
+    long getLinkPagebyTitle(Sito s, String titolo);
+    
     /* SITO */
     
     Sito createSito();
@@ -94,7 +96,7 @@ public interface CMSDataLayer {
     Sito updateSito(Sito s);
     
     List<Sito> getSitobyUtente(Utente U);//per le url senza specifica del sito si può stabilire un default
-
+    
     Sito getSito(long i);
     
     /* SLIDES */

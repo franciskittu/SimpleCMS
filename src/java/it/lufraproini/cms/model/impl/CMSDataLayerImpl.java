@@ -40,8 +40,8 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     private PreparedStatement gCss, aCss, uCss, dCss;
     private PreparedStatement gUtente, gUtente_by_Username, aUtente, uUtente, dUtente;
     private PreparedStatement gImmagine, gImmagini, aImmagine, uImmagine, dImmagine;
-    private PreparedStatement gPagina, aPagina, dPagina;
-    private PreparedStatement gSito, aSito, dSito;
+    private PreparedStatement gPagina, aPagina, dPagina, gFiglie, gPaginabyTitolo;
+    private PreparedStatement gSito, aSito, dSito, gSitobyUtente;
     private PreparedStatement gSlide, aSlide, uSlide, dSlide;
     
     public CMSDataLayerImpl(Connection c) throws SQLException{
@@ -68,6 +68,9 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         aSlide = c.prepareStatement("INSERT INTO slide (descrizione, posizione, file) VALUES(?,?,?) RETURNING id");
         uSlide = c.prepareStatement("UPDATE slide SET descrizione = ?, posizione = ?, file = ?");
         dSlide = c.prepareStatement("DELETE FROM slide WHERE id = ?");
+        gSitobyUtente = c.prepareStatement("SELECT * FROM sito WHERE id_utente = ?");
+        gFiglie = c.prepareStatement("SELECT * FROM pagina WHERE id_padre = ?");
+        gPaginabyTitolo = c.prepareStatement("SELECT id FROM pagina WHERE titolo = ? AND id_sito = ?");
     }
     
     @Override
@@ -442,12 +445,47 @@ public class CMSDataLayerImpl implements CMSDataLayer {
 
     @Override
     public List<Pagina> getFiglie(Pagina p) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        PaginaImpl padre = (PaginaImpl) p;
+        List<Pagina> ris = new ArrayList();
+        ResultSet rs = null;
+        try{
+            gFiglie.setLong(1, padre.getID());
+            rs = gFiglie.executeQuery();
+            while(rs.next()){
+                ris.add(new PaginaImpl(this,rs));
+            }
+        } catch(SQLException ex){
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally{
+            try{
+                rs.close();
+            } catch(SQLException ex){
+                //
+            }
+        }
+        return ris;
     }
 
     @Override
     public Pagina getHomepage(long i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ResultSet rs = null;
+        Pagina ris = null;
+        try{
+            gPagina.setLong(1,i);
+            rs = gPagina.executeQuery();
+            if(rs.next()){
+                return new PaginaImpl(this,rs);
+            }
+        } catch (SQLException ex){
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try{
+                rs.close();
+            } catch (SQLException ex){
+                
+            }
+        }
+        return ris;
     }
 
     @Override
@@ -470,6 +508,29 @@ public class CMSDataLayerImpl implements CMSDataLayer {
             }
         }
         return ris;
+    }
+    
+    @Override
+    public long getLinkPagebyTitle(Sito s, String titolo){
+        SitoImpl sito = (SitoImpl) s;
+        ResultSet rs = null;
+        try{
+            gPaginabyTitolo.setString(1, titolo);
+            gPaginabyTitolo.setLong(2,s.getID());
+            rs = gPaginabyTitolo.executeQuery();
+            if(rs.next()){
+                return rs.getLong("id");
+            }
+        } catch (SQLException ex){
+            
+        } finally {
+            try{
+                rs.close();
+            } catch (SQLException ex){
+                
+            }
+        }
+        return 0;
     }
     
     @Override
@@ -522,7 +583,25 @@ public class CMSDataLayerImpl implements CMSDataLayer {
 
     @Override
     public List<Sito> getSitobyUtente(Utente U) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Sito> ris = new ArrayList();
+        ResultSet rs = null;
+        try{
+            gSitobyUtente.setLong(1, U.getID());
+            rs = gSitobyUtente.executeQuery();
+            while(rs.next()){
+                Sito s = new SitoImpl(this,rs);
+                ris.add(s);
+            }
+        } catch (SQLException ex){
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try{
+                rs.close();
+            } catch (SQLException ex){
+                
+            }
+        }
+        return ris;
     }
     
     @Override
