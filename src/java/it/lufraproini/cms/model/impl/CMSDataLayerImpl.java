@@ -57,7 +57,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         gImmagine = c.prepareStatement("SELECT * FROM immagine WHERE id = ?");
         aImmagine = c.prepareStatement("INSERT INTO immagine (nome,dimensione,file,digest,data_upload,id_utente) VALUES (?,?,?,?,?,?) RETURNING id");
         dImmagine = c.prepareStatement("DELETE FROM immagine WHERE id = ?");
-        uImmagine = c.prepareStatement("UPDATE immagine SET nome = ?, dimensione = ?, file = ?, digest = ?, data_upload = ?, id_utente = ?");
+        uImmagine = c.prepareStatement("UPDATE immagine SET nome = ?, dimensione = ?, tipo = ?, file = ?, digest = ?, data_upload = ?, id_utente = ?");
         gImmagini = c.prepareStatement("SELECT * FROM immagine WHERE id_utente = ?");
         gPagina = c.prepareStatement("SELECT * FROM pagina WHERE id = ?");
         aPagina = c.prepareStatement("INSERT INTO pagina (titolo, body, id_padre, id_sito, modello) VALUES(?,?,?,?,?) RETURNING id");
