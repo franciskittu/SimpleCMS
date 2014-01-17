@@ -65,8 +65,8 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         aSito = c.prepareStatement("INSERT INTO sito (descrizione, header, footer, id_utente, homepage, id_css) VALUES (?,?,?,?,?,?)RETURNING id");
         gSito = c.prepareStatement("SELECT * FROM sito WHERE id = ?");
         gSlide = c.prepareStatement("SELECT * FROM slide WHERE id = ?");
-        aSlide = c.prepareStatement("INSERT INTO slide (descrizione, posizione, file) VALUES(?,?,?) RETURNING id");
-        uSlide = c.prepareStatement("UPDATE slide SET descrizione = ?, posizione = ?, file = ?");
+        aSlide = c.prepareStatement("INSERT INTO slide (descrizione, posizione, file, nome) VALUES(?,?,?,?) RETURNING id");
+        uSlide = c.prepareStatement("UPDATE slide SET descrizione = ?, posizione = ?, file = ?, nome=?");
         dSlide = c.prepareStatement("DELETE FROM slide WHERE id = ?");
         gSitobyUtente = c.prepareStatement("SELECT * FROM sito WHERE id_utente = ?");
         gFiglie = c.prepareStatement("SELECT * FROM pagina WHERE id_padre = ?");
@@ -85,6 +85,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         Obj.setFile(file);
         return Obj;
     }
+    
     @Override
     public Css getCSS(long i){
         Css ris = null;
@@ -406,10 +407,9 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         try{
             aPagina.setString(1, p_agg.getTitolo());
             aPagina.setString(2,p_agg.getBody());
-            aPagina.setLong(3,p_agg.getCss().getID());
-            aPagina.setLong(4,p_agg.getPadre().getID());
-            aPagina.setLong(5,p_agg.getSito().getID());
-            aPagina.setBoolean(6,p_agg.getModello());
+            aPagina.setLong(3,p_agg.getPadre().getID());
+            aPagina.setLong(4,p_agg.getSito().getID());
+            aPagina.setBoolean(5,p_agg.getModello());
             chiave = aPagina.executeQuery();
             if(chiave.next()){
                 return getPagina(chiave.getLong("id"));
@@ -640,6 +640,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
             aSlide.setString(1,s_agg.getDescrizione());
             aSlide.setLong(2, s_agg.getPosizione());
             aSlide.setString(3,s_agg.getFile());
+            aSlide.setString(4,s_agg.getNome());
             chiave = aSlide.executeQuery();
             if(chiave.next()){
                 return getSlide(chiave.getLong("id"));

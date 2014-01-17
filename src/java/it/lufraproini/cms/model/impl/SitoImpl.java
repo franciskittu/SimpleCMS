@@ -16,6 +16,7 @@
  */
 package it.lufraproini.cms.model.impl;
 
+import it.lufraproini.cms.model.Css;
 import it.lufraproini.cms.model.Pagina;
 import it.lufraproini.cms.model.Sito;
 import it.lufraproini.cms.model.Utente;
@@ -26,16 +27,19 @@ import java.sql.SQLException;
 public class SitoImpl implements Sito {
 
     private CMSDataLayerImpl datalayer;
-    private long id, id_utente/*chiave*/, id_homepage/*chiave*/;
-    private String header, footer;
+    private long id, id_utente/*chiave esterna*/, id_homepage/*chiave esterna*/, id_css/*chiave esterna*/;
+    private String header, footer, descrizione;
     
     private Pagina homepage;
     private Utente utente;
+    private Css css;
     
     public SitoImpl(CMSDataLayerImpl datalayer){
         id = 0;
         id_utente = 0;
         id_homepage = 0;
+        id_css = 0;
+        descrizione = "";
         header = "";
         footer = "";
         this.datalayer = datalayer;
@@ -45,6 +49,8 @@ public class SitoImpl implements Sito {
         id = data.getLong("id");
         id_utente = data.getLong("id_utente");
         id_homepage = data.getLong("homepage");
+        id_css = data.getLong("id_css");
+        descrizione = data.getString("descrizione");
         header = data.getString("header");
         footer = data.getString("footer");
         this.datalayer = datalayer;
@@ -55,6 +61,15 @@ public class SitoImpl implements Sito {
         return id;
     }
 
+    @Override
+    public String getDescrizione(){
+        return descrizione;
+    }
+    
+    @Override
+    public void setDescrizione(String s){
+        descrizione = s;
+    }
     @Override
     public String getHeader() {
         return header;
@@ -100,5 +115,15 @@ public class SitoImpl implements Sito {
         }
         return homepage;
     }
-    
+    @Override
+    public Css getCss(){
+        if(css == null){
+            css = datalayer.getCSS(id_css);
+        }
+        return css;
+    }
+    @Override
+    public void setCss(Css stile){
+        css = stile;
+    }
 }

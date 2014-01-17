@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+        <head>
+            <title>Nuova Slide</title>
+        </head>
+        <body>
+            <p><img src='${slide.file}' title='${slide.nome}' alt='${slide.descrizione}'/></p>
+
+            <table border="1">
+                <caption>Dati Immagine Inserita</caption>
+                <thead>
+                    <tr><th>id</th><th>nome</th><th>local_file</th><th>descrizione</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>${id}</td>
+                        <td>${slide.nome}</td>
+                        <td>${slide.file}</td>
+                        <td>${slide.descrizione}</td>
+                        </tr>
+                </tbody>
+            </table>
+        </body>
+    </html>
+

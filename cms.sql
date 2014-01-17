@@ -110,7 +110,6 @@ CREATE TABLE pagina (
     id integer NOT NULL,
     titolo character varying(30),
     body text,
-    css integer,
     id_padre integer,
     id_sito integer,
     modello boolean DEFAULT false
@@ -149,7 +148,9 @@ CREATE TABLE sito (
     header text NOT NULL,
     footer text NOT NULL,
     id_utente integer NOT NULL,
-    homepage integer
+    homepage integer,
+    descrizione character varying(255),
+    id_css integer
 );
 
 
@@ -174,6 +175,42 @@ ALTER TABLE public.sito_id_seq OWNER TO postgres;
 --
 
 ALTER SEQUENCE sito_id_seq OWNED BY sito.id;
+
+
+--
+-- Name: slide; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE slide (
+    id integer NOT NULL,
+    descrizione character varying(30),
+    posizione smallint NOT NULL,
+    file character varying(255) NOT NULL,
+    nome character varying(50)
+);
+
+
+ALTER TABLE public.slide OWNER TO postgres;
+
+--
+-- Name: slide_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE slide_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.slide_id_seq OWNER TO postgres;
+
+--
+-- Name: slide_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE slide_id_seq OWNED BY slide.id;
 
 
 --
@@ -247,6 +284,13 @@ ALTER TABLE ONLY sito ALTER COLUMN id SET DEFAULT nextval('sito_id_seq'::regclas
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
+ALTER TABLE ONLY slide ALTER COLUMN id SET DEFAULT nextval('slide_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
 ALTER TABLE ONLY utente ALTER COLUMN id SET DEFAULT nextval('utente_id_seq'::regclass);
 
 
@@ -254,17 +298,15 @@ ALTER TABLE ONLY utente ALTER COLUMN id SET DEFAULT nextval('utente_id_seq'::reg
 -- Data for Name: css; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY css (id, nome, descrizione, file) FROM stdin;
-1	n	d	f
-2	n	d	f
-3	stiloso	un bellissimo css	css/stylish.css
-4			css/.css
-5	GNU		css/.css
-6	GNU		css/.css
-7	fogliodistile	ottimo!	css/ciccu.css
-8	fogliodistile	ottimo!	css/fogliodistile.css
-9	fogliodistile	ottimo!	css/fogliodistile.css
-\.
+INSERT INTO css (id, nome, descrizione, file) VALUES (1, 'n', 'd', 'f');
+INSERT INTO css (id, nome, descrizione, file) VALUES (2, 'n', 'd', 'f');
+INSERT INTO css (id, nome, descrizione, file) VALUES (3, 'stiloso', 'un bellissimo css', 'css/stylish.css');
+INSERT INTO css (id, nome, descrizione, file) VALUES (4, '', '', 'css/.css');
+INSERT INTO css (id, nome, descrizione, file) VALUES (5, 'GNU', '', 'css/.css');
+INSERT INTO css (id, nome, descrizione, file) VALUES (6, 'GNU', '', 'css/.css');
+INSERT INTO css (id, nome, descrizione, file) VALUES (7, 'fogliodistile', 'ottimo!', 'css/ciccu.css');
+INSERT INTO css (id, nome, descrizione, file) VALUES (8, 'fogliodistile', 'ottimo!', 'css/fogliodistile.css');
+INSERT INTO css (id, nome, descrizione, file) VALUES (9, 'fogliodistile', 'ottimo!', 'css/fogliodistile.css');
 
 
 --
@@ -278,14 +320,12 @@ SELECT pg_catalog.setval('css_id_seq', 9, true);
 -- Data for Name: immagine; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo) FROM stdin;
-4	puttana	75323	images/-51-75-738281840-54107-15-99-2212353-78-1125377-68-38.jpg	-51-75-738281840-54107-15-99-2212353-78-1125377-68-38	2013-12-16 16:19:20.344	2	\N
-5	CAAAAAH	42370	images/-61-248-76-5651-268484-9741-12560-7139843612416-17.jpg	-61-248-76-5651-268484-9741-12560-7139843612416-17	2013-12-16 16:24:01.84	2	\N
-6	cernia	75185	images/84988739583114644539-4656-61109-24-66-1197260127.jpg	84988739583114644539-4656-61109-24-66-1197260127	2013-12-16 16:27:54.878	2	\N
-7	lavatrice	21147	images/111-621-40-69-101-22-41962-74-41126115-6210310469-8977.jpg	111-621-40-69-101-22-41962-74-41126115-6210310469-8977	2013-12-16 23:14:53.985	2	\N
-8	finoaquituttobene	4878	images/104-40-27753611414-20-4471126-8015-65-283-3119112-18.jpg	104-40-27753611414-20-4471126-8015-65-283-3119112-18	2013-12-16 23:29:16.607	2	\N
-9	nevermind	548121	images/978389-96-71661633190-125-68-1411688-5834-49748.jpg	978389-96-71661633190-125-68-1411688-5834-49748	2014-01-04 12:50:04.012	2	image/jpeg
-\.
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo) VALUES (4, 'puttana', 75323, 'images/-51-75-738281840-54107-15-99-2212353-78-1125377-68-38.jpg', '-51-75-738281840-54107-15-99-2212353-78-1125377-68-38', '2013-12-16 16:19:20.344', 2, NULL);
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo) VALUES (5, 'CAAAAAH', 42370, 'images/-61-248-76-5651-268484-9741-12560-7139843612416-17.jpg', '-61-248-76-5651-268484-9741-12560-7139843612416-17', '2013-12-16 16:24:01.84', 2, NULL);
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo) VALUES (6, 'cernia', 75185, 'images/84988739583114644539-4656-61109-24-66-1197260127.jpg', '84988739583114644539-4656-61109-24-66-1197260127', '2013-12-16 16:27:54.878', 2, NULL);
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo) VALUES (7, 'lavatrice', 21147, 'images/111-621-40-69-101-22-41962-74-41126115-6210310469-8977.jpg', '111-621-40-69-101-22-41962-74-41126115-6210310469-8977', '2013-12-16 23:14:53.985', 2, NULL);
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo) VALUES (8, 'finoaquituttobene', 4878, 'images/104-40-27753611414-20-4471126-8015-65-283-3119112-18.jpg', '104-40-27753611414-20-4471126-8015-65-283-3119112-18', '2013-12-16 23:29:16.607', 2, NULL);
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo) VALUES (9, 'nevermind', 548121, 'images/978389-96-71661633190-125-68-1411688-5834-49748.jpg', '978389-96-71661633190-125-68-1411688-5834-49748', '2014-01-04 12:50:04.012', 2, 'image/jpeg');
 
 
 --
@@ -299,12 +339,10 @@ SELECT pg_catalog.setval('immagine_id_seq', 9, true);
 -- Data for Name: pagina; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY pagina (id, titolo, body, css, id_padre, id_sito, modello) FROM stdin;
-3	homepage	<div>questo è il corpo della homepage</div>	\N	\N	5	f
-4	pagina1	<div>questo è il corpo della pagina1</div>	\N	3	5	f
-5	pagina2	<div>questo è il corpo della pagina2</div>	\N	3	5	f
-6	pagina3	<div>questo è il corpo della pagina3 che è foglia della pagina 1</div>	\N	4	5	f
-\.
+INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (3, 'homepage', '<div>questo è il corpo della homepage</div>', NULL, 5, false);
+INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (4, 'pagina1', '<div>questo è il corpo della pagina1</div>', 3, 5, false);
+INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (5, 'pagina2', '<div>questo è il corpo della pagina2</div>', 3, 5, false);
+INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (6, 'pagina3', '<div>questo è il corpo della pagina3 che è foglia della pagina 1</div>', 4, 5, false);
 
 
 --
@@ -318,9 +356,7 @@ SELECT pg_catalog.setval('pagina_id_seq', 6, true);
 -- Data for Name: sito; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY sito (id, header, footer, id_utente, homepage) FROM stdin;
-5	<div><h1>Questa &egrave; l\\intestazione</h1></div>	<div><h2>Questo è il pi&egrave; di pagina</h2></div>	2	3
-\.
+INSERT INTO sito (id, header, footer, id_utente, homepage, descrizione, id_css) VALUES (5, '<div><h1>Questa &egrave; l\intestazione</h1></div>', '<div><h2>Questo è il pi&egrave; di pagina</h2></div>', 2, 3, NULL, NULL);
 
 
 --
@@ -331,12 +367,25 @@ SELECT pg_catalog.setval('sito_id_seq', 5, true);
 
 
 --
+-- Data for Name: slide; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO slide (id, descrizione, posizione, file, nome) VALUES (1, 'kurt in concerto', 1, 'slides/-103-114-128-45-88401276688-116-5392-4966119-34-92106-39.jpg', 'kurtd cobain');
+INSERT INTO slide (id, descrizione, posizione, file, nome) VALUES (2, 'nirvana in water', 2, 'slides/-69-84-5727-30-6168-18050-2263-55-107-46-32-84-11852-64.jpg', 'nirvana');
+
+
+--
+-- Name: slide_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('slide_id_seq', 2, true);
+
+
+--
 -- Data for Name: utente; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY utente (id, username, password, nome, cognome, email, data_di_nascita, spazio_disp_img) FROM stdin;
-2	franciskittu	password	francesco	\N	franciskittu@gmail.com	1991-06-14	2232976
-\.
+INSERT INTO utente (id, username, password, nome, cognome, email, data_di_nascita, spazio_disp_img) VALUES (2, 'franciskittu', 'password', 'francesco', NULL, 'franciskittu@gmail.com', '1991-06-14', 2232976);
 
 
 --
@@ -379,6 +428,14 @@ ALTER TABLE ONLY sito
 
 
 --
+-- Name: slide_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY slide
+    ADD CONSTRAINT slide_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: utente_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -403,14 +460,6 @@ ALTER TABLE ONLY immagine
 
 
 --
--- Name: pagina_css_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY pagina
-    ADD CONSTRAINT pagina_css_fkey FOREIGN KEY (css) REFERENCES css(id) ON DELETE SET NULL;
-
-
---
 -- Name: pagina_id_padre_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -432,6 +481,14 @@ ALTER TABLE ONLY pagina
 
 ALTER TABLE ONLY sito
     ADD CONSTRAINT sito_homepage_fkey FOREIGN KEY (homepage) REFERENCES pagina(id);
+
+
+--
+-- Name: sito_id_css_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY sito
+    ADD CONSTRAINT sito_id_css_fkey FOREIGN KEY (id_css) REFERENCES css(id);
 
 
 --
@@ -530,6 +587,26 @@ REVOKE ALL ON SEQUENCE sito_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE sito_id_seq FROM postgres;
 GRANT ALL ON SEQUENCE sito_id_seq TO postgres;
 GRANT ALL ON SEQUENCE sito_id_seq TO cms_user;
+
+
+--
+-- Name: slide; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE slide FROM PUBLIC;
+REVOKE ALL ON TABLE slide FROM postgres;
+GRANT ALL ON TABLE slide TO postgres;
+GRANT ALL ON TABLE slide TO cms_user;
+
+
+--
+-- Name: slide_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE slide_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE slide_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE slide_id_seq TO postgres;
+GRANT ALL ON SEQUENCE slide_id_seq TO cms_user;
 
 
 --

@@ -12,6 +12,10 @@
         <param-name>system.image_directory</param-name>
         <param-value>images</param-value>
     </context-param>
+    <context-param>
+        <param-name>system.slide_directory</param-name>
+        <param-value>slides</param-value>
+    </context-param>
     <listener>
         <description>Inizializza il pool di connesioni per il database fornendo il datasource alle altre servlet</description>
         <listener-class>it.lufraproini.cms.ContextInitializer</listener-class>
@@ -73,10 +77,6 @@
         <param-value>templates</param-value>
     </context-param>
     <context-param>
-        <param-name>view.outline_template</param-name>
-        <param-value/>
-    </context-param>
-    <context-param>
         <param-name>view.data.author</param-name>
         <param-value>Luca Traini e Francesco Proietti</param-value>
     </context-param>
@@ -86,7 +86,7 @@
     </context-param>
     <context-param>
         <param-name>view.outline_template</param-name>
-        <param-value>outline.ftl.html</param-value>
+        <param-value>outline.ftl.html</param-value><!--da modificare-->
     </context-param>
     <context-param>
         <param-name>view.error_template</param-name>

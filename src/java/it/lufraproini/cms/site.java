@@ -146,7 +146,7 @@ public class site extends HttpServlet {
                 template_data.put("header", title_header_body_footer.get(1));
                 template_data.put("body", title_header_body_footer.get(2));
                 template_data.put("footer", title_header_body_footer.get(3));
-                template_data.put("style","path to css");
+                template_data.put("style", sito.get(0).getCss().getFile());
                 template_data.put("outline_tpl", "");//nessun outline
                 /*preparo il menu*/
                 menu_ordinato = componiMenu(sito.get(0), sito.get(0).getHomepage(), datalayer);
@@ -163,7 +163,7 @@ public class site extends HttpServlet {
                 template_data.put("body", title_header_body_footer.get(2));
                 template_data.put("footer", title_header_body_footer.get(3));
                 template_data.put("outline_tpl", "");
-                template_data.put("style","path to css");
+                template_data.put("style", sito.get(0).getCss().getFile());
                 /*preparo il menu*/
                 menu_ordinato = componiMenu(sito.get(0), datalayer.getPagina(page)/*pagina richiesta*/, datalayer);
                 template_data.put("menu", menu_ordinato);

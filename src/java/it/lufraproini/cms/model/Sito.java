@@ -23,6 +23,9 @@ package it.lufraproini.cms.model;
 public interface Sito {
     long getID();
     
+    String getDescrizione();
+    void setDescrizione(String s);
+    
     String getHeader();
     void setHeader(String s);
     
@@ -34,5 +37,8 @@ public interface Sito {
     
     Pagina getHomepage();
     void setHomepage(Pagina p);
+    
+    Css getCss();
+    void setCss(Css stile);
     
 }
