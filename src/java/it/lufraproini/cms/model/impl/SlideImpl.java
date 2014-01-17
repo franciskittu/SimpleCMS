@@ -28,7 +28,7 @@ public class SlideImpl implements Slide{
     
     private CMSDataLayerImpl datalayer;
     private long id;
-    private String descrizione, file;
+    private String descrizione, file, nome;
     private int posizione;
     
     public SlideImpl(CMSDataLayerImpl datalayer){
@@ -36,6 +36,7 @@ public class SlideImpl implements Slide{
         posizione = 0;
         file = "";
         descrizione = "";
+        nome = "";
         this.datalayer = datalayer;
     }
     
@@ -44,6 +45,7 @@ public class SlideImpl implements Slide{
         posizione = rs.getInt("posizione");
         file = rs.getString("file");
         descrizione = rs.getString("descrizione");
+        nome = rs.getString("nome");
         this.datalayer = datalayer;
     }
     
@@ -80,5 +82,15 @@ public class SlideImpl implements Slide{
     @Override
     public void setFile(String s){
         file = s;
+    }
+    
+    @Override
+    public String getNome(){
+        return nome;
+    }
+    
+    @Override
+    public void setNome(String s){
+        nome = s;
     }
 }

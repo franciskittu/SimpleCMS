@@ -32,8 +32,8 @@ public interface Pagina {
     boolean getModello();
     void setModello(boolean b);
     
-    Css getCss();
-    void setCss(Css style_sheet);
+    /*Css getCss();
+    void setCss(Css style_sheet);*///rimosso perchè si sostiene che il foglio di stile sia da decidere una volta per tutte solo per il sito
     
     Pagina getPadre();
     void setPadre(Pagina p);

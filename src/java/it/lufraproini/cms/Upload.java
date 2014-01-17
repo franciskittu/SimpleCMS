@@ -20,6 +20,7 @@ import it.lufraproini.cms.framework.result.FailureResult;
 import it.lufraproini.cms.framework.result.TemplateResult;
 import it.lufraproini.cms.model.Css;
 import it.lufraproini.cms.model.Immagine;
+import it.lufraproini.cms.model.Slide;
 import it.lufraproini.cms.model.Utente;
 import it.lufraproini.cms.model.impl.CMSDataLayerImpl;
 import it.lufraproini.cms.security.SecurityLayer;
@@ -114,6 +115,8 @@ public class Upload extends HttpServlet {
             cartella = getServletContext().getInitParameter("system.image_directory");
         } else if (tipo_file.equals("css")) {
             cartella = getServletContext().getInitParameter("system.css_directory");
+        } else if (tipo_file.equals("slide")) {
+            cartella = getServletContext().getInitParameter("system.slide_directory");
         } else {
             throw new UnsupportedOperationException("i tipi di file che si vogliono inviare al server non sono ancora supportati");
         }
@@ -229,14 +232,52 @@ public class Upload extends HttpServlet {
         return css_result;
     }
 
+    private Slide memorizzaSlide(Map data, CMSDataLayerImpl datalayer, String digest){
+        Map files = new HashMap();
+        FileItem fi = null;
+        files = (HashMap) data.get("files");
+        fi = (FileItem) files.get("file_to_upload");
+        Slide slide_upload = datalayer.createSlide();
+        Slide slide_result;
+        /*i controlli sulla validità dei campi sono già stati effettuati dalla funzione checkfields, pertanto è necessario soltanto utilizzare le funzioni per l'SQL INJECTION*/
+        slide_upload.setFile(getServletContext().getInitParameter("system.slide_directory") + File.separatorChar + digest + "." + estensione);
+        slide_upload.setDescrizione(SecurityLayer.addSlashes(data.get("descrizione").toString()));
+        slide_upload.setPosizione(Integer.parseInt(data.get("posizione").toString()));
+        slide_upload.setNome(SecurityLayer.addSlashes(data.get("nome").toString()));
+        
+        slide_result = datalayer.addSlide(slide_upload);
+        if(slide_result == null){
+            error_message = "Impossibile aggiungere dati del file css al DB!";
+        }
+        return slide_result;
+    }
+    
+    /*funzione che ritorna una stringa contenente tutti i campi considerati errati nella form*/
     private String checkfields(Map fields) {
         String campi_errati = "";
-        if (fields.get("nome") == null || fields.get("nome").toString().matches(".*" + caratteri_non_ammessi + ".*")) {
+        /*immagini, css e slide*/
+        if (fields.containsKey("nome") && (
+                fields.get("nome") == null || fields.get("nome").toString().matches(".*" + caratteri_non_ammessi + ".*")
+                ) 
+           ) {
             campi_errati += " nome ";
         }
+        /*slide e css*/
         if (fields.containsKey("descrizione")) {
             if (fields.get("descrizione").toString().equals("")) {
                 campi_errati += " descrizione ";
+            }
+        }
+        /*necessario per slide*/
+        if (fields.containsKey("posizione")){
+            if(!fields.get("posizione").toString().equals("")){
+                try{
+                    SecurityLayer.checkNumeric(fields.get("posizione").toString());
+                } catch (NumberFormatException ex){
+                    campi_errati += " posizione ";
+                }
+            } else {
+                campi_errati += " posizione ";
             }
         }
         return campi_errati;
@@ -257,7 +298,7 @@ public class Upload extends HttpServlet {
             throws ServletException, IOException, FileUploadException, SQLException, Exception {
         /*verifica validità sessione*/
         HttpSession s = SecurityLayer.checkSession(request);
-        if (s != null) {
+        if (s == null) {
 
             /*DBMS*/
             DataSource ds = (DataSource) getServletContext().getAttribute("datasource");
@@ -269,7 +310,10 @@ public class Upload extends HttpServlet {
             String tipo = "";
             Map template_data = new HashMap();
             Map info = new HashMap();
+            
             info = prendiInfo(request);
+            /*per prevedere l'upload di un nuovo tipo di file basta dare un valore personalizzato al submit nella form
+            e creare un if con il flusso relativo all'oggetto da caricare nel file system e nel database*/
             tipo = info.get("submit").toString();
             try {
                 /*flusso immagine*/
@@ -277,13 +321,13 @@ public class Upload extends HttpServlet {
                     Immagine img;
                     html = "show_immagine.ftl.html";
                     digest = action_upload(request, info);
-                    digest.getBytes();//potrebbe generare una nullpointerexception
+                    digest.getBytes(); //potrebbe generare una nullpointerexception
                     img = memorizzaImmagine(info, datalayer, digest, (Long) s.getAttribute("userid"));
                     img.setNome(SecurityLayer.stripSlashes(img.getNome()));//potrebbe causare eccezione su img è null
                     template_data.put("immagine", img);
                     template_data.put("id", img.getID());
                     template_data.put("id_utente", 2);
-                } /*flusso css*/ else {
+                } /*flusso css*/ else if(tipo.equals("css")){
                     Css css = null;
                     html = "show_css.ftl.html";
                     action_upload(request, info).getBytes();//potrebbe generare una nullpointerexception
@@ -292,6 +336,17 @@ public class Upload extends HttpServlet {
                     css.setNome(SecurityLayer.stripSlashes(css.getNome()));
                     template_data.put("css", css);
                     template_data.put("identifier", css.getID());
+                } /*flusso slide*/else if(tipo.equals("slide")){
+                    Slide img = null;
+                    html = "show_slide.ftl.html";
+                    digest = action_upload(request, info);
+                    digest.getBytes();//potrebbe generare una nullpointerexception
+                    img = memorizzaSlide(info, datalayer, digest);
+                    /*visualizzazione della slide appena inserita*/
+                    img.setDescrizione(SecurityLayer.stripSlashes(img.getDescrizione()));
+                    img.setNome(SecurityLayer.stripSlashes(img.getNome()));
+                    template_data.put("slide", img);
+                    template_data.put("id", img.getID());
                 }
                 template_data.put("outline_tpl", "");
                 TemplateResult tr = new TemplateResult(getServletContext());

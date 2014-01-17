@@ -25,17 +25,15 @@ import java.sql.SQLException;
 
 public class PaginaImpl implements Pagina {
 
-    private long id, css, id_padre, id_sito;
+    private long id, id_padre, id_sito;
     private String titolo, body;
     private Sito sito;
     private Pagina pagina_padre;
-    private Css stile;
     private boolean modello;
     private CMSDataLayerImpl datalayer;
     
     public PaginaImpl (CMSDataLayerImpl datalayer){
         id = 0;
-        css = 0;
         id_padre = 0;
         id_sito = 0;
         titolo = "";
@@ -46,7 +44,6 @@ public class PaginaImpl implements Pagina {
     
     public PaginaImpl (CMSDataLayerImpl datalayer, ResultSet data) throws SQLException{
         id = data.getLong("id");
-        css = data.getLong("css");
         id_padre = data.getLong("id_padre");
         id_sito = data.getLong("id_sito");
         titolo = data.getString("titolo");
@@ -88,20 +85,7 @@ public class PaginaImpl implements Pagina {
     public void setModello(boolean b) {
         modello = b;
     }
-
-    @Override
-    public Css getCss() {
-        if(stile == null){
-            stile = datalayer.getCSS(css);
-        }
-        return stile;
-    }
-
-    @Override
-    public void setCss(Css style_sheet) {
-        stile = style_sheet;
-    }
-
+    
     @Override
     public Pagina getPadre() {
         if(pagina_padre == null){

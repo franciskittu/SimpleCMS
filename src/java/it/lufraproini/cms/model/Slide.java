@@ -31,4 +31,7 @@ public interface Slide {
     
     String getFile();
     void setFile(String s);
+    
+    String getNome();
+    void setNome(String s);
 }
