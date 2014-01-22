@@ -67,6 +67,7 @@ public class Upload extends HttpServlet {
     private final String caratteri_non_ammessi = "['\"/\\\\]";//slash, apici singoli e apici doppi
 
     /*FUNZIONE GENERICA PER PRENDERE TUTTI I CAMPI E IL FILE NELLE FORM DI UPLOAD*/
+    /*IL CAMPO DEL FILE DEVE INIZIARE PER file_to_upload*/
     private Map prendiInfo(HttpServletRequest request) throws FileUploadException {
         Map info = new HashMap();
         Map files = new HashMap();

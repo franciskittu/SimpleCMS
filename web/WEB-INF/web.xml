@@ -56,6 +56,10 @@
         <servlet-name>registration</servlet-name>
         <servlet-class>it.lufraproini.cms.registration</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>provamail</servlet-name>
+        <servlet-class>it.lufraproini.cms.provamail</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>EsempioDS</servlet-name>
         <url-pattern>/EsempioDS</url-pattern>
@@ -86,7 +90,8 @@
     </context-param>
     <context-param>
         <param-name>view.outline_template</param-name>
-        <param-value>outline.ftl.html</param-value><!--da modificare-->
+        <param-value>outline.ftl.html</param-value>
+        <!--da modificare-->
     </context-param>
     <context-param>
         <param-name>view.error_template</param-name>
@@ -119,6 +124,10 @@
     <servlet-mapping>
         <servlet-name>registration</servlet-name>
         <url-pattern>/registration</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>provamail</servlet-name>
+        <url-pattern>/provamail</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
