@@ -14,11 +14,11 @@
  *    You should have received a copy of the GNU Affero General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package it.lufraproini.cms;
+package it.lufraproini.cms.servlet;
 
 import it.lufraproini.cms.model.Utente;
 import it.lufraproini.cms.model.impl.CMSDataLayerImpl;
-import it.lufraproini.cms.security.SecurityLayer;
+import it.lufraproini.cms.utility.SecurityLayer;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;

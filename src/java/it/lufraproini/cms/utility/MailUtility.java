@@ -16,22 +16,19 @@
  */
 package it.lufraproini.cms.utility;
 
-import java.io.BufferedReader;
-import java.io.IOException;
+
 import java.io.UnsupportedEncodingException;
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.activation.DataHandler;
-import javax.mail.util.ByteArrayDataSource;
 /**
  *
  * @author fsfskittu
  */
 public class MailUtility {
-    public static void sendMail(String mitt, String dest, String oggetto, String testo) throws MessagingException{
+    public static void sendMail(String mitt, String nome, String dest, String oggetto, String testo) throws MessagingException{
         //Creazione di una Mail Session
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.googlemail.com");
@@ -55,7 +52,11 @@ public class MailUtility {
         //Aggiunta degli indirizzi del mittente e del destinatario
         InternetAddress from = null;
         try {
-            from = new InternetAddress(mitt, "CMS srl");
+            if(!nome.equals("")){
+                from = new InternetAddress(mitt, nome);
+            } else {
+                from = new InternetAddress(mitt);
+            }
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(MailUtility.class.getName()).log(Level.SEVERE, null, ex);
         }

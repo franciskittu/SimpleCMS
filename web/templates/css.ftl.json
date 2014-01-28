@@ -1,0 +1,10 @@
+[
+    <#list data as item>
+    {
+    "nome": "${item.nome?js_string}",
+    "descrizione" : "${item.descrizione?js_string}",
+    "file" : "${item.file?js_string",
+    "id" : "${item.id?js_string}"
+    }
+    </#list>
+]

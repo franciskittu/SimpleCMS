@@ -14,35 +14,17 @@
  *    You should have received a copy of the GNU Affero General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package it.lufraproini.cms.model;
-
-import java.sql.Timestamp;
+package it.lufraproini.cms.utility;
 
 /**
  *
  * @author fsfskittu
  */
-public interface Immagine {
-    long getID();
-    
-    String getNome();
-    void setNome(String s);
-    
-    long getDimensione();
-    void setDimensione(long i);
-    
-    String getTipo();
-    void setTipo(String s);
-    
-    String getFile();
-    void setFile(String s);
-    
-    String getDigest();
-    void setDigest(String s);
-    
-    Timestamp getData_upload();//da recuperare con java.sql.Date.valueOf( String s ); es: java.sql.Date jsqlD = java.sql.Date.valueOf( "2008-12-15" );/*http://www.javahelp.it/index.php?java-e-le-date*/
-    void setData_upload(Timestamp t);
-    
-    Utente getUtente();
-    void setUtente(Utente U);
+public class ErroreGrave extends Exception{
+    public ErroreGrave(String err){
+        super(err);
+    }
+    public ErroreGrave(){
+        super("errore sconosciuto!");
+    }
 }

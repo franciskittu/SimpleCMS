@@ -18,11 +18,11 @@
     </context-param>
     <listener>
         <description>Inizializza il pool di connesioni per il database fornendo il datasource alle altre servlet</description>
-        <listener-class>it.lufraproini.cms.ContextInitializer</listener-class>
+        <listener-class>it.lufraproini.cms.config.ContextInitializer</listener-class>
     </listener>
     <servlet>
         <servlet-name>EsempioDS</servlet-name>
-        <servlet-class>it.lufraproini.cms.EsempioDS</servlet-class>
+        <servlet-class>it.lufraproini.cms.servlet.EsempioDS</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ProvaFreemarkereDB</servlet-name>
@@ -30,35 +30,39 @@
     </servlet>
     <servlet>
         <servlet-name>AggiungiCSS</servlet-name>
-        <servlet-class>it.lufraproini.cms.AggiungiCSS</servlet-class>
+        <servlet-class>it.lufraproini.cms.servlet.AggiungiCSS</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Upload</servlet-name>
-        <servlet-class>it.lufraproini.cms.Upload</servlet-class>
+        <servlet-class>it.lufraproini.cms.servlet.Upload</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>login</servlet-name>
-        <servlet-class>it.lufraproini.cms.login</servlet-class>
+        <servlet-class>it.lufraproini.cms.servlet.login</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>logout</servlet-name>
-        <servlet-class>it.lufraproini.cms.logout</servlet-class>
+        <servlet-class>it.lufraproini.cms.servlet.logout</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>site</servlet-name>
-        <servlet-class>it.lufraproini.cms.site</servlet-class>
+        <servlet-class>it.lufraproini.cms.servlet.site</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>image</servlet-name>
-        <servlet-class>it.lufraproini.cms.image</servlet-class>
+        <servlet-class>it.lufraproini.cms.servlet.image</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>registration</servlet-name>
-        <servlet-class>it.lufraproini.cms.registration</servlet-class>
+        <servlet-class>it.lufraproini.cms.servlet.registration</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>provamail</servlet-name>
-        <servlet-class>it.lufraproini.cms.provamail</servlet-class>
+        <servlet-class>it.lufraproini.cms.servlet.provamail</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>user_editing</servlet-name>
+        <servlet-class>it.lufraproini.cms.servlet.user_editing</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>EsempioDS</servlet-name>
@@ -128,6 +132,10 @@
     <servlet-mapping>
         <servlet-name>provamail</servlet-name>
         <url-pattern>/provamail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>user_editing</servlet-name>
+        <url-pattern>/user_editing</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

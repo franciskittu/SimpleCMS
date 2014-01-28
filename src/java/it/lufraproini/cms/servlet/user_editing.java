@@ -14,21 +14,21 @@
  *    You should have received a copy of the GNU Affero General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package it.lufraproini.cms;
+package it.lufraproini.cms.servlet;
 
-import it.lufraproini.cms.framework.result.FailureResult;
-import it.lufraproini.cms.framework.result.StreamResult;
-import it.lufraproini.cms.model.Immagine;
+import it.lufraproini.cms.framework.result.TemplateResult;
+import it.lufraproini.cms.model.Pagina;
+import it.lufraproini.cms.model.Sito;
+import it.lufraproini.cms.model.Utente;
 import it.lufraproini.cms.model.impl.CMSDataLayerImpl;
-import it.lufraproini.cms.security.SecurityLayer;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import it.lufraproini.cms.utility.Nodo;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -41,31 +41,48 @@ import javax.sql.DataSource;
  *
  * @author fsfskittu
  */
-public class image extends HttpServlet {
-    
-    private String error_message;
-    
-    /*funzione del prof. della Penna del file Download.java del progetto Esempio_Uploader modificata*/
-    private void action_download(HttpServletRequest request, HttpServletResponse response, Immagine img) throws IOException{
-        StreamResult result = new StreamResult(getServletContext());
-        InputStream is;
-        String dir = getServletContext().getInitParameter("system.image_directory");//bisogna decidere se le immagini vanno memorizzate nelle sottocartelle degli utenti
-        //try {
-            is = new FileInputStream(getServletContext().getRealPath("."/*o dir*/) + File.separatorChar + img.getFile()/*al momento contiene il path alla cartella delle immagini*/);//possibile FileNotFound gestita in processRequest
-            request.setAttribute("contentType", img.getTipo());
-            result.activate(is, img.getDimensione(), img.getNome(), request, response);
-        //} catch (FileNotFoundException ex) {
-            //error_message = "file non trovato!";
-            //throw new NullPointerException();
-        //} finally {
-            try{
-                is.close();
-            } catch (Exception ex){
-                
-            }
-        //}
-    }
+public class user_editing extends HttpServlet {
 
+    /*l'albero che ritorna la funzione è sottoforma di lista ed è ordinato secondo una 
+    visita in profondità
+    questo è stato fatto per visualizzare l'albero del sito tramite freemarker senza troppe
+    complicazioni*/
+    private List<Nodo> creaAlbero(CMSDataLayerImpl datalayer, Utente U){
+        List<Nodo> albero = new ArrayList<Nodo>();
+        List<Sito> s = datalayer.getSitobyUtente(U);
+        Sito sito = s.get(0);
+        
+        
+        //la homepage è la radice dell'albero
+        albero.add(new Nodo(datalayer.getHomepage(sito.getHomepage().getID()), 0));
+        List<Pagina> foglie = datalayer.getFoglie(sito);
+        for(int i = 0; i < foglie.size(); i++){
+            List<Pagina> antenati_cresc = datalayer.getAntenati(foglie.get(i));
+            int k = 1;//livello nodo
+            int j = antenati_cresc.size()-2;//poichè il risultato è ordinato in modo crescente di parentela l'ultimo padre è la homepage, quindi non và considerata
+            while(j >= 0){
+                boolean inserito = false;
+                Nodo n = new Nodo(antenati_cresc.get(j),k);
+                //verifico se il nodo è già stato inserito nella struttura
+                for(int z = 0; z < albero.size(); z++){
+                    if(n.getLivello() == albero.get(z).getLivello()
+                            && n.getID() == albero.get(z).getID()){
+                        inserito = true;
+                        break;
+                    }
+                }
+                if(!inserito){
+                    albero.add(n);
+                }
+                
+                k++;//il livello aumenta allo scorrere della lista
+                j--;
+            }
+        }
+        
+        return albero;
+    }
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -74,7 +91,6 @@ public class image extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
-     * @throws SQLException 
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
@@ -84,37 +100,13 @@ public class image extends HttpServlet {
         /**/
         CMSDataLayerImpl datalayer = new CMSDataLayerImpl(connection);
         
-        /*verifica parametri*/
-        long id_img_par = SecurityLayer.checkNumeric(request.getParameter("image"));
-        String utente = request.getParameter("user");
-        
-        /*controllo se l'immagine appartiene all'utente specificato*/
-        List<Immagine> immagini = datalayer.getAllUsersImages(datalayer.getUtentebyUsername(utente));
-        Immagine img_download = null;
-        
-        try{
-            for(Immagine img:immagini){
-                if(img.getID() == id_img_par){
-                    img_download = img;
-                    break;
-                }
-            }
-        
-            if(img_download == null){
-                error_message = "L'immagine specificata non appartiene all'utente "+ utente +"!";
-                img_download.getID();//eccezione
-            }
-                action_download(request, response, img_download);//potrebbe sollevare FileNotFound
-                
-        } catch (NullPointerException ex){
-            /*visualizzazione della pagina di errore predefinita con il messaggio di errore riscontrato*/
-            FailureResult res = new FailureResult(getServletContext());
-            res.activate(error_message, request, response);
-        } catch (FileNotFoundException ex){
-            /*visualizzazione della pagina di errore predefinita con il messaggio di errore riscontrato*/
-            FailureResult res = new FailureResult(getServletContext());
-            res.activate("file non trovato!", request, response);
-        }
+        Utente U = datalayer.getUtente(2);
+        List<Nodo> albero = creaAlbero(datalayer, U);
+        Map template_data = new HashMap();
+        template_data.put("alberoprofondita", albero);
+        template_data.put("outline_tpl", "");
+        TemplateResult tr = new TemplateResult(getServletContext());
+        tr.activate("albero_sito.ftl.html", template_data, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -132,7 +124,7 @@ public class image extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(image.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(user_editing.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -150,7 +142,7 @@ public class image extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(image.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(user_editing.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

@@ -14,7 +14,7 @@
  *    You should have received a copy of the GNU Affero General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package it.lufraproini.cms;
+package it.lufraproini.cms.servlet;
 
 import it.lufraproini.cms.utility.MailUtility;
 import java.io.IOException;
@@ -54,7 +54,7 @@ public class provamail extends HttpServlet {
             
             String message = "<html><head><title>oggetto</title></head>"
                     + "<body><p>questo è il link che deve cliccare se vuole registrarsi effettivamente al sistema di CMS\n <a href='www.google.it'>link</a></p></body></html>";
-            MailUtility.sendMail("franciskittu@gmail.com", "proietti.francesco.91@gmail.com", "PROVA JAVA", message);
+            MailUtility.sendMail("franciskittu@gmail.com", "CMS", "proietti.francesco.91@gmail.com", "PROVA JAVA", message);
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");

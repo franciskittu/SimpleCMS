@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+        <head>
+            <title>prova-albero</title>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width">
+        </head>
+        <body>
+            <div class="tree">
+                
+                <#if (alberoprofondita?size > 0)>
+                <ul>
+                    <#assign livprec = 0>
+                    <#list alberoprofondita as nodo>
+                    
+                    <#if (nodo.livello > livprec) >
+                    <ul>
+                    
+                    <#elseif (nodo.livello < livprec) >
+                    </li></ul></li>
+                    
+                    <#elseif (nodo.livello == livprec && nodo.livello != 0)> <!-- hanno lo stesso livello -->
+                    </li>
+                    </#if>
+                    
+                    <li>  ${nodo.titolo}
+                    <#assign livprec = nodo.livello >
+                    </#list>
+                    
+                    <!-- chiudere gli elementi rimasti aperti-->
+                    <#list 0..livprec as i>
+                    </li>
+                    </ul>
+                    </#list>
+                </#if>
+            </div>
+        </body>
+    </html>

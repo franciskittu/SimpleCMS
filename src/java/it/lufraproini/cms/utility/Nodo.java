@@ -14,35 +14,45 @@
  *    You should have received a copy of the GNU Affero General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package it.lufraproini.cms.model;
+package it.lufraproini.cms.utility;
 
-import java.sql.Timestamp;
+import it.lufraproini.cms.model.Pagina;
 
 /**
  *
  * @author fsfskittu
  */
-public interface Immagine {
-    long getID();
+public class Nodo {
+    private String titolo;
+    private int livello;
+    private long id;
     
-    String getNome();
-    void setNome(String s);
+    public Nodo(Pagina P, int livello){
+        this.titolo = P.getTitolo();
+        this.id = P.getID();
+        this.livello = livello;
+    }
     
-    long getDimensione();
-    void setDimensione(long i);
+    public void setLivello(int livello){
+        this.livello = livello;
+    }
     
-    String getTipo();
-    void setTipo(String s);
+    public int getLivello(){
+        return livello;
+    }
     
-    String getFile();
-    void setFile(String s);
+    public void setTitolo(String s){
+        this.titolo = s;
+    }
     
-    String getDigest();
-    void setDigest(String s);
+    public String getTitolo(){
+        return titolo;
+    }
     
-    Timestamp getData_upload();//da recuperare con java.sql.Date.valueOf( String s ); es: java.sql.Date jsqlD = java.sql.Date.valueOf( "2008-12-15" );/*http://www.javahelp.it/index.php?java-e-le-date*/
-    void setData_upload(Timestamp t);
-    
-    Utente getUtente();
-    void setUtente(Utente U);
+    public void setID(long id){
+        this.id = id;
+    }
+    public long getID(){
+        return id;
+    }
 }

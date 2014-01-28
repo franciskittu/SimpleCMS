@@ -1,4 +1,4 @@
-package it.lufraproini.cms;
+package it.lufraproini.cms.config;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

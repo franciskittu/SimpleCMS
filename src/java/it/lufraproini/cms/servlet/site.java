@@ -14,7 +14,7 @@
  *    You should have received a copy of the GNU Affero General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package it.lufraproini.cms;
+package it.lufraproini.cms.servlet;
 
 import it.lufraproini.cms.framework.result.FailureResult;
 import it.lufraproini.cms.framework.result.TemplateResult;
@@ -22,7 +22,8 @@ import it.lufraproini.cms.model.Pagina;
 import it.lufraproini.cms.model.Sito;
 import it.lufraproini.cms.model.Utente;
 import it.lufraproini.cms.model.impl.CMSDataLayerImpl;
-import it.lufraproini.cms.security.SecurityLayer;
+import it.lufraproini.cms.utility.ErroreGrave;
+import it.lufraproini.cms.utility.SecurityLayer;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -47,10 +48,8 @@ import javax.sql.DataSource;
  */
 public class site extends HttpServlet {
 
-    private String error_message;
-
     /*la funzione ritorna in una lista tutte le componenti della pagina, in ordine: titolo,header body e footer*/
-    private List<String> componiPagina(Sito s, Pagina p) {
+    private List<String> componiPagina(Sito s, Pagina p) throws ErroreGrave {
         List<String> title_header_body_footer = new ArrayList();
         //controllo se la pagina richiesta è nell'albero del sito richiesto
         if (p.getSito().getID() == s.getID()) {
@@ -59,7 +58,7 @@ public class site extends HttpServlet {
             title_header_body_footer.add(p.getBody());
             title_header_body_footer.add(s.getFooter());
         } else {
-            error_message = "la pagina " + p.getTitolo() + " non appartiene al sito " + s.getUtente().getUsername() + "!";
+            throw new ErroreGrave("la pagina " + p.getTitolo() + " non appartiene al sito " + s.getUtente().getUsername() + "!");
         }
         return title_header_body_footer;
     }
@@ -126,20 +125,18 @@ public class site extends HttpServlet {
         /**/
         try {
             if (site == null) {
-                error_message = "Non è stato specificato alcun sito su cui accedere!";
-                site.getBytes();//eccezione
+                throw new ErroreGrave("Non è stato specificato alcun sito su cui accedere!");
             }
-            List<String> title_header_body_footer = new ArrayList();//pagina html
+            List<String> title_header_body_footer = new ArrayList<String>();//pagina html
             List<Map> menu_ordinato = new ArrayList();//menu della pagina
             Utente U = datalayer.getUtentebyUsername(site);//creatore del sito
             List<Sito> sito = datalayer.getSitobyUtente(U);//per il momento è stato solo implementata la possibilità di avere un sito per utente.
             if (sito.size() < 1) {
-                error_message = "L'utente non ha alcun sito!";
+                throw new ErroreGrave("L'utente non ha alcun sito!");
             }
             if (page == 0) {
                 /*in questo caso si sta accedendo alla homepage del sito in quanto non è stata specificata una pagina precisa nell'URL*/
                 title_header_body_footer = componiPagina(sito.get(0)/*primo sito*/, sito.get(0).getHomepage()/*homepage del sito*/);
-                title_header_body_footer.get(0).getBytes();//possibile eccezione
                 /*preparo l'output inserendo tutti gli elementi della pagina tranne il menu*/
                 template_data.put("nomeutente", site);
                 template_data.put("title", title_header_body_footer.get(0));
@@ -156,7 +153,6 @@ public class site extends HttpServlet {
                 tr.activate("pagina_costruttore.ftl.html", template_data, response);
             } else {
                 title_header_body_footer = componiPagina(sito.get(0), datalayer.getPagina(page));
-                title_header_body_footer.get(0).getBytes();//possibile eccezione
                 template_data.put("nomeutente", site);
                 template_data.put("title", title_header_body_footer.get(0));
                 template_data.put("header", title_header_body_footer.get(1));
@@ -171,10 +167,11 @@ public class site extends HttpServlet {
                 TemplateResult tr = new TemplateResult(getServletContext());
                 tr.activate("pagina_costruttore.ftl.html", template_data, response);
             }
-        } catch (NullPointerException ex) {
+        } catch (ErroreGrave ex) {
+            Logger.getLogger(site.class.getName()).log(Level.SEVERE, null, ex);
             /*visualizzazione della pagina di errore predefinita con il messaggio di errore riscontrato*/
             FailureResult res = new FailureResult(getServletContext());
-            res.activate(error_message, request, response);
+            res.activate(ex.getMessage(), request, response);
         }
     }
 

@@ -1,4 +1,4 @@
-package it.lufraproini.cms.security;
+package it.lufraproini.cms.utility;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -125,13 +125,13 @@ public class SecurityLayer {
         return valori_errati;
     }
     
-    public static int checkNumeric(String s) throws NumberFormatException {
+    public static long checkNumeric(String s) throws NumberFormatException {
         //convertiamo la stringa in numero, ma assicuriamoci prima che sia valida
         //convert the string to a number, ensuring its validity
         if (s != null) {
             //se la conversione fallisce, viene generata un'eccezione
             //if the conversion fails, an exception is raised
-            return Integer.parseInt(s);
+            return Long.parseLong(s);
         } else {
             throw new NumberFormatException("String argument is null");
         }
@@ -203,13 +203,12 @@ public class SecurityLayer {
     }
     
     //questa funzione genera una nuova password random, utile per gli utenti
-    //che le dimenticano e non vogliono creare un nuovo account
-    public static String randPassword(String username){
-        String alfabeto = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghilmnopqrstuvz";
+    //che le dimenticano e per il primo accesso
+    public static String randPassword(String s, int lunghezza){
+        String alfabeto = "012389ABCDEFGHIJ4567KLMNOXYZabc"+s+"defghilmnoPQRSTUVWpqrstuvz";
         Random rand = new Random(System.currentTimeMillis());
-        int lunghezza = 8;
         StringBuilder sb = new StringBuilder(lunghezza);
-        for(int i = 0; i < 8; i++){
+        for(int i = 0; i < lunghezza; i++){
             sb.append(alfabeto.charAt(rand.nextInt(alfabeto.length())));
         }
         return sb.toString();
