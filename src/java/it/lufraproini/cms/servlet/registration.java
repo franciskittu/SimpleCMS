@@ -18,6 +18,7 @@ package it.lufraproini.cms.servlet;
 
 import it.lufraproini.cms.utility.ErroreGrave;
 import it.lufraproini.cms.framework.result.FailureResult;
+import it.lufraproini.cms.framework.result.TemplateResult;
 import it.lufraproini.cms.model.Utente;
 import it.lufraproini.cms.model.impl.CMSDataLayerImpl;
 import it.lufraproini.cms.utility.FormUtility;
@@ -43,34 +44,33 @@ import javax.sql.DataSource;
  */
 public class registration extends HttpServlet {
 
-    private Map<String, String> caratteri_non_ammessi;// "['\"/\\\\]";
+    private Map<String, String> regex;// "['\"/\\\\]";
+    private String rand_passwd_in_chiaro;
 
-    private String creaUtente(Utente U, Map campi_corretti) {
+    private String creaUtente(Utente U, Map campi_corretti, CMSDataLayerImpl datalayer) {
         String campi_errati = "";
         //verifica presenza di tutti i campi necessari
-        if (campi_corretti.containsKey("username")) {
-            U.setUsername(campi_corretti.get("username").toString());
+        if (campi_corretti.containsKey("username") && datalayer.getUtentebyUsername(SecurityLayer.addSlashes(campi_corretti.get("username").toString())) == null) {
+            U.setUsername(SecurityLayer.addSlashes(campi_corretti.get("username").toString()));
             U.setCodiceAttivazione(SecurityLayer.randPassword("", 20));
+            rand_passwd_in_chiaro = SecurityLayer.randPassword(U.getUsername(), 10);
+            U.setPassword(SecurityLayer.criptaPassword(rand_passwd_in_chiaro, U.getUsername()));
         } else {
             campi_errati += " username ";
         }
-        if (campi_corretti.containsKey("password")) {
-            U.setPassword(SecurityLayer.criptaPassword(campi_corretti.get("password").toString(), U.getUsername()));
-        } else {
-            campi_errati += " password ";
-        }
+        
         if (campi_corretti.containsKey("nome")) {
-            U.setNome(campi_corretti.get("nome").toString());
+            U.setNome(SecurityLayer.addSlashes(campi_corretti.get("nome").toString()));
         } else {
             campi_errati += " nome ";
         }
         if (campi_corretti.containsKey("cognome")) {
-            U.setCognome(campi_corretti.get("cognome").toString());
+            U.setCognome(SecurityLayer.addSlashes(campi_corretti.get("cognome").toString()));
         } else {
             campi_errati += " cognome ";
         }
         if (campi_corretti.containsKey("email")) {
-            U.setEmail(campi_corretti.get("email").toString());
+            U.setEmail(SecurityLayer.addSlashes(campi_corretti.get("email").toString()));
         } else {
             campi_errati += " email ";
         }
@@ -79,25 +79,25 @@ public class registration extends HttpServlet {
         return campi_errati;
     }
 
-    private void action_registration(CMSDataLayerImpl datalayer, HttpServletRequest request) throws ErroreGrave {
-        caratteri_non_ammessi = new HashMap();
-        caratteri_non_ammessi.put("username", "['\",;]");
-        caratteri_non_ammessi.put("email", "['\",;[^@]]");
-        caratteri_non_ammessi.put("cognome", "[[\\s]{3,}[0-9][a-zA-Z]]");
-        caratteri_non_ammessi.put("nome", "[[\\s]{3,}[0-9][a-zA-Z]]");
-        Map campi_corretti = FormUtility.verificaCampiUrlEncoded(request, caratteri_non_ammessi);
+    private void action_registration(CMSDataLayerImpl datalayer, HttpServletRequest request, Map template_data) throws ErroreGrave {
+        regex = new HashMap();
+        regex.put("username", "\\w*[-'\"\\\\/]*\\w*");
+        regex.put("email", "\\w*[^;,]+[\\.\\w]*@[a-z0-9]+\\.[a-z]{2,4}");
+        regex.put("cognome", "[a-z][A-Z]*[\\s]?[a-zA-Z]*[\\s]?[a-zA-Z]*");
+        regex.put("nome", "[a-zA-Z]*[\\s]?[a-zA-Z]*[\\s]?[a-zA-Z]*");
+        Map campi_corretti = FormUtility.verificaCampiUrlEncoded(request, regex);
         Utente U = datalayer.createUtente();
-        String campi_errati = creaUtente(U, campi_corretti);
-
+        String campi_errati = creaUtente(U, campi_corretti, datalayer);
+        
         if (campi_errati.equals("")) {
             try{
                 String messaggio_mail = "<html><head><title>attivazione account</title></head>"
-                        + "<body><p>Complimenti " + U.getNome() + U.getCognome() + " la registrazione è stata effettuata con successo! <br />"
-                        + "Queste sono le sue credenziali di accesso:<br />USERNAME: " + U.getUsername() + "<br />PASSWORD:" + SecurityLayer.randPassword(U.getUsername(), 10) + "<br />br />"
-                        + "La password potrà cambiarla in qualsiasi momento nella pagina di gestione del suo account<br />"
-                        + "L'ultimo passo da fare per attivare l'account " + U.getUsername() + "è cliccare il seguente link "
+                        + "<body><p>Complimenti " + U.getNome() +" " + U.getCognome() + " la registrazione &egrave; stata effettuata con successo! <br />"
+                        + "Queste sono le sue credenziali di accesso:<br />USERNAME: " + U.getUsername() + "<br />PASSWORD:" + rand_passwd_in_chiaro + "<br /><br />"
+                        + "La password potr&agrave; cambiarla in qualsiasi momento nella pagina di gestione del suo account<br />"
+                        + "L'ultimo passo da fare per attivare l'account " + U.getUsername() + " &egrave; cliccare sul seguente link "
                         + "<a href='localhost:8484/SimpleCMS/registration?att=" + U.getCodiceAttivazione() + "'>link</a></p></body></html>";
-                MailUtility.sendMail("franciskittu@gmail.com", "CMS s.r.l.", U.getEmail(), "attivazione account", messaggio_mail);
+                MailUtility.sendMail("franciskittu@gmail.com", "CMS", U.getEmail(), "attivazione account", messaggio_mail);
 
             Utente nuovoUtente = datalayer.addUtente(U);
 
@@ -109,8 +109,13 @@ public class registration extends HttpServlet {
             }
         
             } else {
-            //messaggio di errore con i campi errati NO FAILURERESULT
-        }
+                String[] array = campi_errati.split("\\s+");
+                for(String campo:array){
+                    if(!campo.isEmpty() && !campo.equals(" ")){
+                        template_data.put("err_"+campo, "display" /*classe css*/);
+                    }
+                }
+            }
     }
     
     private void action_activation(CMSDataLayerImpl datalayer, String id_utente, String cod_att) throws ErroreGrave{
@@ -125,6 +130,9 @@ public class registration extends HttpServlet {
         U = datalayer.getUtente(id);
         if(cod_att.equals(U.getCodiceAttivazione())){
             U.setAttivato(true);
+        }
+        if(datalayer.updateUtente(U) == null){
+            throw new ErroreGrave("non è stato possibile aggiornare l'account utente!");
         }
     }
 
@@ -146,15 +154,19 @@ public class registration extends HttpServlet {
         Connection connection = ds.getConnection();
         /**/
         CMSDataLayerImpl datalayer = new CMSDataLayerImpl(connection);
+        
+        Map template_data = new HashMap();
 
         if (request.getParameter("att") == null) {
             try {
-                action_registration(datalayer, request);
+                action_registration(datalayer, request, template_data);
             } catch (ErroreGrave ex) {
                 Logger.getLogger(registration.class.getName()).log(Level.SEVERE, null, ex);
                 FailureResult res = new FailureResult(getServletContext());
                 res.activate(ex.getMessage(), request, response);
             }
+            TemplateResult tr = new TemplateResult(getServletContext());
+            tr.activate("content.ftl.html", template_data, response);
         }
         else{
             try {
@@ -164,6 +176,7 @@ public class registration extends HttpServlet {
                 FailureResult res = new FailureResult(getServletContext());
                 res.activate(ex.getMessage(), request, response);
             }
+            response.sendRedirect("Homepage.html");/*visualizza?pagina=home*/
         }
     }
 

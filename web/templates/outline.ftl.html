@@ -1,13 +1,37 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>${page_title!"Untitled page"?html}</title>
-        <!--<link rel="stylesheet" href="style/default.css" type="text/css"/>-->
-    </head>
+  <head>
+    <title>Clicca sul rettangolo blu!</title>
+    <link rel="stylesheet" href="css/default.css" type="text/css" />
+    <script type="text/javascript" src="scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="scripts/slider.js"></script>
+    <script type="text/javascript" src="scripts/simpledynamicscroller.js"></script>
+
+  </head>
+  <body>
+  	<div class="container"> 
+  	
+  		<div class="row">
+  		
+  			<div class="sixteen columns header">
+                            <div class="login"></div>
+                            <div class="menu"></div>
+  			</div>
+  		
+  		</div>
+            
+                <#include content_tpl>
+            
+		<div class="row">
+  		  			
+        		<div class="sixteen columns footer"></div>
+  	  	
+  	  	</div>
+  	
+  	</div>
     
-    <#include content_tpl>
-    <div>Copyright &copy; 2013 ${defaults.author}.</div>
+  </body>
 </html>

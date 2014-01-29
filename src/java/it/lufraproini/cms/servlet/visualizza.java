@@ -16,23 +16,21 @@
  */
 package it.lufraproini.cms.servlet;
 
-import it.lufraproini.cms.utility.MailUtility;
+import it.lufraproini.cms.framework.result.TemplateResult;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.mail.MessagingException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/*è solo una prova, ma le cose da cambiare sono soltanto i dati che forse
-        si dovrebbero prendere via POST dalla form di registrazione e l'output dovrebbe
-        essere la homepage del sito*/
 /**
- * 
+ *
  * @author fsfskittu
  */
-public class provamail extends HttpServlet {
+public class visualizza extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,31 +43,22 @@ public class provamail extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        /*è solo una prova, ma le cose da cambiare sono soltanto i dati che forse
-        si dovrebbero prendere via POST dalla form di registrazione e l'output dovrebbe
-        essere la homepage del sito*/
-        try {
-            
-            String message = "<html><head><title>oggetto</title></head>"
-                    + "<body><p>questo è il link che deve cliccare se vuole registrarsi effettivamente al sistema di CMS\n <a href='www.google.it'>link</a></p></body></html>";
-            MailUtility.sendMail("franciskittu@gmail.com", "CMS", "proietti.francesco.91@gmail.com", "PROVA JAVA", message);
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet provamail</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet provamail at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        } catch(MessagingException ex){
-            out.println("Qualcosa è andato storto! "+ ex.getMessage());
-        }finally {
-            out.close();
+        String par = request.getParameter("pagina");
+        String html = null;
+        Map template_data = new HashMap();
+        if(par.equals("registrazione")){
+            html = "content.ftl.html";
         }
+        else if(par.equals("home")){
+            template_data.put("content_tpl", "");
+            html = "Homepage.ftl.html";
+        }
+        else if(par.equals("account")){
+            template_data.put("content_tpl", "");
+            html = "Homepage.ftl.html";
+        }
+        TemplateResult tr = new TemplateResult(getServletContext());
+        tr.activate(html, template_data, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

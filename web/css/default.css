@@ -1,20 +1,76 @@
-/*   SimpleCMS - un semplice content management system di pagine statiche
-*    Copyright (C) 2013  Francesco Proietti, Luca Traini
-*
-*    This program is free software: you can redistribute it and/or modify
-*    it under the terms of the GNU Affero General Public License as
-*    published by the Free Software Foundation, either version 3 of the
-*    License, or (at your option) any later version.
-*
-*    This program is distributed in the hope that it will be useful,
-*    but WITHOUT ANY WARRANTY; without even the implied warranty of
-*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*    GNU Affero General Public License for more details.
-*
-*    You should have received a copy of the GNU Affero General Public License
-*    along with this program.  If not, see <http://www.gnu.org/licenses/>
-*//* 
-    Created on : 14-dic-2013, 13.07.28
-    Author     : fsfskittu
-*/
+/* Test  */ 
+.wrapper_form input{ display: block; margin-left:  auto; margin-right: auto;margin-bottom: 5%;}
+.wrapper_form fieldset{text-align: center; border: none;color:#ccc;}
+.panel_form{z-index:10;width: 100%;  background-color:rgba(0,0,0,0.8); height: 100%;position: absolute; display: none;}
+.wrapper_form{opacity: 0;overflow: hidden;width: 50%; height: 0; margin:5% 25%;transition:3s ease-in-out ;-webkit-transition:3s ease-in-out ;-moz-transition:3s ease-in-out ; }
+.slider{ position: relative;height:500px; background-color: grey;overflow: hidden;}
+.slide{ width:100%;border:1px solid black; display:none;height:100%;transition:opacity .55s ease-in-out ;-webkit-transition:opacity .55s ease-in-out ;-moz-transition:opacity .55s ease-in-out ;}
+.slider .button{ background-color:  blue; position:absolute; right:10%; top:50%; height:20px; width: 60px;z-index: 10;transition:5s ease-in-out ;-webkit-transition:5s ease-in-out ;-moz-transition:5s ease-in-out ;}
+#last_sites{ background-color:lime; height:500px;overflow:auto;position:relative;}
+.header{ background-color:cyan;height:200px;position: relative;}
+.footer{ background-color:cyan;height:100px;}
+.item{ background-color:black; height:200px;}
+.slide.current{display:block;}
+.menu{ position:absolute;right:10%; top: 65%; height: 40px; width: 450px;border: 1px solid black; }
+.login{position:absolute;top:5px; right: 10px;border: 1px solid black;height: 20px; width: 60px;}
+.sitemap li{list-style: none;position: relative; }
+.sitemap ul li{margin-left:90px;margin-top: 10px }
+.sitemap ul li:first-child{margin-top: 15px;}
+.sitemap ul li:last-child{border-left:none;}
+.circle.root{background-color: rgba(0,0,0,0.7);}
+.odd.circle{background-color: rgba(0,0,0,0.1);} 
+.even.circle{background-color: rgba(0,0,0,0.7);} 
+.circle{background-color: black;}
+.circle{border-radius:2em; border: 1px solid rgba(60,60,60,0.2);height: 60px;width:230px;position: relative;}
+.circle p{ text-align: center; }
+.function{font-size: 0.5em;position: absolute;width:16px;}
+.edit{ top:-10px; left:-10px;}
+.move{top:-10px; right: -10px;}
+.delete{bottom:-10px;left:-10px;  }
+.add{ bottom: -10px; right:-10px;}
+//ul li .line {border-radius: 5em;border-right: 2px solid rgba(0, 0, 0, 0.4);height: 40px;left: 119px;position: absolute;top: 94px;transform: rotate(303deg);width: 0;}/* End-Test */
 
+/* Responsive */ 
+
+body,html {
+    padding:0; 
+    margin:0;
+}
+
+.container  { position: relative; width: 98%; padding: 0; margin: 1% auto;} 
+
+.row { margin-bottom: 10px; }
+
+.container .column, .container .columns { float: left; display: inline; margin-left: 1%; margin-right: 1%; } 
+
+.column.alpha, .columns.alpha { margin-left: 0; }    
+.column.omega, .columns.omega { margin-right: 0; } 
+
+.container .one.column { width: 4.25%; }
+.container .two.columns { width: 10.5%;}
+.container .three.columns { width: 16.75%;}
+.container .four.columns { width: 23%;}
+.container .five.columns { width: 29.25%;}
+.container .six.columns { width: 35.5%;}
+.container .seven.columns { width: 41.75%;}
+.container .eight.columns { width: 48%;}
+.container .nine.columns { width: 54.25%;}
+.container .ten.columns { width: 60.5%;}
+.container .eleven.columns { width: 66.75%;}
+.container .twelve.columns { width: 73%;}
+.container .thirteen.columns { width: 79.25%;}
+.container .fourteen.columns { width: 85.5%;}
+.container .fifteen.columns { width: 91.75%;}
+.container .sixteen.columns { width: 98%;}
+
+.row:before,.row:after { content: '\0020'; display: block; overflow: hidden; visibility: hidden; width: 0; height: 0; }    
+.row:after { clear: both; }
+.row{ zoom: 1; }	
+
+/* End-Responsive */ 
+
+/*field incorrect*/
+
+.no_display{display: none;}
+.display{color: red;}
+/**/

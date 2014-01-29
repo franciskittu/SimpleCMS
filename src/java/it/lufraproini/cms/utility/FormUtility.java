@@ -28,9 +28,9 @@ import javax.servlet.http.HttpServletRequest;
 public class FormUtility {
 
     /*la funzione ritorna in una mappa tutti i campi che passano il check sui caratteri o che non ne hanno bisogno
-    la mappa in argomento deve essere del tipo (nome_campo, caratteri_non_ammessi)
+    la mappa in argomento deve essere del tipo (nome_campo, regex)
     */
-    public static Map verificaCampiUrlEncoded(HttpServletRequest request, Map<String, String> caratteri_non_ammessi) {
+    public static Map verificaCampiUrlEncoded(HttpServletRequest request, Map<String, String> regex) {
         Map result = new HashMap();
         //per elaborare tutti i campi della request, ne richiedo la mappa
         Map m = request.getParameterMap();
@@ -40,18 +40,18 @@ public class FormUtility {
             //itero sui vari campi
             String nome = field.getKey();
 
-            if (caratteri_non_ammessi.containsKey(nome)) {
+            if (regex.containsKey(nome)) {
                 //il valore, anche se semplice, è sempre un array
                 String[] valori = field.getValue();
 
                 if (valori.length > 0) {
                     if (valori.length == 1) {
-                        if (!valori[0].isEmpty() && !valori[0].matches(caratteri_non_ammessi.get(nome))) {
+                        if (!valori[0].isEmpty() && valori[0].matches(".*"+regex.get(nome)+".*")) {
                             result.put(nome, valori[0]);
                         }
                     } else {
                         for (int i = 0; i < valori.length; i++) {
-                            if (!valori[i].isEmpty() && !valori[i].matches(caratteri_non_ammessi.get(nome))) {
+                            if (!valori[i].isEmpty() && valori[i].matches(".*"+regex.get(nome)+".*")) {
                                 result.put(nome + "_" + i, valori[i]);
                             }
                         }

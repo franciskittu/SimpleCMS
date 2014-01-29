@@ -326,7 +326,7 @@ public class Upload extends HttpServlet {
             throws ServletException, IOException, FileUploadException, SQLException, Exception {
         /*verifica validità sessione*/
         HttpSession s = SecurityLayer.checkSession(request);
-        if (s == null) {
+        if (s != null) {
 
             /*DBMS*/
             DataSource ds = (DataSource) getServletContext().getAttribute("datasource");
@@ -352,10 +352,10 @@ public class Upload extends HttpServlet {
                     Boolean thumbnail = false;
                     html = "show_immagine.ftl.html";
                     digest = action_upload(request, info);
-                    img = memorizzaImmagine(info, datalayer, digest, 2/*(Long) s.getAttribute("userid")*/);
+                    img = memorizzaImmagine(info, datalayer, digest, (Long) s.getAttribute("userid"));
                     img.setNome(SecurityLayer.stripSlashes(img.getNome()));//potrebbe causare eccezione su img è null
                     if(info.containsKey("thumbnail")){
-                        thumbnail = creaThumbnail(img, "franciskittu"/*s.getAttribute("username").toString()*/);
+                        thumbnail = creaThumbnail(img, s.getAttribute("username").toString());
                     }
                     template_data.put("thumbnail", thumbnail.toString());
                     template_data.put("immagine", img);

@@ -57,12 +57,12 @@
         <servlet-class>it.lufraproini.cms.servlet.registration</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>provamail</servlet-name>
-        <servlet-class>it.lufraproini.cms.servlet.provamail</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>user_editing</servlet-name>
         <servlet-class>it.lufraproini.cms.servlet.user_editing</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>visualizza</servlet-name>
+        <servlet-class>it.lufraproini.cms.servlet.visualizza</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>EsempioDS</servlet-name>
@@ -130,12 +130,12 @@
         <url-pattern>/registration</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>provamail</servlet-name>
-        <url-pattern>/provamail</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>user_editing</servlet-name>
         <url-pattern>/user_editing</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>visualizza</servlet-name>
+        <url-pattern>/visualizza</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

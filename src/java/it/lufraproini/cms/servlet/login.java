@@ -71,10 +71,10 @@ public class login extends HttpServlet {
         long user_id = check_access_credential(username, password_in_chiaro, datalayer);
         if(user_id != 0){
             SecurityLayer.createSession(request, username, user_id);
-            response.sendRedirect("account");
+            response.sendRedirect("visualizza?pagina=account");
         }
         else{
-            response.sendRedirect("Homepage.html");
+            response.sendRedirect("visualizza?pagina=home");
         }
     }
 
