@@ -1,0 +1,30 @@
+<#macro showtree node >
+<ul>
+        <li> ${node.page.titolo}
+        <#if (node.children?size>0)>
+        <#list node.children as child>
+            
+            <@showtree node=child/>
+           
+        </#list>
+        </#if>
+         </li>
+     
+</ul>
+   
+
+</#macro>
+
+
+<!DOCTYPE html>
+<html>
+        <head>
+            <title>prova-albero</title>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width">
+        </head>
+        <body>
+             <@showtree node=home/>   
+               
+        </body>
+    </html>

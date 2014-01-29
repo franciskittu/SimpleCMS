@@ -64,6 +64,10 @@
         <servlet-name>visualizza</servlet-name>
         <servlet-class>it.lufraproini.cms.servlet.visualizza</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>provaAlbero</servlet-name>
+        <servlet-class>it.lufraproini.cms.servlet.provaAlbero</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>EsempioDS</servlet-name>
         <url-pattern>/EsempioDS</url-pattern>
@@ -136,6 +140,10 @@
     <servlet-mapping>
         <servlet-name>visualizza</servlet-name>
         <url-pattern>/visualizza</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>provaAlbero</servlet-name>
+        <url-pattern>/provaAlbero</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

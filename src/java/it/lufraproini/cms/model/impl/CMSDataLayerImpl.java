@@ -40,12 +40,13 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     private PreparedStatement gCss, aCss, uCss, dCss;
     private PreparedStatement gUtente, gUtente_by_Username, aUtente, uUtente, dUtente;
     private PreparedStatement gImmagine, gImmagini, aImmagine, uImmagine, dImmagine;
-    private PreparedStatement gPagina, aPagina, dPagina, gFiglie, gPaginabyTitolo;
+    private PreparedStatement gPagina, aPagina, dPagina, gFiglie, gPaginabyTitolo, gHome;
     private PreparedStatement gSito, aSito, dSito, gSitobyUtente;
     private PreparedStatement gSlide, aSlide, uSlide, dSlide;
-    private PreparedStatement gAntenati, gFoglie;
+    private PreparedStatement gAntenati, gFoglie, gPagineSito;
     
     public CMSDataLayerImpl(Connection c) throws SQLException{
+        gHome = c.prepareStatement("SELECT pagina.* FROM sito, pagina WHERE sito.id = ? AND pagina.id = homepage;");
         gCss = c.prepareStatement("SELECT * FROM css WHERE id = ?");
         aCss = c.prepareStatement("INSERT INTO css (nome, descrizione, file) VALUES (?,?,?) RETURNING id");
         uCss = c.prepareStatement("UPDATE css SET nome=?, descrizione=?,file=? WHERE id = ?");
@@ -79,6 +80,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
                 + "UNION ALL " 
                 + "SELECT p.id_padre FROM func f, pagina p WHERE f.id = p.id) " 
                 + "SELECT id FROM func;");
+        gPagineSito = c.prepareStatement("SELECT * FROM pagina WHERE id_sito = ?");
     }
     
     @Override
@@ -481,10 +483,9 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     @Override
     public Pagina getHomepage(long i) {
         ResultSet rs = null;
-        Pagina ris = null;
         try{
-            gPagina.setLong(1,i);
-            rs = gPagina.executeQuery();
+            gHome.setLong(1,i);
+            rs = gHome.executeQuery();
             if(rs.next()){
                 return new PaginaImpl(this,rs);
             }
@@ -497,7 +498,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
                 
             }
         }
-        return ris;
+        return null;
     }
 
     @Override
@@ -593,6 +594,29 @@ public class CMSDataLayerImpl implements CMSDataLayer {
             }
         }
         return ris;
+    }
+    
+    @Override
+    public List<Pagina> getPagineSito(Sito s){
+        List<Pagina> ris = new ArrayList<Pagina>();
+        ResultSet rs = null;
+        try{
+            gPagineSito.setLong(1,s.getID());
+            rs = gPagineSito.executeQuery();
+            while(rs.next()){
+                ris.add(new PaginaImpl(this, rs));
+            }
+            return ris;
+        } catch (SQLException ex){
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try{
+                rs.close();
+            } catch (Exception ex){
+                
+            }
+        }
+        return null;
     }
     
     @Override

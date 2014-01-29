@@ -1,4 +1,5 @@
 /*filtro copiato dal prof. Della Penna*/
+/*QUESTA CLASSE È DISABILITATA: CIOÈ NON È STATA AGGIUNTA AL DEPLOY DESCRIPTOR*/
 
 /*
  * Questa classe implementa un Servlet Filter, cioè un oggetto che intercetta

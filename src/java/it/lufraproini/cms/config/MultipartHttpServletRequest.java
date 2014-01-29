@@ -1,5 +1,5 @@
 /*servlet copiata dal prof. Della Penna*/
-
+/*QUESTA CLASSE È DISABILITATA IN QUANTO NON VI È ALCUN FILTRO ABILITATO CHE LA CHIAMI*/
 /*
  * Questa classe, derivata da HttpServletRequestWrapper, estende la normale HttpServletRequest
  * per trattare in maniera trasparente le richieste di tipo multipart utilizzando
