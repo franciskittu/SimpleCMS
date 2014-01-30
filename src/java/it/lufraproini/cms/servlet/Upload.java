@@ -14,7 +14,7 @@
  *    You should have received a copy of the GNU Affero General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package it.lufraproini.cms;
+package it.lufraproini.cms.servlet;
 
 import it.lufraproini.cms.framework.result.FailureResult;
 import it.lufraproini.cms.framework.result.TemplateResult;
@@ -23,7 +23,10 @@ import it.lufraproini.cms.model.Immagine;
 import it.lufraproini.cms.model.Slide;
 import it.lufraproini.cms.model.Utente;
 import it.lufraproini.cms.model.impl.CMSDataLayerImpl;
-import it.lufraproini.cms.security.SecurityLayer;
+import it.lufraproini.cms.utility.ErroreGrave;
+import it.lufraproini.cms.utility.SecurityLayer;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -63,25 +67,31 @@ public class Upload extends HttpServlet {
 
     private String estensione;
     private String nomefile;
-    private String error_message;
     private final String caratteri_non_ammessi = "['\"/\\\\]";//slash, apici singoli e apici doppi
 
+    
+    
+    /*si poteva utilizzare un filtro per le form multipart già creato dal prof. Della Penna,
+    la tecnica è stata appresa successivamente allo sviluppo della seguente servlet, e
+    poichè non introduceva alcun miglioramento all'applicazione si è deciso di non adottarla
+    */
     /*FUNZIONE GENERICA PER PRENDERE TUTTI I CAMPI E IL FILE NELLE FORM DI UPLOAD*/
+    /*IL CAMPO DEL FILE DEVE INIZIARE PER file_to_upload*/
     private Map prendiInfo(HttpServletRequest request) throws FileUploadException {
         Map info = new HashMap();
         Map files = new HashMap();
 
-        /*riutilizzo codice prof. Della Penna per l'upload*/
+        //riutilizzo codice prof. Della Penna per l'upload
         if (ServletFileUpload.isMultipartContent(request)) {
-            /* Funzioni delle librerie Apache per l'upload*/
+            // Funzioni delle librerie Apache per l'upload
             FileItemFactory factory = new DiskFileItemFactory();
             ServletFileUpload upload = new ServletFileUpload(factory);
             List<FileItem> items;
             items = upload.parseRequest(request);
-            /**/
+            //
             for (FileItem item : items) {
                 String name = item.getFieldName();
-                /*le form che prevedono l'upload di un file devono avere il campo del file chiamato in questo modo*/
+                //le form che prevedono l'upload di un file devono avere il campo del file chiamato in questo modo
                 if (name.startsWith("file_to_upload")) {
                     files.put(name, item);
                 } else {
@@ -93,9 +103,10 @@ public class Upload extends HttpServlet {
         }
         return null;
     }
-
+    
+    
     /*questa funzione*/
-    private String action_upload(HttpServletRequest request, Map data) throws SQLException, IOException, NamingException, NoSuchAlgorithmException, Exception {
+    private String action_upload(HttpServletRequest request, Map data) throws ErroreGrave, SQLException, IOException, NamingException, NoSuchAlgorithmException {
 
         FileItem fi = null;
         String sdigest = "";
@@ -107,8 +118,8 @@ public class Upload extends HttpServlet {
         files = (HashMap) data.get("files");
         campi_errati = checkfields(data);
         if (!campi_errati.equals("")) {
-            error_message = "I seguenti campi contengono valori non ammessi: " + campi_errati;
-            return null;
+            throw new ErroreGrave("I seguenti campi contengono valori non ammessi: " + campi_errati);
+            //return null;
         }
 
         if (tipo_file.equals("immagine")) {
@@ -118,7 +129,7 @@ public class Upload extends HttpServlet {
         } else if (tipo_file.equals("slide")) {
             cartella = getServletContext().getInitParameter("system.slide_directory");
         } else {
-            throw new UnsupportedOperationException("i tipi di file che si vogliono inviare al server non sono ancora supportati");
+            throw new ErroreGrave("i tipi di file che si vogliono inviare al server non sono ancora supportati");
         }
 
         fi = (FileItem) files.get("file_to_upload");
@@ -146,6 +157,10 @@ public class Upload extends HttpServlet {
             sdigest += String.valueOf(b);
         }
 
+        if(sdigest.equals("")){
+            throw new ErroreGrave();
+        }
+        
         this.estensione = estensione;
         if (estensione.equals("css")) {
             this.nomefile = data.get("nome").toString();
@@ -161,8 +176,9 @@ public class Upload extends HttpServlet {
         }
         return sdigest;
     }
-
-    private Immagine memorizzaImmagine(Map data, CMSDataLayerImpl datalayer, String digest, long id_user) throws SQLException {
+    
+    private Immagine memorizzaImmagine(Map data, CMSDataLayerImpl datalayer, String digest, long id_user) throws SQLException, ErroreGrave {
+        String error_message;
         Map files = new HashMap();
         FileItem fi = null;
         files = (HashMap) data.get("files");
@@ -186,7 +202,7 @@ public class Upload extends HttpServlet {
             error_message = "L'utente non ha spazio disponibile sufficiente per caricare l'immagine!";
             error_message += " Byte disponibili: " + U.getSpazio_disp_img();
             error_message += " - Byte immagine: " + fi.getSize();
-            return null;
+            throw new ErroreGrave(error_message);
         }
         img_upload.setNome(SecurityLayer.addSlashes(data.get("nome").toString()));
         img_upload.setDimensione(fi.getSize());
@@ -204,15 +220,27 @@ public class Upload extends HttpServlet {
                 return img_result;
             } else {
                 datalayer.deleteImmagine(img_result);
-                error_message = "Non è stato possibile aggiornare lo spazio immagine dell'utente!";
-                return null;
+                throw new ErroreGrave("Non è stato possibile aggiornare lo spazio immagine dell'utente!");
             }
         }
-        error_message = "Impossibile inserire i dati dell'immagine nel DB!";
-        return null;
+        throw new ErroreGrave("Impossibile inserire i dati dell'immagine nel DB!");
     }
 
-    private Css memorizzaCss(Map data, CMSDataLayerImpl datalayer) {
+    private Boolean creaThumbnail(Immagine img, String username){
+        BufferedImage thumb = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+        String cartella = getServletContext().getInitParameter("system.image_directory");
+        String file_img = img.getFile().substring(img.getFile().indexOf("/"));
+        String path = getServletContext().getRealPath(cartella);
+        try{
+            thumb.createGraphics().drawImage(ImageIO.read(new File(path+file_img)).getScaledInstance(100, 100, Image.SCALE_SMOOTH),0,0,null);
+            ImageIO.write(thumb, estensione, new File(path + File.separatorChar + "thumbnail_"+username+"."+ estensione));
+        } catch (IOException ex){
+            return false;
+        }
+        return true;
+    }
+    
+    private Css memorizzaCss(Map data, CMSDataLayerImpl datalayer) throws ErroreGrave {
         Map files = new HashMap();
         FileItem fi = null;
         files = (HashMap) data.get("files");
@@ -227,12 +255,12 @@ public class Upload extends HttpServlet {
         }
         css_result = datalayer.addCSS(css_upload);
         if (css_result == null) {
-            error_message = "Impossibile aggiungere dati del file css al DB!";
+            throw new ErroreGrave("Impossibile aggiungere dati del file css al DB!");
         }
         return css_result;
     }
 
-    private Slide memorizzaSlide(Map data, CMSDataLayerImpl datalayer, String digest){
+    private Slide memorizzaSlide(Map data, CMSDataLayerImpl datalayer, String digest) throws ErroreGrave{
         Map files = new HashMap();
         FileItem fi = null;
         files = (HashMap) data.get("files");
@@ -247,7 +275,7 @@ public class Upload extends HttpServlet {
         
         slide_result = datalayer.addSlide(slide_upload);
         if(slide_result == null){
-            error_message = "Impossibile aggiungere dati del file css al DB!";
+            throw new ErroreGrave("Impossibile aggiungere dati del file css al DB!");
         }
         return slide_result;
     }
@@ -255,20 +283,20 @@ public class Upload extends HttpServlet {
     /*funzione che ritorna una stringa contenente tutti i campi considerati errati nella form*/
     private String checkfields(Map fields) {
         String campi_errati = "";
-        /*immagini, css e slide*/
+        //immagini, css e slide
         if (fields.containsKey("nome") && (
                 fields.get("nome") == null || fields.get("nome").toString().matches(".*" + caratteri_non_ammessi + ".*")
                 ) 
            ) {
             campi_errati += " nome ";
         }
-        /*slide e css*/
+        //slide e css
         if (fields.containsKey("descrizione")) {
             if (fields.get("descrizione").toString().equals("")) {
                 campi_errati += " descrizione ";
             }
         }
-        /*necessario per slide*/
+        //necessario per slide
         if (fields.containsKey("posizione")){
             if(!fields.get("posizione").toString().equals("")){
                 try{
@@ -298,7 +326,7 @@ public class Upload extends HttpServlet {
             throws ServletException, IOException, FileUploadException, SQLException, Exception {
         /*verifica validità sessione*/
         HttpSession s = SecurityLayer.checkSession(request);
-        if (s == null) {
+        if (s != null) {
 
             /*DBMS*/
             DataSource ds = (DataSource) getServletContext().getAttribute("datasource");
@@ -312,35 +340,42 @@ public class Upload extends HttpServlet {
             Map info = new HashMap();
             
             info = prendiInfo(request);
+            //info = request.getParameterMap();
+            
             /*per prevedere l'upload di un nuovo tipo di file basta dare un valore personalizzato al submit nella form
             e creare un if con il flusso relativo all'oggetto da caricare nel file system e nel database*/
             tipo = info.get("submit").toString();
             try {
-                /*flusso immagine*/
+                //flusso immagine
                 if (tipo.equals("immagine")) {
                     Immagine img;
+                    Boolean thumbnail = false;
                     html = "show_immagine.ftl.html";
                     digest = action_upload(request, info);
-                    digest.getBytes(); //potrebbe generare una nullpointerexception
                     img = memorizzaImmagine(info, datalayer, digest, (Long) s.getAttribute("userid"));
                     img.setNome(SecurityLayer.stripSlashes(img.getNome()));//potrebbe causare eccezione su img è null
+                    if(info.containsKey("thumbnail")){
+                        thumbnail = creaThumbnail(img, s.getAttribute("username").toString());
+                    }
+                    template_data.put("thumbnail", thumbnail.toString());
                     template_data.put("immagine", img);
                     template_data.put("id", img.getID());
                     template_data.put("id_utente", 2);
-                } /*flusso css*/ else if(tipo.equals("css")){
+                 } //flusso css
+                else if(tipo.equals("css")){
                     Css css = null;
                     html = "show_css.ftl.html";
-                    action_upload(request, info).getBytes();//potrebbe generare una nullpointerexception
+                    action_upload(request, info);
                     css = memorizzaCss(info, datalayer);
                     css.setDescrizione(SecurityLayer.stripSlashes(css.getDescrizione()));//potrebbe generare una nullpointerexception
                     css.setNome(SecurityLayer.stripSlashes(css.getNome()));
                     template_data.put("css", css);
                     template_data.put("identifier", css.getID());
-                } /*flusso slide*/else if(tipo.equals("slide")){
+                } //flusso slide
+                else if(tipo.equals("slide")){
                     Slide img = null;
                     html = "show_slide.ftl.html";
                     digest = action_upload(request, info);
-                    digest.getBytes();//potrebbe generare una nullpointerexception
                     img = memorizzaSlide(info, datalayer, digest);
                     /*visualizzazione della slide appena inserita*/
                     img.setDescrizione(SecurityLayer.stripSlashes(img.getDescrizione()));
@@ -351,9 +386,10 @@ public class Upload extends HttpServlet {
                 template_data.put("outline_tpl", "");
                 TemplateResult tr = new TemplateResult(getServletContext());
                 tr.activate(html, template_data, response);
-            } catch (NullPointerException ex) {
+            } catch (ErroreGrave ex) {
+                Logger.getLogger(Upload.class.getName()).log(Level.SEVERE, null, ex);
                 FailureResult res = new FailureResult(getServletContext());
-                res.activate(error_message, request, response);
+                res.activate(ex.getMessage(), request, response);
             }
         } else {
             response.sendRedirect("Homepage.html");

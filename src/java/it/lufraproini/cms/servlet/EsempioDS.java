@@ -5,7 +5,7 @@
  * Inoltre per fare la prova basta creare una tabella di prova e fare select * from tabella come query di prova
  * 
  */
-package it.lufraproini.cms;
+package it.lufraproini.cms.servlet;
 
 import it.lufraproini.cms.framework.result.HTMLResult;
 import java.io.IOException;

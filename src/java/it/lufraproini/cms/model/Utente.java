@@ -38,10 +38,13 @@ public interface Utente {
     
     String getEmail();
     void setEmail(String s);
-    
-    Date getData_di_nascita();/*http://www.javahelp.it/index.php?java-e-le-date*/
-    void setData_di_nascita(Date d);
-    
+      
     long getSpazio_disp_img();
     void setSpazio_disp_img(long i);
+    
+    String getCodiceAttivazione();
+    void setCodiceAttivazione(String s);
+    
+    boolean getAttivato();
+    void setAttivato(boolean b);
 }

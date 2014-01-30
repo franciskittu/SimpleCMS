@@ -40,19 +40,21 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     private PreparedStatement gCss, aCss, uCss, dCss;
     private PreparedStatement gUtente, gUtente_by_Username, aUtente, uUtente, dUtente;
     private PreparedStatement gImmagine, gImmagini, aImmagine, uImmagine, dImmagine;
-    private PreparedStatement gPagina, aPagina, dPagina, gFiglie, gPaginabyTitolo;
+    private PreparedStatement gPagina, aPagina, dPagina, gFiglie, gPaginabyTitolo, gHome;
     private PreparedStatement gSito, aSito, dSito, gSitobyUtente;
     private PreparedStatement gSlide, aSlide, uSlide, dSlide;
+    private PreparedStatement gAntenati, gFoglie, gPagineSito;
     
     public CMSDataLayerImpl(Connection c) throws SQLException{
+        gHome = c.prepareStatement("SELECT pagina.* FROM sito, pagina WHERE sito.id = ? AND pagina.id = homepage;");
         gCss = c.prepareStatement("SELECT * FROM css WHERE id = ?");
         aCss = c.prepareStatement("INSERT INTO css (nome, descrizione, file) VALUES (?,?,?) RETURNING id");
         uCss = c.prepareStatement("UPDATE css SET nome=?, descrizione=?,file=? WHERE id = ?");
         dCss = c.prepareStatement("DELETE FROM css WHERE id = ?");
         gUtente = c.prepareStatement("SELECT * FROM utente WHERE id = ?");
         gUtente_by_Username = c.prepareStatement("SELECT * FROM utente WHERE username = ?");
-        aUtente = c.prepareStatement("INSERT INTO utente (username,password,nome,cognome,email,data_di_nascita,spazio_disp_img) VALUES (?,?,?,?,?,?,?) RETURNING id");
-        uUtente = c.prepareStatement("UPDATE utente SET username=?, password=?, nome=?, cognome=?, email=?, data_di_nascita=?, spazio_disp_img=? WHERE id = ?");
+        aUtente = c.prepareStatement("INSERT INTO utente (username,password,nome,cognome,email,spazio_disp_img,codice_attivazione,attivato) VALUES (?,?,?,?,?,?,?,?) RETURNING id");
+        uUtente = c.prepareStatement("UPDATE utente SET username=?, password=?, nome=?, cognome=?, email=?, spazio_disp_img=?, codice_attivazione=?, attivato=? WHERE id = ?");
         dUtente = c.prepareStatement("DELETE FROM utente WHERE id = ?");
         gImmagine = c.prepareStatement("SELECT * FROM immagine WHERE id = ?");
         aImmagine = c.prepareStatement("INSERT INTO immagine (nome,dimensione,tipo,file,digest,data_upload,id_utente) VALUES (?,?,?,?,?,?,?) RETURNING id");
@@ -71,6 +73,14 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         gSitobyUtente = c.prepareStatement("SELECT * FROM sito WHERE id_utente = ?");
         gFiglie = c.prepareStatement("SELECT * FROM pagina WHERE id_padre = ?");
         gPaginabyTitolo = c.prepareStatement("SELECT id FROM pagina WHERE titolo = ? AND id_sito = ?");
+        gFoglie = c.prepareStatement("SELECT * FROM pagina WHERE id_sito = ? AND id_padre IS NOT NULL AND id NOT IN "
+                + "(SELECT DISTINCT id_padre FROM pagina WHERE id_padre IS NOT NULL);");
+        gAntenati = c.prepareStatement("WITH RECURSIVE func(id) AS ( "
+                + "SELECT id FROM pagina WHERE id = ? "
+                + "UNION ALL " 
+                + "SELECT p.id_padre FROM func f, pagina p WHERE f.id = p.id) " 
+                + "SELECT id FROM func;");
+        gPagineSito = c.prepareStatement("SELECT * FROM pagina WHERE id_sito = ?");
     }
     
     @Override
@@ -167,15 +177,16 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         return new UtenteImpl(this);
     }
 
-    public Utente createUtenteWithData(String username, String password, String nome, String cognome, String email, long spazio_disp_img, Date data_di_nascita){
+    public Utente createUtenteWithData(String username, String password, String nome, String cognome, String email, long spazio_disp_img, String act_code, boolean b){
         Utente U = new UtenteImpl(this);
         U.setUsername(username);
         U.setPassword(password);
         U.setNome(nome);
         U.setCognome(cognome);
         U.setEmail(email);
-        U.setData_di_nascita(data_di_nascita);
         U.setSpazio_disp_img(spazio_disp_img);
+        U.setCodiceAttivazione(act_code);
+        U.setAttivato(b);
         return U;
     }
     
@@ -231,8 +242,9 @@ public class CMSDataLayerImpl implements CMSDataLayer {
             aUtente.setString(3,IUtente.getNome());
             aUtente.setString(4,IUtente.getCognome());
             aUtente.setString(5,IUtente.getEmail());
-            aUtente.setDate(6,IUtente.getData_di_nascita());
-            aUtente.setLong(7,IUtente.getSpazio_disp_img());
+            aUtente.setLong(6,IUtente.getSpazio_disp_img());
+            aUtente.setString(7, IUtente.getCodiceAttivazione());
+            aUtente.setBoolean(8, IUtente.getAttivato());
             chiave = aUtente.executeQuery();
             if(chiave.next()){
                 return getUtente(chiave.getLong("id"));
@@ -270,9 +282,10 @@ public class CMSDataLayerImpl implements CMSDataLayer {
             uUtente.setString(3,U.getNome());
             uUtente.setString(4,U.getCognome());
             uUtente.setString(5, U.getEmail());
-            uUtente.setDate(6, U.getData_di_nascita());
-            uUtente.setLong(7,U.getSpazio_disp_img());
-            uUtente.setLong(8,U.getID());
+            uUtente.setLong(6,U.getSpazio_disp_img());
+            uUtente.setString(7, U.getCodiceAttivazione());
+            uUtente.setBoolean(8, U.getAttivato());
+            uUtente.setLong(9,U.getID());
             if(uUtente.executeUpdate() == 1){
                 return getUtente(U.getID());
             }
@@ -470,10 +483,9 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     @Override
     public Pagina getHomepage(long i) {
         ResultSet rs = null;
-        Pagina ris = null;
         try{
-            gPagina.setLong(1,i);
-            rs = gPagina.executeQuery();
+            gHome.setLong(1,i);
+            rs = gHome.executeQuery();
             if(rs.next()){
                 return new PaginaImpl(this,rs);
             }
@@ -486,7 +498,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
                 
             }
         }
-        return ris;
+        return null;
     }
 
     @Override
@@ -532,6 +544,79 @@ public class CMSDataLayerImpl implements CMSDataLayer {
             }
         }
         return 0;
+    }
+    
+    @Override
+    public List<Pagina> getFoglie(Sito s){
+        List<Pagina> ris = new ArrayList<Pagina>();
+        ResultSet rs = null;
+        try{
+            gFoglie.setLong(1,s.getID());
+            rs = gFoglie.executeQuery();
+            while(rs.next()){
+                ris.add(new PaginaImpl(this, rs));
+            }
+        }catch(SQLException ex){
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try{
+                rs.close();
+            } catch (SQLException ex){
+                
+            }
+        }
+        return ris;
+    }
+    
+    @Override
+    public List<Pagina> getAntenati(Pagina foglia){
+        List<Pagina> ris = new ArrayList<Pagina>();
+        ResultSet rs1 = null;
+        ResultSet rs2 = null;
+        try{
+            gAntenati.setLong(1, foglia.getID());
+            rs1 = gAntenati.executeQuery();
+            while(rs1.next()){
+                gPagina.setLong(1, rs1.getLong("id"));
+                rs2 = gPagina.executeQuery();
+                if(rs2.next()){
+                    ris.add(new PaginaImpl(this, rs2));
+                }
+            }
+        } catch (SQLException ex){
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try{
+                rs1.close();
+                rs2.close();
+            } catch (Exception ex){
+                
+            }
+        }
+        return ris;
+    }
+    
+    @Override
+    public List<Pagina> getPagineSito(Sito s){
+        List<Pagina> ris = new ArrayList<Pagina>();
+        ResultSet rs = null;
+        try{
+            gPagineSito.setLong(1,s.getID());
+            rs = gPagineSito.executeQuery();
+            while(rs.next()){
+                ris.add(new PaginaImpl(this, rs));
+            }
+            return ris;
+        } catch (SQLException ex){
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try{
+                rs.close();
+            } catch (Exception ex){
+                
+            }
+        }
+        return null;
     }
     
     @Override

@@ -14,12 +14,13 @@
  *    You should have received a copy of the GNU Affero General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package it.lufraproini.cms;
+package it.lufraproini.cms.servlet;
 
+import it.lufraproini.cms.framework.result.TemplateResult;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -29,24 +30,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author fsfskittu
  */
-public class registration extends HttpServlet {
+public class visualizza extends HttpServlet {
 
-    private String caratteri_non_ammessi = "['\"/\\\\]";
-    
-    private String verificaCampi(HttpServletRequest request){
-        Map m = request.getParameterMap();
-        Set<Entry<String,String[]>> fieldset = m.entrySet();
-        for(Entry<String,String[]> field:fieldset){
-            String nome = field.getKey();
-            String[] valori = field.getValue();
-            if (valori.length > 0) {
-                if (valori.length == 1) {
-                    if(!valori[0].isEmpty()){
-                        
-                    }
-                }
-        }
-    }
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -58,7 +43,22 @@ public class registration extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        String par = request.getParameter("pagina");
+        String html = null;
+        Map template_data = new HashMap();
+        if(par.equals("registrazione")){
+            html = "content.ftl.html";
+        }
+        else if(par.equals("home")){
+            template_data.put("content_tpl", "");
+            html = "Homepage.ftl.html";
+        }
+        else if(par.equals("account")){
+            template_data.put("content_tpl", "");
+            html = "Homepage.ftl.html";
+        }
+        TemplateResult tr = new TemplateResult(getServletContext());
+        tr.activate(html, template_data, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

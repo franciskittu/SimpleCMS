@@ -25,8 +25,8 @@ import java.sql.SQLException;
 
 public class UtenteImpl implements Utente {
     private long id, spazio_disp_img;
-    private String username, password, nome, cognome, email;
-    private Date data_di_nascita;
+    private String username, password, nome, cognome, email, codice_attivazione;
+    private boolean attivato;
     
     private CMSDataLayerImpl datalayer;
     
@@ -37,8 +37,9 @@ public class UtenteImpl implements Utente {
         nome = "";
         cognome = "";
         email = "";
-        data_di_nascita = null;
         spazio_disp_img = 0;
+        codice_attivazione = "";
+        attivato = false;
         this.datalayer = datalayer;
     }
     
@@ -49,8 +50,9 @@ public class UtenteImpl implements Utente {
         nome = data.getString("nome");
         cognome = data.getString("cognome");
         email = data.getString("email");
-        data_di_nascita = data.getDate("data_di_nascita");//data.getDate(email, null)
         spazio_disp_img = data.getLong("spazio_disp_img");
+        codice_attivazione = data.getString("codice_attivazione");
+        attivato = data.getBoolean("attivato");
         this.datalayer = datalayer;
     }
     
@@ -111,16 +113,6 @@ public class UtenteImpl implements Utente {
     }
 
     @Override
-    public Date getData_di_nascita() {
-        return data_di_nascita;
-    }
-
-    @Override
-    public void setData_di_nascita(Date d) {
-        this.data_di_nascita = d;
-    }
-
-    @Override
     public long getSpazio_disp_img() {
         return this.spazio_disp_img;
     }
@@ -128,6 +120,26 @@ public class UtenteImpl implements Utente {
     @Override
     public void setSpazio_disp_img(long i) {
         this.spazio_disp_img = i;
+    }
+    
+    @Override
+    public String getCodiceAttivazione(){
+        return codice_attivazione;
+    }
+    
+    @Override
+    public void setCodiceAttivazione(String s){
+        codice_attivazione = s;
+    }
+    
+    @Override
+    public boolean getAttivato(){
+        return attivato;
+    }
+    
+    @Override
+    public void setAttivato(boolean b){
+        attivato = b;
     }
  
 }

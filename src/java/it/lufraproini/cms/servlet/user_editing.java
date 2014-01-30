@@ -14,14 +14,21 @@
  *    You should have received a copy of the GNU Affero General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package it.lufraproini.cms;
+package it.lufraproini.cms.servlet;
 
+import it.lufraproini.cms.framework.result.TemplateResult;
+import it.lufraproini.cms.model.Pagina;
+import it.lufraproini.cms.model.Sito;
 import it.lufraproini.cms.model.Utente;
 import it.lufraproini.cms.model.impl.CMSDataLayerImpl;
-import it.lufraproini.cms.security.SecurityLayer;
+import it.lufraproini.cms.utility.Nodo;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -34,17 +41,48 @@ import javax.sql.DataSource;
  *
  * @author fsfskittu
  */
-public class login extends HttpServlet {
+public class user_editing extends HttpServlet {
 
-    /*la funzione ritorna l'id dell'utente autenticato se le credenziali di accesso sono esatte, 0 altrimenti*/
-    private long check_access_credential(String username, String password_in_chiaro, CMSDataLayerImpl datalayer){
-        Utente U = datalayer.getUtentebyUsername(username);
-        String password_criptata = SecurityLayer.criptaPassword(password_in_chiaro, username);
-        if(U != null && password_criptata.equals(U.getPassword())){
-            return U.getID();
+    /*l'albero che ritorna la funzione è sottoforma di lista ed è ordinato secondo una 
+    visita in profondità
+    questo è stato fatto per visualizzare l'albero del sito tramite freemarker senza troppe
+    complicazioni*/
+    private List<Nodo> creaAlbero(CMSDataLayerImpl datalayer, Utente U){
+        List<Nodo> albero = new ArrayList<Nodo>();
+        List<Sito> s = datalayer.getSitobyUtente(U);
+        Sito sito = s.get(0);
+        
+        
+        //la homepage è la radice dell'albero
+        albero.add(new Nodo(datalayer.getHomepage(sito.getHomepage().getID()), 0));
+        List<Pagina> foglie = datalayer.getFoglie(sito);
+        for(int i = 0; i < foglie.size(); i++){
+            List<Pagina> antenati_cresc = datalayer.getAntenati(foglie.get(i));
+            int k = 1;//livello nodo
+            int j = antenati_cresc.size()-2;//poichè il risultato è ordinato in modo crescente di parentela l'ultimo padre è la homepage, quindi non và considerata
+            while(j >= 0){
+                boolean inserito = false;
+                Nodo n = new Nodo(antenati_cresc.get(j),k);
+                //verifico se il nodo è già stato inserito nella struttura
+                for(int z = 0; z < albero.size(); z++){
+                    if(n.getLivello() == albero.get(z).getLivello()
+                            && n.getID() == albero.get(z).getID()){
+                        inserito = true;
+                        break;
+                    }
+                }
+                if(!inserito){
+                    albero.add(n);
+                }
+                
+                k++;//il livello aumenta allo scorrere della lista
+                j--;
+            }
         }
-        return 0;
+        
+        return albero;
     }
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -56,26 +94,19 @@ public class login extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
-        
-        /*if(!SecurityLayer.checkHttps(request)){
-            SecurityLayer.redirectToHttps(request, response);
-            return;
-        }*/
         /*DBMS*/
         DataSource ds = (DataSource) getServletContext().getAttribute("datasource");
         Connection connection = ds.getConnection();
         /**/
         CMSDataLayerImpl datalayer = new CMSDataLayerImpl(connection);
-        String username = request.getParameter("username");
-        String password_in_chiaro = request.getParameter("password");
-        long user_id = check_access_credential(username, password_in_chiaro, datalayer);
-        if(user_id != 0){
-            SecurityLayer.createSession(request, username, user_id);
-            response.sendRedirect("account");
-        }
-        else{
-            response.sendRedirect("Homepage.html");
-        }
+        
+        Utente U = datalayer.getUtente(2);
+        List<Nodo> albero = creaAlbero(datalayer, U);
+        Map template_data = new HashMap();
+        template_data.put("alberoprofondita", albero);
+        template_data.put("outline_tpl", "");
+        TemplateResult tr = new TemplateResult(getServletContext());
+        tr.activate("albero_sito.ftl.html", template_data, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -93,7 +124,7 @@ public class login extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(user_editing.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -111,7 +142,7 @@ public class login extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(user_editing.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
