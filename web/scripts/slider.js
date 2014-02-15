@@ -1,5 +1,4 @@
 
-function showForm(e){ var panel=$(".panel_form"); panel.css("display", "block");var wrapper=$(".wrapper_form");setTimeout( function(){ wrapper.css("height", "90%"); }, 1000);setTimeout( function(){  wrapper.css("opacity","1")}, 2000);    }
 
 function eliminateOpacity(curr, next){
 	curr.css("opacity", 0);
@@ -38,16 +37,12 @@ function hideSlide(first){
 	
 		
 }
-function init_slider(){
+function initSlider(){
 
 	var first=$(".slide").first();
-        
-        var button=$(".button");
-        
-        button.bind("click", showForm);
-	
-	setInterval(hideSlide,12000, first);
-	
+        if(first.length>0){
+            setInterval(hideSlide,12000, first);
+        }
 }
 
 

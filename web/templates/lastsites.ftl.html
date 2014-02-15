@@ -1,0 +1,13 @@
+    
+<div class="row lastsites">
+    <div class="title">Last Sites<a href="lastsites" class="button small">view more</a></div>
+    <#list lastsites as lastsite>
+    <div class="four columns ">
+        <div class="panel">
+            <div class="descr"><div class="sitename">${lastsite.name}</div><div class="user">by ${lastsite.nome_e_cognome}</div>  <a class="button small" href="site?user=${lastsite.user}" >VIEW SITE</a></div>
+
+        </div>
+        <img src="${lastsite.image}" alt="${lastsite.name}"/>
+    </div>
+    </#list>
+</div>

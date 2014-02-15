@@ -45,4 +45,7 @@ public interface Immagine {
     
     Utente getUtente();
     void setUtente(Utente U);
+    
+    String getThumb();
+    void setThumb(String s);
 }

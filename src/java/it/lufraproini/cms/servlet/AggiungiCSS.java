@@ -147,7 +147,7 @@ public class AggiungiCSS extends HttpServlet {
             action_upload(request, response, nomefile);
         }
         nomefile +=".css";
-        Obj = datalayer.createCSSWithData(info.get(0),info.get(1),getServletContext().getInitParameter("system.css_directory") + File.separatorChar +nomefile);
+        //Obj = datalayer.createCSSWithData(info.get(0),info.get(1),getServletContext().getInitParameter("system.css_directory") + File.separatorChar +nomefile);
         //Obj.setNome(info.get(0));
         //Obj.setDescrizione(info.get(1));
         //Obj.setFile(getServletContext().getInitParameter("system.css_directory") + File.separatorChar +nomefile);

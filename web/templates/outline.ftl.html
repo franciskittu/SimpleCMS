@@ -4,34 +4,53 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title>Clicca sul rettangolo blu!</title>
-    <link rel="stylesheet" href="css/default.css" type="text/css" />
-    <script type="text/javascript" src="scripts/jquery.min.js"></script>
-    <script type="text/javascript" src="scripts/slider.js"></script>
-    <script type="text/javascript" src="scripts/simpledynamicscroller.js"></script>
-
+    <title>SimpleCMS</title>
+    <link rel="stylesheet" href="./css/default.css" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,700,400' rel='stylesheet' type='text/css'/>
+    <script type="text/javascript" src="./scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="./ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="./scripts/slider.js"></script>
+    <script type="text/javascript" src="./scripts/init.js"></script>
   </head>
   <body>
   	<div class="container"> 
   	
-  		<div class="row">
+            <div class="row ">
   		
   			<div class="sixteen columns header">
-                            <div class="login"></div>
-                            <div class="menu"></div>
+                            
+                            <div class="logo"><h1><a href="visualizza">  <span class="white">Simple</span><span class="cyan">CMS</span></a></h1></div>
+                            <div class="login"><a href="login">Login</a></div>
+                            <div class="menu">
+                                <ul>
+                                    <li><a href="visualizza">Home </a></li>
+                                    <li><a href="#">What is SimpleCMS?</a></li>
+                                    <li><span>Contact</span>
+                                        <div><a href="mailto:info@simpleCMS.com">info@simpleCMS.com</a> </div>
+                                    </li>
+                                </ul>
+                                
+                            </div>
   			</div>
   		
-  		</div>
+            </div>
+  		
+            <#include content_tpl>
             
-                <#include content_tpl>
-            
-		<div class="row">
+            <div class="row ">
   		  			
-        		<div class="sixteen columns footer"></div>
-  	  	
-  	  	</div>
+                <div class="sixteen columns footer">
+                    <p>SimpleCMS &egrave; un costruttore di siti online che ti permette di creare siti gratis.Scrivi il contenuto delle pagine con CkEditor, definisci la sitemap e scegli fra uno dei nostri fogli di stile. </p>
+                    <p>Creare un sito gratuito con SimpleCMS &egrave; semplice e veloce! Puoi iniziare a fare il tuo sito gratis ora, semplicemente iscrivendoti. Solo pochi minuti ti separano dall'avere il tuo sito.</p>
+                    <p>Se hai bisogno di un sito per promuovere la tua attivit&agrave; o mostrare la tua arte , SimpleCMS &egrave; la migliore soluzione per te. Cosa stai aspettando? Iscriviti ora! </p>
+                    <p> &copy;2014 LTFpro, Inc</p>
+
+                </div>
+                    
+            </div>
   	
-  	</div>
+  	
+        </div>
     
   </body>
 </html>

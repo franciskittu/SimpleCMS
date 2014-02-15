@@ -1,0 +1,41 @@
+                    <#if (styles?size>0)>
+                    <div class="row style">
+                        <div class="title">Style</div>
+                            <#list styles as style>
+                            <a id="css${style.id}"  class="button <#if(style.active)> active</#if>" href="style?id=${style.id}" >
+                                ${style.name}
+                            </a>
+                            </#list>
+                    </div>
+                    </#if>
+                    <div class="row images">
+                        <div class="title">Images</div>
+                        <div class="wrapper_content">
+                            <div class="content">
+                                <#if(images?size>0)>
+                                <#list images as image>
+                                <div  class="eight columns">
+                                    <img   src="${image.src}" alt="${image.nome}"/>
+                                    <a class="cover <#if(image.cover)> set</#if>" href="cover?id={image.id}" id="img1">cover</a>
+                                    <a href="deleteimage?id={image.id}" class="delete_img">x</a>
+                                    <a href="javascript:void(0)" class="add_img">+</a>
+                                 </div>
+                                </#list>
+                                <#else>
+                                <span>Nessuna immagine</span>
+                                </#if>
+                             
+                            </div>
+                            <form action="upload" method="get">
+                                <fieldset>
+                                <input type="file" name="img" />
+                                <input type="submit" value="upload"/>
+                                </fieldset>
+                            </form>   
+                            
+                        </div>    
+                        
+                        
+                    </div>
+                    
+                

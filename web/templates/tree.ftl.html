@@ -1,0 +1,59 @@
+<#macro showpage node current>
+    <#if (node.id!=id)> 
+        <a href="move?current=${current.id}&padre=${node.id}"> ${node.name} </a>
+    </#if>
+    <#if (node.children?size>0)>
+        <#list node.children as child>
+
+            <@showpage node=child current=current/>
+
+        </#list>
+    </#if>
+
+  </#macro>
+
+
+
+<#macro showtree node >
+<ul>
+        <li>  
+            <div class="circle-text<#if(node.home)>home</#if>">
+                <div class="text"> ${node.name}</div>
+                <a class="button_view" href="page?id=${node.id}">view</a>
+                <div class="functions">
+                    <a class="edit" href="javascript:void(0)" id="edit${node.id}">edit</a>
+                    <a class="move" href="javascript: void(0)">move</a><div class="moveto"> <@showpage node=home current=node> </div>
+                    <a class="delete" href="delete?id=${node.id}">delete</a>
+                    <a  class="add" href="javascript: void(0)" id="add${node.id}" >add</a>
+                    
+                </div>
+            </div>
+            
+        <#if (node.children?size>0)>
+        <#list node.children as child>
+            
+            <@showtree node=child/>
+           
+        </#list>
+        </#if>
+         </li>
+     
+</ul>
+   
+
+</#macro>
+
+
+
+
+
+
+
+
+
+<div id="tree"> 
+    <a href="javascript:void(0)" id="header" class="button ">Edit Header</a>
+    <a href="javascript:void(0)" id="footer" class="button ">Edit Footer</a>   
+    <@showtree node=home />
+</div>
+

@@ -17,8 +17,6 @@
 package it.lufraproini.cms.model.impl;
 
 import it.lufraproini.cms.model.Utente;
-//import it.lufraproini.cms.security.SecurityLayer FACCIAMO GESTIRE LA CRITTOGRAFIA E LE VARIE FUNZIONI DI SICUREZZA AL CONTROLLER
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -141,5 +139,5 @@ public class UtenteImpl implements Utente {
     public void setAttivato(boolean b){
         attivato = b;
     }
- 
+    
 }

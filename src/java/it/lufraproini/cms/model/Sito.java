@@ -16,6 +16,8 @@
  */
 package it.lufraproini.cms.model;
 
+import java.sql.Date;
+
 /**
  *
  * @author fsfskittu
@@ -40,5 +42,8 @@ public interface Sito {
     
     Css getCss();
     void setCss(Css stile);
+    
+    Date getDataCreazione();
+    void setDataCreazione(Date d);
     
 }

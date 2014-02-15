@@ -16,7 +16,6 @@
  */
 package it.lufraproini.cms.model;
 
-import java.sql.Date;
 /**
  *
  * @author fsfskittu

@@ -32,6 +32,8 @@ public interface CMSDataLayer {
     /* CSS */
     Css createCSS();
     
+    Css getFirstCSS();
+    
     Css getCSS(long i);
     
     Css addCSS(Css O);
@@ -48,10 +50,7 @@ public interface CMSDataLayer {
     
     Utente deleteUtente(Utente U);
     
-    Utente updateUtente(Utente U);
-    
-    boolean checkPassword(Utente U, String pwd);//verifica correttezza password
-    
+    Utente updateUtente(Utente U);    
     
     
     /* IMMAGINI */
@@ -66,6 +65,8 @@ public interface CMSDataLayer {
     Immagine getImgbyID(int id_img);
     
     List<Immagine> getAllUsersImages(Utente U);
+    
+    Immagine getCoverUtente(Utente U);
     
     /* PAGINE */
     
@@ -104,6 +105,8 @@ public interface CMSDataLayer {
     List<Sito> getSitobyUtente(Utente U);//per le url senza specifica del sito si può stabilire un default
     
     Sito getSito(long i);
+    
+    List<Sito> getSitiDataOrdinati();
     
     /* SLIDES */
     
