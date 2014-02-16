@@ -1,0 +1,28 @@
+<form action="edit" id="form_edit">
+    <fieldset>
+        <a href="javascript:void(0)" id="back" ><img src="./site_images/back_ico.png"/></a>
+        <h3>Editor</h3>
+        <input type="hidden" name="type" disabled="disabled" value=""/>
+        <input type="hidden" name="id"  disabled="disabled" value=""/>
+    </fieldset>
+    <fieldset>
+        <span>Titolo</span>
+        <input type="text" disabled="disabled" name="title" value=""/> 
+    </fieldset>
+
+    <fieldset>
+        <textarea name="editor" id="editor" rows="10" cols="80"></textarea>
+    </fieldset>
+    <fieldset>
+        <span>Modello</span><input name="model"   disabled="disabled" type="checkbox"/>
+        <span class="select">Scegli modello</span> 
+        <select disabled="disabled" name="impmodel">
+            <option value="0"> Empty</option>
+            <option value="1"> About us | lucatra</option>
+            <option value="2"> Home | franciskittu</option>
+        </select>
+    </fieldset>
+    <fieldset>
+        <input type="submit" value="SALVA" class="button"/>
+    </fieldset>
+</form>

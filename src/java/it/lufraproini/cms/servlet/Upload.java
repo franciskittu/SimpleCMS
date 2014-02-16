@@ -227,14 +227,21 @@ public class Upload extends HttpServlet {
     }
 
     private Boolean creaThumbnail(Immagine img, String username){
-        BufferedImage thumb = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
         String cartella = getServletContext().getInitParameter("system.image_directory");
         String file_img = img.getFile().substring(img.getFile().indexOf("/"));
         String path = getServletContext().getRealPath(cartella);
+        int altezza_thumb = 120;
+        int larghezza_thumb = 120;
+        BufferedImage thumb = new BufferedImage(larghezza_thumb, altezza_thumb, BufferedImage.TYPE_INT_RGB);
         try{
-            thumb.createGraphics().drawImage(ImageIO.read(new File(path+file_img)).getScaledInstance(100, 100, Image.SCALE_SMOOTH),0,0,null);
+            if (ImageIO.read(new File(path+file_img)).getWidth() >= larghezza_thumb){
+                thumb.createGraphics().drawImage(ImageIO.read(new File(path+file_img)).getScaledInstance(-1, altezza_thumb, Image.SCALE_SMOOTH),0,0,null);
+            } else {
+                thumb.createGraphics().drawImage(ImageIO.read(new File(path+file_img)).getScaledInstance(larghezza_thumb, altezza_thumb, Image.SCALE_SMOOTH),0,0,null);
+            }
+            
             ImageIO.write(thumb, estensione, new File(path + File.separatorChar + "thumbnail_"+username+"."+ estensione));
-        } catch (IOException ex){
+            } catch (IOException ex){
             return false;
         }
         return true;

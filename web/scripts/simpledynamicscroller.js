@@ -16,7 +16,7 @@ See the course homepage: http://www.di.univaq.it/gdellape/students.php
 */
 
 //funzione di supporto che carica le pagine di dati
-//implementazione di prova: in realt� qui sarebbe opportuno
+//implementazione di prova: in realtà qui sarebbe opportuno
 //usare ajax per caricare i dati dal server!
 //support function to load the data pages
 //test implementation: actually we should use ajax to 
@@ -44,14 +44,14 @@ function dummyLoader(page) {
 }
 
 //funzione costrutture dell'oggetto SmartScroller che gestisce lo scrolling paginato
-//ogni oggetto SmartScroller � legato a un elemento html di cui gestisce lo scrolling
+//ogni oggetto SmartScroller è legato a un elemento html di cui gestisce lo scrolling
 //this constructor creates a SmartScroller object handling the pages scrolling
 //each SmartScroller is linked to a specific html scrollable element
 function SmartScroller(scroller,loaderFunction) {
 		//verifichiamo se siamo in Internet Explorer
 		//check for IE
 		this.IEmode = (document.all)?true:false;
-		//assegniamo a delle propriet� dell'oggetto alcuni parametri del costruttore
+		//assegniamo a delle proprietà dell'oggetto alcuni parametri del costruttore
 		//e altri valori calcolati
 		//assign some object properties with constructor parameters
 		this.scroller = scroller;	
@@ -71,22 +71,22 @@ function SmartScroller(scroller,loaderFunction) {
 		this.makeScrollListener = function() {
 			//usiamo l'effetto closure per fare in modo che l'handler restituito
 			//abbia un riferimento all'oggetto che lo ha generato (questo) e quindi
-			//possa leggerne le propriet�
+			//possa leggerne le proprietà
 			//the closure effect is used to embed in the returned handler a reference
 			//the its owner object (this), to read its properties
 			var THIS=this;
 			return function() {
                                
-				//l'handler di scorrimento verifica se la riga "trigger" (cio� la riga che attiva 
-				//il caricamento degli elementi successivi) � visibile e, finch� lo �,
-				//invoca la funzione esterna per recuperare nuovi elementi e li accoda a quelli gi�
+				//l'handler di scorrimento verifica se la riga "trigger" (cioè la riga che attiva 
+				//il caricamento degli elementi successivi) è visibile e, finchè lo è,
+				//invoca la funzione esterna per recuperare nuovi elementi e li accoda a quelli già
 				//visualzzati, mantenendo la riga trigger all'ultimo posto				
 				//the scroll handler checks if the "trigger line" (i.e., the invisible element which triggers
 				//the loading of another block of text) is visible and, as long as it reamins visible,
 				//calls an external function to load another block of data and appends them to the current
 				//element text, leaving the trigger line at the bottom of the content.
 				while(THIS.scroller.scrollTop+THIS.scroller.offsetHeight >= THIS.triggerLine.offsetTop) {
-					//per verificare se la triggerLine � visibile, si confronta la sua posizione verticale
+					//per verificare se la triggerLine è visibile, si confronta la sua posizione verticale
 					//con l'origine verticale dello scroll corrente nell'elemento, tenendo anche conto della sua altezza
 					//to check is triggerLine is visible, we compare its vertical position with the current vertical
 					//scroll offset, taking into account also the viewport height

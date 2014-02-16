@@ -25,10 +25,10 @@ import it.lufraproini.cms.model.Slide;
 import it.lufraproini.cms.model.Utente;
 import java.io.File;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -37,16 +37,21 @@ import java.util.logging.Logger;
 
 public class CMSDataLayerImpl implements CMSDataLayer {
     
-    private PreparedStatement gCss, aCss, uCss, dCss;
-    private PreparedStatement gUtente, gUtente_by_Username, aUtente, uUtente, dUtente;
-    private PreparedStatement gImmagine, gImmagini, aImmagine, uImmagine, dImmagine;
-    private PreparedStatement gPagina, aPagina, dPagina, gFiglie, gPaginabyTitolo, gHome;
-    private PreparedStatement gSito, aSito, dSito, gSitobyUtente;
-    private PreparedStatement gSlide, aSlide, uSlide, dSlide;
-    private PreparedStatement gAntenati, gFoglie, gPagineSito;
+    private final PreparedStatement gCss, aCss, uCss, dCss;
+    private final Statement gManualCss, gSitiDataOrdinati;
+    private final PreparedStatement gUtente, gUtente_by_Username, aUtente, uUtente, dUtente;
+    private final PreparedStatement gImmagine, gImmagini, aImmagine, uImmagine, dImmagine;
+    private final PreparedStatement gPagina, aPagina, dPagina, gFiglie, dSottoAlbero, gPaginabyTitolo, gHome, uPagina, aHome, uHome;
+    private final PreparedStatement gSito, aSito, dSito, gSitobyUtente, uSito;
+    private final PreparedStatement gSlide, aSlide, uSlide, dSlide;
+    private final PreparedStatement gAntenati, gFoglie, gPagineSito, gCoverUtente;
     
     public CMSDataLayerImpl(Connection c) throws SQLException{
+        gManualCss = c.createStatement();
+        gSitiDataOrdinati = c.createStatement();
         gHome = c.prepareStatement("SELECT pagina.* FROM sito, pagina WHERE sito.id = ? AND pagina.id = homepage;");
+        aHome = c.prepareStatement("INSERT INTO pagina (titolo, body, id_sito) VALUES(?,?,?) RETURNING id");
+        uHome = c.prepareStatement("UPDATE pagina SET titolo = ?, body = ?, id_sito = ?, modello = ? WHERE id = ?");
         gCss = c.prepareStatement("SELECT * FROM css WHERE id = ?");
         aCss = c.prepareStatement("INSERT INTO css (nome, descrizione, file) VALUES (?,?,?) RETURNING id");
         uCss = c.prepareStatement("UPDATE css SET nome=?, descrizione=?,file=? WHERE id = ?");
@@ -57,15 +62,18 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         uUtente = c.prepareStatement("UPDATE utente SET username=?, password=?, nome=?, cognome=?, email=?, spazio_disp_img=?, codice_attivazione=?, attivato=? WHERE id = ?");
         dUtente = c.prepareStatement("DELETE FROM utente WHERE id = ?");
         gImmagine = c.prepareStatement("SELECT * FROM immagine WHERE id = ?");
-        aImmagine = c.prepareStatement("INSERT INTO immagine (nome,dimensione,tipo,file,digest,data_upload,id_utente) VALUES (?,?,?,?,?,?,?) RETURNING id");
+        aImmagine = c.prepareStatement("INSERT INTO immagine (nome,dimensione,tipo,file,digest,data_upload,id_utente,thumb) VALUES (?,?,?,?,?,?,?,?) RETURNING id");
         dImmagine = c.prepareStatement("DELETE FROM immagine WHERE id = ?");
-        uImmagine = c.prepareStatement("UPDATE immagine SET nome = ?, dimensione = ?, tipo = ?, file = ?, digest = ?, data_upload = ?, id_utente = ?");
+        uImmagine = c.prepareStatement("UPDATE immagine SET nome = ?, dimensione = ?, tipo = ?, file = ?, digest = ?, data_upload = ?, id_utente = ?, thumb = ?");
         gImmagini = c.prepareStatement("SELECT * FROM immagine WHERE id_utente = ?");
         gPagina = c.prepareStatement("SELECT * FROM pagina WHERE id = ?");
         aPagina = c.prepareStatement("INSERT INTO pagina (titolo, body, id_padre, id_sito, modello) VALUES(?,?,?,?,?) RETURNING id");
+        uPagina = c.prepareStatement("UPDATE pagina SET titolo = ?, body = ?, id_padre = ?, id_sito = ?, modello = ? WHERE id = ?");
         dPagina = c.prepareStatement("DELETE FROM pagina WHERE id = ?");
-        aSito = c.prepareStatement("INSERT INTO sito (descrizione, header, footer, id_utente, homepage, id_css) VALUES (?,?,?,?,?,?)RETURNING id");
+        aSito = c.prepareStatement("INSERT INTO sito (header, footer, id_utente, descrizione, id_css) VALUES (?,?,?,?,?)RETURNING id");
         gSito = c.prepareStatement("SELECT * FROM sito WHERE id = ?");
+        uSito = c.prepareStatement("UPDATE sito SET descrizione = ?, header = ?, footer = ?, id_utente = ?, homepage = ?, id_css = ?, data_creazione = ? WHERE id = ?");
+        dSito = c.prepareStatement("DELETE FROM sito WHERE id = ?");
         gSlide = c.prepareStatement("SELECT * FROM slide WHERE id = ?");
         aSlide = c.prepareStatement("INSERT INTO slide (descrizione, posizione, file, nome) VALUES(?,?,?,?) RETURNING id");
         uSlide = c.prepareStatement("UPDATE slide SET descrizione = ?, posizione = ?, file = ?, nome=?");
@@ -81,6 +89,8 @@ public class CMSDataLayerImpl implements CMSDataLayer {
                 + "SELECT p.id_padre FROM func f, pagina p WHERE f.id = p.id) " 
                 + "SELECT id FROM func;");
         gPagineSito = c.prepareStatement("SELECT * FROM pagina WHERE id_sito = ?");
+        dSottoAlbero = c.prepareStatement("WITH ");
+        gCoverUtente = c.prepareStatement("SELECT * FROM immagine WHERE immagine.cover = true AND immagine.id_utente = ? ");
     }
     
     @Override
@@ -88,14 +98,46 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         return new CssImpl(this);
     }
     
-    public Css createCSSWithData(String nome, String descrizione, String file){
-        Css Obj = new CssImpl(this);
-        Obj.setNome(nome);
-        Obj.setDescrizione(descrizione);
-        Obj.setFile(file);
-        return Obj;
+    @Override
+    public Css getFirstCSS(){
+        ResultSet rs = null;
+        try{
+            rs = gManualCss.executeQuery("SELECT * FROM css LIMIT 1");
+            if(rs.next()){
+                return new CssImpl(this, rs);
+            }
+        } catch (SQLException ex){
+            java.util.logging.Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try{
+                rs.close();
+            } catch (SQLException ex){
+                //
+            }
+        }
+        return null;
     }
     
+    @Override
+    public List<Css> getAllCSS(){
+        ResultSet rs = null;
+        List<Css> ris = new ArrayList<Css>();
+        try{
+            rs = gManualCss.executeQuery("SELECT * FROM css");
+            while(rs.next()){
+                ris.add(new CssImpl(this, rs));
+            }
+        } catch (SQLException ex){
+            java.util.logging.Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try{
+                rs.close();
+            } catch (SQLException ex){
+                
+            }
+        }
+        return ris;
+    }
     @Override
     public Css getCSS(long i){
         Css ris = null;
@@ -175,19 +217,6 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     @Override
     public Utente createUtente() {
         return new UtenteImpl(this);
-    }
-
-    public Utente createUtenteWithData(String username, String password, String nome, String cognome, String email, long spazio_disp_img, String act_code, boolean b){
-        Utente U = new UtenteImpl(this);
-        U.setUsername(username);
-        U.setPassword(password);
-        U.setNome(nome);
-        U.setCognome(cognome);
-        U.setEmail(email);
-        U.setSpazio_disp_img(spazio_disp_img);
-        U.setCodiceAttivazione(act_code);
-        U.setAttivato(b);
-        return U;
     }
     
     public Utente getUtente(long i){
@@ -296,11 +325,6 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     }
 
     @Override
-    public boolean checkPassword(Utente U, String pwd) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public Immagine createImmagine() {
         return new ImmagineImpl(this);
     }
@@ -325,6 +349,28 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         }
         return ris;
     }
+    
+    @Override
+    public Immagine getCoverUtente(Utente U){
+        ResultSet rs = null;
+        try {
+            
+            gCoverUtente.setLong(1, U.getID());
+            rs = gCoverUtente.executeQuery();
+            if(rs.next()){
+                return new ImmagineImpl(this, rs);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try{
+                rs.close();
+            } catch (SQLException ex){
+                //
+            }
+        }
+        return null;
+    }
     @Override
     public Immagine addImmagine(Immagine I) {
         Immagine img = (ImmagineImpl) I;
@@ -337,6 +383,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
             aImmagine.setString(5,img.getDigest());
             aImmagine.setTimestamp(6,img.getData_upload());
             aImmagine.setLong(7,img.getUtente().getID());
+            aImmagine.setString(8,img.getThumb());
             chiave = aImmagine.executeQuery();
             if(chiave.next()){
                 return getImmagine(chiave.getLong("id"));
@@ -353,9 +400,13 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         return null;
     }
 
-    private void deleteImmagineFile(Immagine I){
+    private void deleteImmagineFiles(Immagine I){
         if(I != null){
             File f = new File(I.getFile());// forse da fare getRealPath
+            if(f.exists()){
+                f.delete();
+            }
+            f = new File(I.getThumb());
             if(f.exists()){
                 f.delete();
             }
@@ -367,7 +418,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         try{
             dImmagine.setLong(1,I.getID());
             if(dImmagine.executeUpdate() == 1){
-                deleteImmagineFile(I);
+                deleteImmagineFiles(I);
                 return I;
             }
         } catch (SQLException ex){
@@ -414,13 +465,36 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     }
 
     @Override
+    public Pagina addHomepage(Pagina p){
+        ResultSet chiave = null;
+        try{
+            aHome.setString(1, p.getTitolo());
+            aHome.setString(2, p.getBody());
+            aHome.setLong(3, p.getSito().getID());
+            chiave = aHome.executeQuery();
+            if(chiave.next()){
+                return getPagina(chiave.getLong("id"));
+            }
+        } catch (SQLException ex){
+            
+        } finally {
+            try{
+                chiave.close();
+            } catch (SQLException ex){
+                
+            }
+        }
+        return null;
+    }
+    
+    @Override
     public Pagina addPagina(Pagina p) {
         ResultSet chiave = null;
         PaginaImpl p_agg = (PaginaImpl) p;
         try{
             aPagina.setString(1, p_agg.getTitolo());
             aPagina.setString(2,p_agg.getBody());
-            aPagina.setLong(3,p_agg.getPadre().getID());
+            aPagina.setLong(3,0/*p_agg.getPadre().getID()*/);
             aPagina.setLong(4,p_agg.getSito().getID());
             aPagina.setBoolean(5,p_agg.getModello());
             chiave = aPagina.executeQuery();
@@ -438,6 +512,28 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         }
         return null;
     }
+    
+    //dal più recente
+    @Override
+    public List<Sito> getSitiDataOrdinati(){
+        List<Sito> ris = new ArrayList<Sito>();
+        ResultSet rs = null;
+        try{
+            rs = gSitiDataOrdinati.executeQuery("SELECT * FROM sito ORDER BY(data_creazione) DESC");
+            while(rs.next()){
+                ris.add(new SitoImpl(this, rs));
+            }
+        } catch (SQLException ex){
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try{
+                rs.close();
+            } catch (SQLException ex){
+                //
+            }
+        }
+        return ris;
+    }
 
     @Override
     public Pagina deletePagina(Pagina p) {
@@ -453,8 +549,37 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     }
 
     @Override
+    public Pagina updateHomepage(Pagina p){
+        try{
+            uHome.setString(1, p.getTitolo());
+            uHome.setString(2, p.getBody());
+            uHome.setLong(3, p.getSito().getID());
+            uHome.setBoolean(4, p.getModello());
+            uHome.setLong(5, p.getID());
+            if(uHome.executeUpdate() == 1){
+                return getPagina(p.getID());
+            }
+        } catch (SQLException ex){
+            //
+        }
+        return null;
+        }
+    @Override
     public Pagina updatePagina(Pagina p) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try{
+            uPagina.setString(1, p.getTitolo());
+            uPagina.setString(2, p.getBody());
+            uPagina.setLong(3, p.getPadre().getID());
+            uPagina.setLong(4, p.getSito().getID());
+            uPagina.setBoolean(5, p.getModello());
+            uPagina.setLong(6, p.getID());
+            if(uPagina.executeUpdate() == 1){
+                return getPagina(p.getID());
+            }
+        } catch (SQLException ex){
+            //
+        }
+        return null;
     }
 
     @Override
@@ -632,7 +757,8 @@ public class CMSDataLayerImpl implements CMSDataLayer {
             aSito.setString(1,s_agg.getHeader());
             aSito.setString(2,s_agg.getFooter());
             aSito.setLong(3,s_agg.getUtente().getID());
-            aSito.setLong(4,s_agg.getHomepage().getID());
+            aSito.setString(4,s_agg.getDescrizione());
+            aSito.setLong(5,s_agg.getCss().getID());
             chiave = aSito.executeQuery();
             if(chiave.next()){
                 return getSito(chiave.getLong("id"));
@@ -643,7 +769,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
             try{
                 chiave.close();
             } catch (SQLException ex){
-                
+                //
             }
         }
         return null;
@@ -664,7 +790,22 @@ public class CMSDataLayerImpl implements CMSDataLayer {
 
     @Override
     public Sito updateSito(Sito s) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try{
+            uSito.setString(1, s.getDescrizione());
+            uSito.setString(2, s.getHeader());
+            uSito.setString(3, s.getFooter());
+            uSito.setLong(4, s.getUtente().getID());
+            uSito.setLong(5, s.getHomepage().getID());
+            uSito.setLong(6, s.getCss().getID());
+            uSito.setDate(7, s.getDataCreazione());
+            uSito.setLong(8, s.getID());
+            if(uSito.executeUpdate() == 1){
+                return getSito(s.getID());
+            }
+        } catch (SQLException ex){
+            //
+        }
+        return null;
     }
 
     @Override

@@ -213,4 +213,9 @@ public class SecurityLayer {
         }
         return sb.toString();
     }
+    
+    public static String eliminaPath(String path_file){
+        String nome_file = path_file.substring(path_file.lastIndexOf("/")+1);
+        return nome_file;
+    }
 }

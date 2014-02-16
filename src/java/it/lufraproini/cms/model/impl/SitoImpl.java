@@ -20,6 +20,7 @@ import it.lufraproini.cms.model.Css;
 import it.lufraproini.cms.model.Pagina;
 import it.lufraproini.cms.model.Sito;
 import it.lufraproini.cms.model.Utente;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -29,6 +30,7 @@ public class SitoImpl implements Sito {
     private CMSDataLayerImpl datalayer;
     private long id, id_utente/*chiave esterna*/, id_homepage/*chiave esterna*/, id_css/*chiave esterna*/;
     private String header, footer, descrizione;
+    private Date data_creazione;
     
     private Pagina homepage;
     private Utente utente;
@@ -42,6 +44,7 @@ public class SitoImpl implements Sito {
         descrizione = "";
         header = "";
         footer = "";
+        data_creazione = null;
         this.datalayer = datalayer;
     }
     
@@ -53,6 +56,7 @@ public class SitoImpl implements Sito {
         descrizione = data.getString("descrizione");
         header = data.getString("header");
         footer = data.getString("footer");
+        data_creazione = data.getDate("data_creazione");
         this.datalayer = datalayer;
     }
     
@@ -111,7 +115,7 @@ public class SitoImpl implements Sito {
     @Override
     public Pagina getHomepage() {
         if(homepage == null){
-            homepage = datalayer.getHomepage(id_homepage);
+            homepage = datalayer.getPagina(id_homepage);
         }
         return homepage;
     }
@@ -125,5 +129,15 @@ public class SitoImpl implements Sito {
     @Override
     public void setCss(Css stile){
         css = stile;
+    }
+    
+    @Override
+    public Date getDataCreazione(){
+        return data_creazione;
+    }
+    
+    @Override
+    public void setDataCreazione(Date d){
+        data_creazione = d;
     }
 }

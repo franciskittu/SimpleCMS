@@ -27,7 +27,8 @@ public class ImmagineImpl implements Immagine {
     
     private CMSDataLayerImpl datalayer;
     private long id, dimensione, id_utente/*chiave*/;
-    private String nome, file, digest, tipo;
+    private boolean cover;
+    private String nome, file, digest, tipo, thumb;
     private Timestamp data_upload;
     
     private Utente utente;
@@ -40,6 +41,8 @@ public class ImmagineImpl implements Immagine {
         nome = "";
         file = "";
         digest = "";
+        thumb = "";
+        cover = false;
         data_upload = null;
         this.datalayer = datalayer;
         
@@ -54,6 +57,8 @@ public class ImmagineImpl implements Immagine {
         file = rs.getString("file");
         digest = rs.getString("digest");
         data_upload = rs.getTimestamp("data_upload");
+        thumb = rs.getString("thumb");
+        cover = rs.getBoolean("cover");
         this.datalayer = datalayer;
     }
     
@@ -135,4 +140,23 @@ public class ImmagineImpl implements Immagine {
         utente = U;
     }
     
+    @Override
+    public String getThumb(){
+        return thumb;
+    }
+    
+    @Override
+    public void setThumb(String s){
+        thumb = s;
+    }
+    
+    @Override
+    public boolean getCover(){
+        return cover;
+    }
+    
+    @Override
+    public void setCover(boolean b){
+        cover = b;
+    }
 }

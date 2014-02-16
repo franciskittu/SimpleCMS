@@ -74,7 +74,7 @@ public class login extends HttpServlet {
             response.sendRedirect("visualizza?pagina=account");
         }
         else{
-            response.sendRedirect("visualizza?pagina=home");
+            response.sendRedirect("visualizza?pagina=login&errors_login=Username o Password non validi");
         }
     }
 
