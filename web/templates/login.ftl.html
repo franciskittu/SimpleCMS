@@ -3,13 +3,14 @@
                 <div class="ten columns wrapper_form">
                     <div class="form">   
                         <div  id="errors_signup">
-                            <#if(errors_signup?size>0)>
-                            <#list errors_signup as error>
-                            <span> ${error}</span>
-                            </#list>
+                            
+                            <#if errors_sign_up?? >
+                                <#list errors_sign_up as error>
+                                <span> ${error}</span>
+                                </#list>
                             </#if>
                         </div>
-                        <form action="prova" method="post" class="signup_form" >
+                        <form action="registration" method="post" class="signup_form" >
                             <fieldset>
                                 <span> Nome</span><input type="text" class="required"  name="nome" value="" /> 
                                 <span>Cognome </span><input type="text"  class="required" name="cognome" value=""/>
@@ -23,13 +24,13 @@
                     </div>   
                     <div class="form"> 
                         <div  id="errors_login">
-                            <#if(errors_login?size>0)>
-                            <#list errors_login as error>
-                                <span> ${error}</span>
-                            </#list>
+                            <#if errors_login?? >
+                            
+                                <span> ${errors_login}</span>
+                            
                             </#if>
                         </div>  
-                        <form action="prova" method="post"  class="login_form">
+                        <form action="login" method="post"  class="login_form">
                             <fieldset>
                                 <span>Username</span><input type="text" class="required"  name="username" value=""/>
                                 <span>Password</span><input type="password" class="required" name="password" value=""/>  

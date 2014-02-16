@@ -48,4 +48,7 @@ public interface Immagine {
     
     String getThumb();
     void setThumb(String s);
+    
+    boolean getCover();
+    void setCover(boolean b);
 }

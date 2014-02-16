@@ -49,7 +49,7 @@ public class style extends HttpServlet {
 
     //la funzione cambia lo stile del sito dell'utente sul database e ritorna una lista contenente l'id del vecchio css e l'id del nuovo in quest'ordine
     private List cambiaStile(CMSDataLayerImpl datalayer, Utente U, long id_new_css) throws ErroreGrave{
-        List id_old_css__id_new_css = new ArrayList<String>();
+        List id_old_css__id_new_css = new ArrayList();
         List<Sito> sito = datalayer.getSitobyUtente(U);
         Css nuovo = datalayer.getCSS(id_new_css);
         if(nuovo == null){
@@ -58,7 +58,7 @@ public class style extends HttpServlet {
         
         id_old_css__id_new_css.add(sito.get(0).getCss().getID());
         sito.get(0).setCss(nuovo);
-        id_old_css__id_new_css.add(sito.get(0).getCss().getID());
+        id_old_css__id_new_css.add(id_new_css);
         if(datalayer.updateSito(sito.get(0)) == null){
             throw new ErroreGrave("Impossibile modificare la caratteristica del sito nel database!");
         }
@@ -93,8 +93,8 @@ public class style extends HttpServlet {
                 List ids = cambiaStile(datalayer, U, id_nuovo_css);
                 //output
                 template_data.put("outline_tpl", "");
-                template_data.put("id_old_css", ids.get(0));
-                template_data.put("id_new_css", ids.get(1));
+                template_data.put("css_old", ids.get(0));
+                template_data.put("css_current", ids.get(1));
                 TemplateResult tr = new TemplateResult(getServletContext());
                 tr.activate("account_ajax.ftl.json", template_data, response);
             } catch (SQLException ex){

@@ -76,7 +76,7 @@ public class upload_user_img extends HttpServlet {
                 items = upload.parseRequest(request);
                 for (FileItem item : items) {
                     String name = item.getFieldName();
-                    if (name.equals("file")) {
+                    if (name.equals("file_to_upload")) {
                         file = item;
                         break;
                     }
@@ -189,8 +189,6 @@ public class upload_user_img extends HttpServlet {
         //
         Immagine img_upload = datalayer.createImmagine();
         Immagine result;
-        //creazione thumbnail
-        creaThumbnail(img_upload,info);
         
         img_upload.setNome(SecurityLayer.addSlashes(info.get("nome_senza_estensione").toString()));
         img_upload.setDimensione((Long) info.get("dimensione"));
@@ -199,6 +197,8 @@ public class upload_user_img extends HttpServlet {
         img_upload.setDigest(info.get("digest").toString());
         img_upload.setData_upload(current_timestamp);
         img_upload.setUtente(U);
+        //creazione thumbnail
+        creaThumbnail(img_upload,info);
         //memorizazione su DB
         result = datalayer.addImmagine(img_upload);
         if (result == null) {

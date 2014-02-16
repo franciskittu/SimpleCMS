@@ -20,7 +20,11 @@
   			<div class="sixteen columns header">
                             
                             <div class="logo"><h1><a href="visualizza">  <span class="white">Simple</span><span class="cyan">CMS</span></a></h1></div>
-                            <div class="login"><a href="login">Login</a></div>
+                            <#if (utente??)>
+                            <div class="login"><a href="logout">Logout</a></div>
+                            <#else>
+                            <div class="login"><a href="visualizza?pagina=login">Login</a></div>
+                            </#if>
                             <div class="menu">
                                 <ul>
                                     <li><a href="visualizza">Home </a></li>

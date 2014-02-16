@@ -115,7 +115,7 @@ public class SitoImpl implements Sito {
     @Override
     public Pagina getHomepage() {
         if(homepage == null){
-            homepage = datalayer.getHomepage(id_homepage);
+            homepage = datalayer.getPagina(id_homepage);
         }
         return homepage;
     }

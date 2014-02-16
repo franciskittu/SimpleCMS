@@ -36,6 +36,8 @@ public interface CMSDataLayer {
     
     Css getCSS(long i);
     
+    List<Css> getAllCSS();
+    
     Css addCSS(Css O);
     
     Css updateCSS(Css O);
@@ -74,9 +76,13 @@ public interface CMSDataLayer {
     
     Pagina addPagina(Pagina p);
     
+    Pagina addHomepage(Pagina p);
+    
     Pagina deletePagina(Pagina p);
     
     Pagina updatePagina(Pagina p);
+    
+    Pagina updateHomepage(Pagina p);
     
     List<Pagina> getFiglie(Pagina p);
     

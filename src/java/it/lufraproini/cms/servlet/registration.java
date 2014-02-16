@@ -18,7 +18,6 @@ package it.lufraproini.cms.servlet;
 
 import it.lufraproini.cms.utility.ErroreGrave;
 import it.lufraproini.cms.framework.result.FailureResult;
-import it.lufraproini.cms.framework.result.TemplateResult;
 import it.lufraproini.cms.model.Css;
 import it.lufraproini.cms.model.Pagina;
 import it.lufraproini.cms.model.Sito;
@@ -87,7 +86,7 @@ public class registration extends HttpServlet {
         return campi_errati;
     }
 
-    private void action_registration(CMSDataLayerImpl datalayer, HttpServletRequest request, Map template_data) throws ErroreGrave {
+    private String action_registration(CMSDataLayerImpl datalayer, HttpServletRequest request) throws ErroreGrave {
         regex = new HashMap();
         regex.put("username", "\\w*[-'\"\\\\/]*\\w*");
         regex.put("email", "\\w*[^;,]+[\\.\\w]*@[a-z0-9]+\\.[a-z]{2,4}");
@@ -97,7 +96,7 @@ public class registration extends HttpServlet {
         Utente U = datalayer.createUtente();
         List<String> campi_errati = creaUtente(U, campi_corretti, datalayer);
 
-        if (!campi_errati.isEmpty()) {
+        if (campi_errati.size() < 1) {
             try {
                 Utente nuovoUtente = datalayer.addUtente(U);
 
@@ -109,22 +108,17 @@ public class registration extends HttpServlet {
                         + "Queste sono le sue credenziali di accesso:<br />USERNAME: " + nuovoUtente.getUsername() + "<br />PASSWORD:" + rand_passwd_in_chiaro + "<br /><br />"
                         + "La password potr&agrave; cambiarla in qualsiasi momento nella pagina di gestione del suo account<br />"
                         + "L'ultimo passo da fare per attivare l'account " + nuovoUtente.getUsername() + " &egrave; cliccare sul seguente link "
-                        + "<a href='localhost:8484/SimpleCMS/registration?att=" + nuovoUtente.getCodiceAttivazione() + "&id=" + U.getID() + "'>link</a></p></body></html>";
+                        + "<a href='"+request.getLocalName()+":"+request.getServerPort()+"/SimpleCMS/registration?att=" + nuovoUtente.getCodiceAttivazione() + "&id=" + nuovoUtente.getID() + "'>link</a></p></body></html>";
                 
                 MailUtility.sendMail("franciskittu@gmail.com", "CMS", nuovoUtente.getEmail(), "attivazione account", messaggio_mail);
 
             } catch (MessagingException ex) {
                 throw new ErroreGrave("impossibile inviare email di conferma!");
             }
-
+            return null;
         } else {
-            template_data.put("errori_registrazione", campi_errati);
-            /*String[] array = campi_errati.split("\\s+");
-            for (String campo : array) {
-                if (!campo.isEmpty() && !campo.equals(" ")) {
-                    template_data.put("err_" + campo, "display" /*classe css);
-                }
-            }*/
+            return campi_errati.toString();
+            
         }
     }
     
@@ -150,15 +144,15 @@ public class registration extends HttpServlet {
         nuovo_sito.setDataCreazione(data_db);
         nuovo_sito = datalayer.addSito(nuovo_sito);
         if(nuovo_sito == null){
-            throw new ErroreGrave("impossibile aggiungere sito al DB!");
+            throw new ErroreGrave("l'utente aggiornato è "+U.getUsername()+" ma è stato impossibile creare ed aggiungere il sito al DB!");
         }
         Pagina home_nuovo_sito = datalayer.createPagina();
         home_nuovo_sito.setBody(default_body);
         home_nuovo_sito.setTitolo("Homepage");
         home_nuovo_sito.setSito(nuovo_sito);
-        home_nuovo_sito = datalayer.addPagina(home_nuovo_sito);
+        home_nuovo_sito = datalayer.addHomepage(home_nuovo_sito);
         if(home_nuovo_sito == null){
-            throw new ErroreGrave("impossibile aggiungere homepage al DB!");
+            throw new ErroreGrave("l'utente aggiornato è "+U.getUsername()+", il sito creato ha id="+nuovo_sito.getID()+" ma è stato impossibile aggiungere l'homepage al DB!");
         }
         nuovo_sito.setHomepage(home_nuovo_sito);
         
@@ -167,7 +161,7 @@ public class registration extends HttpServlet {
             throw new ErroreGrave("errore nell'associare l'homepage al sito di "+U.getUsername());
         }
         home_nuovo_sito.setSito(nuovo_sito);
-        home_nuovo_sito = datalayer.updatePagina(home_nuovo_sito);
+        home_nuovo_sito = datalayer.updateHomepage(home_nuovo_sito);
         if(home_nuovo_sito == null){
             throw new ErroreGrave("errore nell'associare il sito all'homepage");
         }
@@ -211,28 +205,29 @@ public class registration extends HttpServlet {
         /**/
         CMSDataLayerImpl datalayer = new CMSDataLayerImpl(connection);
 
-        Map template_data = new HashMap();
-
         if (request.getParameter("att") == null) {
             try {
-                action_registration(datalayer, request, template_data);
+                String errori = action_registration(datalayer, request);
+                if( errori == null){
+                    response.sendRedirect("visualizza?pagina=login&registrazione=ok");
+                } else {
+                    response.sendRedirect("visualizza?pagina=login&errors_sign_up="+errori);
+                }
             } catch (ErroreGrave ex) {
                 Logger.getLogger(registration.class.getName()).log(Level.SEVERE, null, ex);
                 FailureResult res = new FailureResult(getServletContext());
                 res.activate(ex.getMessage(), request, response);
             }
-            TemplateResult tr = new TemplateResult(getServletContext());
-            tr.activate("content.ftl.html", template_data, response);
+            
         } else {
             try {
                 action_activation(datalayer, request.getParameter("id"), request.getParameter("att"));
+                response.sendRedirect("visualizza?pagina=login&attivazione=ok");
             } catch (ErroreGrave ex) {
                 Logger.getLogger(registration.class.getName()).log(Level.SEVERE, null, ex);
                 FailureResult res = new FailureResult(getServletContext());
                 res.activate(ex.getMessage(), request, response);
             }
-            response.sendRedirect("Homepage.html");/*visualizza?pagina=home*/
-
         }
     }
 

@@ -75,7 +75,9 @@ CREATE TABLE immagine (
     digest character varying(255) NOT NULL,
     data_upload timestamp without time zone NOT NULL,
     id_utente integer NOT NULL,
-    tipo character varying(30)
+    tipo character varying(30),
+    thumb character varying(255),
+    cover boolean DEFAULT false
 );
 
 
@@ -150,7 +152,8 @@ CREATE TABLE sito (
     id_utente integer NOT NULL,
     homepage integer,
     descrizione character varying(255),
-    id_css integer
+    id_css integer,
+    data_creazione date DEFAULT ('now'::text)::date
 );
 
 
@@ -220,12 +223,14 @@ ALTER SEQUENCE slide_id_seq OWNED BY slide.id;
 CREATE TABLE utente (
     id integer NOT NULL,
     username character varying(20) NOT NULL,
-    password character varying(40) NOT NULL,
-    nome character varying(30),
-    cognome character varying(30),
+    password character varying(255) NOT NULL,
+    nome character varying(30) NOT NULL,
+    cognome character varying(30) NOT NULL,
     email character varying(60) NOT NULL,
-    data_di_nascita date NOT NULL,
-    spazio_disp_img integer NOT NULL
+    spazio_disp_img integer NOT NULL,
+    codice_attivazione character varying(255),
+    attivato boolean DEFAULT false,
+    admin boolean DEFAULT false
 );
 
 
@@ -298,41 +303,35 @@ ALTER TABLE ONLY utente ALTER COLUMN id SET DEFAULT nextval('utente_id_seq'::reg
 -- Data for Name: css; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO css (id, nome, descrizione, file) VALUES (1, 'n', 'd', 'f');
-INSERT INTO css (id, nome, descrizione, file) VALUES (2, 'n', 'd', 'f');
-INSERT INTO css (id, nome, descrizione, file) VALUES (3, 'stiloso', 'un bellissimo css', 'css/stylish.css');
-INSERT INTO css (id, nome, descrizione, file) VALUES (4, '', '', 'css/.css');
-INSERT INTO css (id, nome, descrizione, file) VALUES (5, 'GNU', '', 'css/.css');
-INSERT INTO css (id, nome, descrizione, file) VALUES (6, 'GNU', '', 'css/.css');
-INSERT INTO css (id, nome, descrizione, file) VALUES (7, 'fogliodistile', 'ottimo!', 'css/ciccu.css');
-INSERT INTO css (id, nome, descrizione, file) VALUES (8, 'fogliodistile', 'ottimo!', 'css/fogliodistile.css');
-INSERT INTO css (id, nome, descrizione, file) VALUES (9, 'fogliodistile', 'ottimo!', 'css/fogliodistile.css');
+INSERT INTO css (id, nome, descrizione, file) VALUES (1, 'simple', 'il foglio di stile di default', 'css/default.css');
+INSERT INTO css (id, nome, descrizione, file) VALUES (10, 'alternativo', 'stile alternative', 'css/alternative.css');
 
 
 --
 -- Name: css_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('css_id_seq', 9, true);
+SELECT pg_catalog.setval('css_id_seq', 10, true);
 
 
 --
 -- Data for Name: immagine; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo) VALUES (4, 'puttana', 75323, 'images/-51-75-738281840-54107-15-99-2212353-78-1125377-68-38.jpg', '-51-75-738281840-54107-15-99-2212353-78-1125377-68-38', '2013-12-16 16:19:20.344', 2, NULL);
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo) VALUES (5, 'CAAAAAH', 42370, 'images/-61-248-76-5651-268484-9741-12560-7139843612416-17.jpg', '-61-248-76-5651-268484-9741-12560-7139843612416-17', '2013-12-16 16:24:01.84', 2, NULL);
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo) VALUES (6, 'cernia', 75185, 'images/84988739583114644539-4656-61109-24-66-1197260127.jpg', '84988739583114644539-4656-61109-24-66-1197260127', '2013-12-16 16:27:54.878', 2, NULL);
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo) VALUES (7, 'lavatrice', 21147, 'images/111-621-40-69-101-22-41962-74-41126115-6210310469-8977.jpg', '111-621-40-69-101-22-41962-74-41126115-6210310469-8977', '2013-12-16 23:14:53.985', 2, NULL);
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo) VALUES (8, 'finoaquituttobene', 4878, 'images/104-40-27753611414-20-4471126-8015-65-283-3119112-18.jpg', '104-40-27753611414-20-4471126-8015-65-283-3119112-18', '2013-12-16 23:29:16.607', 2, NULL);
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo) VALUES (9, 'nevermind', 548121, 'images/978389-96-71661633190-125-68-1411688-5834-49748.jpg', '978389-96-71661633190-125-68-1411688-5834-49748', '2014-01-04 12:50:04.012', 2, 'image/jpeg');
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (9, 'blind', 6304, 'images/30102-152575-91-26-59-8069-30-6468529816108-43-87.gif', '30102-152575-91-26-59-8069-30-6468529816108-43-87', '2014-02-14 12:24:30.32', 4, 'image/gif', NULL, false);
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (11, 'smile', 707, 'images/-24884-7447-61-40-415461-101123124-78-43-81-396665113.gif', '-24884-7447-61-40-415461-101123124-78-43-81-396665113', '2014-02-14 12:28:20.826', 4, 'image/gif', NULL, false);
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (12, 'yoyo', 34148, 'images/-98-90-27372327389-76-844-15-5821-5775116633110.jpg', '-98-90-27372327389-76-844-15-5821-5775116633110', '2014-02-14 12:29:13.283', 4, 'image/jpeg', NULL, false);
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (13, 'nevermind', 548121, 'images/978389-96-71661633190-125-68-1411688-5834-49748.jpg', '978389-96-71661633190-125-68-1411688-5834-49748', '2014-02-14 12:30:32.62', 4, 'image/jpeg', NULL, false);
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (14, 'plin', 6304, 'images/30102-152575-91-26-59-8069-30-6468529816108-43-87.gif', '30102-152575-91-26-59-8069-30-6468529816108-43-87', '2014-02-14 16:49:42.661', 4, 'image/gif', '', false);
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (10, 'nirvana', 1298117, 'images/65-79-50-23-114540-4042125-6-108-12812178-53-13-336847.jpg', '65-79-50-23-114540-4042125-6-108-12812178-53-13-336847', '2014-02-14 12:24:41.663', 4, 'image/jpeg', NULL, true);
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (15, '196253', 1298117, 'images/65-79-50-23-114540-4042125-6-108-12812178-53-13-336847.jpg', '65-79-50-23-114540-4042125-6-108-12812178-53-13-336847', '2014-02-16 14:47:36.916', 8, 'image/jpeg', 'images/thumbs/65-79-50-23-114540-4042125-6-108-12812178-53-13-336847_thumbnail.jpg', false);
 
 
 --
 -- Name: immagine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('immagine_id_seq', 9, true);
+SELECT pg_catalog.setval('immagine_id_seq', 15, true);
 
 
 --
@@ -343,35 +342,39 @@ INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (3, 'ho
 INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (4, 'pagina1', '<div>questo è il corpo della pagina1</div>', 3, 5, false);
 INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (5, 'pagina2', '<div>questo è il corpo della pagina2</div>', 3, 5, false);
 INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (6, 'pagina3', '<div>questo è il corpo della pagina3 che è foglia della pagina 1</div>', 4, 5, false);
+INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (7, 'pagina4', '<div>questo è il corpo della pagina4 che è figlia della pagina 1</div>', 4, 5, false);
+INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (8, 'pagina5', '<div>questo è il corpo della pagina5 che è figlia di pagina 2</div>', 5, 5, false);
+INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (9, 'pagina6', '<div>questo è il corpo della pagina6</div>', 3, 5, false);
+INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (16, 'Homepage', '<p>Scrivere contenuto!</p>', NULL, 13, false);
 
 
 --
 -- Name: pagina_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('pagina_id_seq', 6, true);
+SELECT pg_catalog.setval('pagina_id_seq', 16, true);
 
 
 --
 -- Data for Name: sito; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO sito (id, header, footer, id_utente, homepage, descrizione, id_css) VALUES (5, '<div><h1>Questa &egrave; l\intestazione</h1></div>', '<div><h2>Questo è il pi&egrave; di pagina</h2></div>', 2, 3, NULL, NULL);
+INSERT INTO sito (id, header, footer, id_utente, homepage, descrizione, id_css, data_creazione) VALUES (5, '<div><h1>Questa &egrave; l\intestazione</h1></div>', '<div><h2>Questo è il pi&egrave; di pagina</h2></div>', 4, 3, 'rita_rinaldi', NULL, '2014-02-14');
+INSERT INTO sito (id, header, footer, id_utente, homepage, descrizione, id_css, data_creazione) VALUES (6, '<p>Questa è il contenuto di default dell''homepage del sito di chebanca!</p>', '<p>Il sito è stato creato ilSat Feb 15 11:33:01 CET 2014</p>', 5, NULL, 'chebanca', 1, '2014-02-15');
+INSERT INTO sito (id, header, footer, id_utente, homepage, descrizione, id_css, data_creazione) VALUES (13, '<p>Questa è il contenuto di default dell''homepage del sito di rock4ever!</p>', '<p>Il sito è stato creato ilSat Feb 15 18:39:59 CET 2014</p>', 8, 16, 'rock4ever', 10, '2014-02-15');
 
 
 --
 -- Name: sito_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('sito_id_seq', 5, true);
+SELECT pg_catalog.setval('sito_id_seq', 13, true);
 
 
 --
 -- Data for Name: slide; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO slide (id, descrizione, posizione, file, nome) VALUES (1, 'kurt in concerto', 1, 'slides/-103-114-128-45-88401276688-116-5392-4966119-34-92106-39.jpg', 'kurtd cobain');
-INSERT INTO slide (id, descrizione, posizione, file, nome) VALUES (2, 'nirvana in water', 2, 'slides/-69-84-5727-30-6168-18050-2263-55-107-46-32-84-11852-64.jpg', 'nirvana');
 
 
 --
@@ -385,14 +388,18 @@ SELECT pg_catalog.setval('slide_id_seq', 2, true);
 -- Data for Name: utente; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO utente (id, username, password, nome, cognome, email, data_di_nascita, spazio_disp_img) VALUES (2, 'franciskittu', 'password', 'francesco', NULL, 'franciskittu@gmail.com', '1991-06-14', 2232976);
+INSERT INTO utente (id, username, password, nome, cognome, email, spazio_disp_img, codice_attivazione, attivato, admin) VALUES (3, 'marta_proietti', '-1-128-29-111-54-107-6823-10-45265240-116-7123-1154210-44', 'marta', 'proietti', 'marta.proietti06@yahoo.it', 10000000, '1D6QEhruzTIfvinTRdVe', true, false);
+INSERT INTO utente (id, username, password, nome, cognome, email, spazio_disp_img, codice_attivazione, attivato, admin) VALUES (2, 'franciskittu', 'password', 'francesco', 'proietti', 'franciskittu@gmail.com', 7369618, NULL, false, true);
+INSERT INTO utente (id, username, password, nome, cognome, email, spazio_disp_img, codice_attivazione, attivato, admin) VALUES (4, 'rita_rinaldi', '-46-5830-1764-26111111-90-125-4966-3382-9609311081-38', 'Rita', 'Rinaldi', 'proietti.francesco.91@gmail.com', 3984838, '6nWcHul2zdEGEIJed4i2', true, false);
+INSERT INTO utente (id, username, password, nome, cognome, email, spazio_disp_img, codice_attivazione, attivato, admin) VALUES (5, 'chebanca', '707539127-5617-8473-120-74-37-40-116-938-64-32-6548117', 'Claudio', 'Proietti', 'franciskittu@gmail.com', 10000000, 'Krmspoq3r26pDRY9Bez5', true, false);
+INSERT INTO utente (id, username, password, nome, cognome, email, spazio_disp_img, codice_attivazione, attivato, admin) VALUES (8, 'rock4ever', '-120100-8-128-69-126126124-9611369-30-102-34-75695212512-80', 'Francesco', 'Proietti', 'proietti.francesco.91@gmail.com', 8701883, 'F5gEzXuQUUGHiWfchCAN', true, false);
 
 
 --
 -- Name: utente_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('utente_id_seq', 2, true);
+SELECT pg_catalog.setval('utente_id_seq', 8, true);
 
 
 --
@@ -464,7 +471,7 @@ ALTER TABLE ONLY immagine
 --
 
 ALTER TABLE ONLY pagina
-    ADD CONSTRAINT pagina_id_padre_fkey FOREIGN KEY (id_padre) REFERENCES pagina(id) ON UPDATE CASCADE;
+    ADD CONSTRAINT pagina_id_padre_fkey FOREIGN KEY (id_padre) REFERENCES pagina(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -472,7 +479,7 @@ ALTER TABLE ONLY pagina
 --
 
 ALTER TABLE ONLY pagina
-    ADD CONSTRAINT pagina_id_sito_fkey FOREIGN KEY (id_sito) REFERENCES sito(id) ON DELETE SET NULL;
+    ADD CONSTRAINT pagina_id_sito_fkey FOREIGN KEY (id_sito) REFERENCES sito(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

@@ -1,7 +1,8 @@
-{
+[{
     "body": "${corpo_pagina!""?js_string}",
     "title" : "${titolo_pagina!""?js_string}",
     "checked" : "${modello!""?js_string}",
-    "id_old" : "${id_old_css!""?js_string}",
-    "id_new" : "${id_new_css!""?js_string}"
+    "css_old" : "${id_old_css!""?js_string}",
+    "css_current" : "${id_new_css!""?js_string}"
 }
+]

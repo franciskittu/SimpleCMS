@@ -208,10 +208,10 @@ function smartButtonAdd(button){
     this.href=button.attr("href");
     
     this.success=function(data){
-                            var old= $("#img"+data.old);
-                            var curr=$("#img"+data.current);
-                            old.removeClass("set");
-                            curr.addClass("set");}
+                            var old= $("#img"+data.css_old);
+                            var curr=$("#img"+data.css_current);
+                            old.removeClass("active");
+                            curr.addClass("active");}
     
     var href=this.href;
     
