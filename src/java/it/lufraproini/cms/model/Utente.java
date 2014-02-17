@@ -21,7 +21,7 @@ package it.lufraproini.cms.model;
  * @author fsfskittu
  */
 public interface Utente {
-    long getID();
+    long getId();
     
     String getUsername();
     void setUsername(String s);

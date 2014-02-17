@@ -46,7 +46,7 @@ public class CssImpl implements Css {
     }
     
     @Override
-    public long getID() {
+    public long getId() {
         return id;
     }
 

@@ -11,7 +11,7 @@ package it.lufraproini.cms.model;
  * @author fsfskittu
  */
 public interface Css {
-    long getID();
+    long getId();
     
     String getNome();
     void setNome(String nome);

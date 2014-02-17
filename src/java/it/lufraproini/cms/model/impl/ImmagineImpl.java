@@ -63,7 +63,7 @@ public class ImmagineImpl implements Immagine {
     }
     
     @Override
-    public long getID() {
+    public long getId() {
         return id;
     }
 

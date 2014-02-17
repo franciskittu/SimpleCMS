@@ -43,9 +43,9 @@ import javax.sql.DataSource;
  * @author fsfskittu
  */
 public class image extends HttpServlet {
-    
+
     /*funzione del prof. della Penna del file Download.java del progetto Esempio_Uploader modificata*/
-    private void action_download(HttpServletRequest request, HttpServletResponse response, Immagine img) throws ErroreGrave, IOException{
+    private void action_download(HttpServletRequest request, HttpServletResponse response, Immagine img) throws ErroreGrave, IOException {
         StreamResult result = new StreamResult(getServletContext());
         InputStream is = null;
         String dir = getServletContext().getInitParameter("system.image_directory");//bisogna decidere se le immagini vanno memorizzate nelle sottocartelle degli utenti
@@ -56,10 +56,10 @@ public class image extends HttpServlet {
         } catch (FileNotFoundException ex) {
             throw new ErroreGrave("file non trovato!");
         } finally {
-            try{
+            try {
                 is.close();
-            } catch (Exception ex){
-                
+            } catch (Exception ex) {
+
             }
         }
     }
@@ -72,7 +72,7 @@ public class image extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
-     * @throws SQLException 
+     * @throws SQLException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
@@ -81,29 +81,32 @@ public class image extends HttpServlet {
         Connection connection = ds.getConnection();
         /**/
         CMSDataLayerImpl datalayer = new CMSDataLayerImpl(connection);
-        
-        /*verifica parametri*/
-        long id_img_par = SecurityLayer.checkNumeric(request.getParameter("image"));
-        String utente = request.getParameter("user");
-        
-        /*controllo se l'immagine appartiene all'utente specificato*/
-        List<Immagine> immagini = datalayer.getAllUsersImages(datalayer.getUtentebyUsername(utente));
-        Immagine img_download = null;
-        
-        try{
-            for(Immagine img:immagini){
-                if(img.getID() == id_img_par){
-                    img_download = img;
-                    break;
+        try {
+
+            /*verifica parametri*/
+            if (request.getParameter("image") != null && request.getParameter("user") != null) {
+                long id_img_par = SecurityLayer.checkNumeric(request.getParameter("image"));
+                String utente = request.getParameter("user");
+
+                /*controllo se l'immagine appartiene all'utente specificato*/
+                List<Immagine> immagini = datalayer.getAllUsersImages(datalayer.getUtentebyUsername(utente));
+                Immagine img_download = null;
+
+                for (Immagine img : immagini) {
+                    if (img.getId() == id_img_par) {
+                        img_download = img;
+                        break;
+                    }
                 }
-            }
-        
-            if(img_download == null){
-                throw new ErroreGrave("L'immagine specificata non appartiene all'utente "+ utente +"!");
-            }
+
+                if (img_download == null) {
+                    throw new ErroreGrave("L'immagine specificata non appartiene all'utente " + utente + "!");
+                }
                 action_download(request, response, img_download);
-                
-        } catch (ErroreGrave ex){
+            } else {
+                throw new ErroreGrave("I parametri non sono corretti!");
+            }
+        } catch (ErroreGrave ex) {
             /*visualizzazione della pagina di errore predefinita con il messaggio di errore riscontrato*/
             FailureResult res = new FailureResult(getServletContext());
             res.activate(ex.getMessage(), request, response);

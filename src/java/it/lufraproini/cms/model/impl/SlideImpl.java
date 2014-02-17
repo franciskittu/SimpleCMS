@@ -50,7 +50,7 @@ public class SlideImpl implements Slide{
     }
     
     @Override
-    public long getID(){
+    public long getId(){
         return id;
     }
     

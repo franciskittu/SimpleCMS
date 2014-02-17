@@ -23,7 +23,7 @@ import java.sql.Date;
  * @author fsfskittu
  */
 public interface Sito {
-    long getID();
+    long getId();
     
     String getDescrizione();
     void setDescrizione(String s);

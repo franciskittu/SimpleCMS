@@ -108,7 +108,7 @@ public class registration extends HttpServlet {
                         + "Queste sono le sue credenziali di accesso:<br />USERNAME: " + nuovoUtente.getUsername() + "<br />PASSWORD:" + rand_passwd_in_chiaro + "<br /><br />"
                         + "La password potr&agrave; cambiarla in qualsiasi momento nella pagina di gestione del suo account<br />"
                         + "L'ultimo passo da fare per attivare l'account " + nuovoUtente.getUsername() + " &egrave; cliccare sul seguente link "
-                        + "<a href='"+request.getLocalName()+":"+request.getServerPort()+"/SimpleCMS/registration?att=" + nuovoUtente.getCodiceAttivazione() + "&id=" + nuovoUtente.getID() + "'>link</a></p></body></html>";
+                        + "<a href='"+request.getLocalName()+":"+request.getServerPort()+"/SimpleCMS/registration?att=" + nuovoUtente.getCodiceAttivazione() + "&id=" + nuovoUtente.getId() + "'>link</a></p></body></html>";
                 
                 MailUtility.sendMail("franciskittu@gmail.com", "CMS", nuovoUtente.getEmail(), "attivazione account", messaggio_mail);
 
@@ -152,7 +152,7 @@ public class registration extends HttpServlet {
         home_nuovo_sito.setSito(nuovo_sito);
         home_nuovo_sito = datalayer.addHomepage(home_nuovo_sito);
         if(home_nuovo_sito == null){
-            throw new ErroreGrave("l'utente aggiornato è "+U.getUsername()+", il sito creato ha id="+nuovo_sito.getID()+" ma è stato impossibile aggiungere l'homepage al DB!");
+            throw new ErroreGrave("l'utente aggiornato è "+U.getUsername()+", il sito creato ha id="+nuovo_sito.getId()+" ma è stato impossibile aggiungere l'homepage al DB!");
         }
         nuovo_sito.setHomepage(home_nuovo_sito);
         

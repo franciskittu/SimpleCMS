@@ -1,4 +1,4 @@
-<form action="edit" id="form_edit">
+<form action="edit" method="post" id="form_edit">
     <fieldset>
         <a href="javascript:void(0)" id="back" ><img src="./site_images/back_ico.png"/></a>
         <h3>Editor</h3>
@@ -18,8 +18,11 @@
         <span class="select">Scegli modello</span> 
         <select disabled="disabled" name="impmodel">
             <option value="0"> Empty</option>
-            <option value="1"> About us | lucatra</option>
-            <option value="2"> Home | franciskittu</option>
+            <#if (model_pages?size > 0)>
+            <#list model_pages as page>
+            <option value="${page.id}">${page.titolo} | ${page.nome_sito}</option>
+            </#list>
+            </#if>
         </select>
     </fieldset>
     <fieldset>

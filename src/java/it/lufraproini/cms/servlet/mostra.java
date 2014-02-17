@@ -16,6 +16,7 @@
  */
 package it.lufraproini.cms.servlet;
 
+import it.lufraproini.cms.framework.result.FailureResult;
 import it.lufraproini.cms.framework.result.TemplateResult;
 import it.lufraproini.cms.model.Css;
 import it.lufraproini.cms.model.Immagine;
@@ -32,6 +33,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -47,13 +50,28 @@ import javax.sql.DataSource;
  * CHE RICHIEDONO DEI CONTENUTI DA FORNIRE DINAMICAMENTE
  */
 public class mostra extends HttpServlet {
+    
+    private List<Map> getModelli(CMSDataLayerImpl datalayer){
+        List<Map> struttura_modelli = new ArrayList<Map>();
+        List<Pagina> pagine_CMS = datalayer.getPagineModello();
+        for(Pagina p: pagine_CMS){
+                Map info = new HashMap();
+                info.put("id", p.getId());
+                info.put("titolo", SecurityLayer.stripSlashes(p.getTitolo()));
+                Sito s = datalayer.getSito(p.getSito().getId());
+                Utente U = datalayer.getUtente(s.getUtente().getId());
+                info.put("nome_sito", SecurityLayer.stripSlashes(U.getUsername()));
+                struttura_modelli.add(info);
+        }
+        return struttura_modelli;
+    }
 
     private List<Map> getAllImages(CMSDataLayerImpl datalayer, Utente U){
         List<Immagine> images = datalayer.getAllUsersImages(U);
         List<Map> lista_struttura_immagini = new ArrayList<Map>();
         for(Immagine img:images){
             Map info_img = new HashMap();
-            info_img.put("id", img.getID());
+            info_img.put("id", img.getId());
             info_img.put("cover", img.getCover());
             info_img.put("thumb", img.getThumb());
             info_img.put("nome", img.getNome());
@@ -67,10 +85,10 @@ public class mostra extends HttpServlet {
         List<Sito> siti_utente = datalayer.getSitobyUtente(U);
         for(Css foglio:fogli_di_stile){
             Map info = new HashMap();
-            info.put("id", foglio.getID());
+            info.put("id", foglio.getId());
             info.put("name", foglio.getNome());
             info.put("active",0);
-            if(foglio.getID() == siti_utente.get(0).getCss().getID()){
+            if(foglio.getId() == siti_utente.get(0).getCss().getId()){
                 info.put("active",1);
             }
             struttura_stili.add(info);
@@ -116,7 +134,7 @@ public class mostra extends HttpServlet {
 
     /*funzione che si serve della ricorsione per creare l'albero del sito a partire dalla homepage*/
     private Node creaAlbero(CMSDataLayerImpl datalayer, Sito sito) {
-        Pagina home = datalayer.getHomepage(sito.getID());
+        Pagina home = datalayer.getHomepage(sito.getId());
         if (home == null) {
             return null;
         }
@@ -175,6 +193,7 @@ public class mostra extends HttpServlet {
                         permesso = true;
                         //editor
                         template_data.put("editor", "editor.ftl.html");
+                        template_data.put("model_pages", getModelli(datalayer));
                         //albero
                         template_data.put("tree", "tree.ftl.html");
                         List<Sito> siti = datalayer.getSitobyUtente(U);
@@ -210,12 +229,16 @@ public class mostra extends HttpServlet {
                         template_data.put("mex_registrazione", "Complimenti, la registrazione è stata effettuata con successo!<br/>Controlli la sua e-mail per coompletare la procedura di attivazione!");
                     }
                     html = "login.ftl.html";
+                } else if(par.equals("whatis")){
+                    permesso = true;
+                    html = "whatis.ftl.html";
                 }
             }
             TemplateResult tr = new TemplateResult(getServletContext());
             tr.activate(html, template_data, response);
         } catch (SQLException ex) {
-            //
+            FailureResult res = new FailureResult(getServletContext());
+            res.activate(ex.getMessage(), request, response);
         }
 
     }

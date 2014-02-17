@@ -81,7 +81,7 @@ public class upload_user_img extends HttpServlet {
                         break;
                     }
                 }
-                if (file == null) {
+                if (file == null || file.getName().equals("")) {
                     throw new ErroreGrave("la form non ha inviato il campo file!");
                 } else {
                     //informazioni
@@ -147,21 +147,22 @@ public class upload_user_img extends HttpServlet {
     private Boolean creaThumbnail(Immagine img, Map info) {
         String cartella_img = getServletContext().getInitParameter("system.image_directory");
         String file_img = img.getFile().substring(img.getFile().indexOf("/"));
-        String path = getServletContext().getRealPath(cartella_img);
+        String path_img = getServletContext().getRealPath(cartella_img);
         String cartella_thumb = getServletContext().getInitParameter("system.thumb_directory");
-        int altezza_thumb = 120;
-        int larghezza_thumb = 120;
+        String path_thumb = getServletContext().getRealPath(cartella_thumb);
+        int altezza_thumb = 200;
+        int larghezza_thumb = 200;
         BufferedImage thumb = new BufferedImage(larghezza_thumb, altezza_thumb, BufferedImage.TYPE_INT_RGB);
-        String file_thumb = info.get("digest")+"_thumbnail." + info.get("estensione");
+        String file_thumb = info.get("digest")+"." + info.get("estensione");
         
         try {
-            if (ImageIO.read(new File(path + file_img)).getWidth() >= larghezza_thumb) {
-                thumb.createGraphics().drawImage(ImageIO.read(new File(path + file_img)).getScaledInstance(-1, altezza_thumb, Image.SCALE_SMOOTH), 0, 0, null);
+            if (ImageIO.read(new File(path_img + file_img)).getWidth() >= larghezza_thumb) {
+                thumb.createGraphics().drawImage(ImageIO.read(new File(path_img + file_img)).getScaledInstance(-1, altezza_thumb, Image.SCALE_SMOOTH), 0, 0, null);
             } else {
-                thumb.createGraphics().drawImage(ImageIO.read(new File(path + file_img)).getScaledInstance(larghezza_thumb, altezza_thumb, Image.SCALE_SMOOTH), 0, 0, null);
+                thumb.createGraphics().drawImage(ImageIO.read(new File(path_img + file_img)).getScaledInstance(larghezza_thumb, altezza_thumb, Image.SCALE_SMOOTH), 0, 0, null);
             }
             
-            ImageIO.write(thumb, info.get("estensione").toString(), new File(path + File.separatorChar + info.get("digest")+"_thumbnail." + info.get("estensione")));
+            ImageIO.write(thumb, info.get("estensione").toString(), new File(path_thumb + File.separatorChar + info.get("digest")+"." + info.get("estensione")));
         } catch (IOException ex) {
             return false;
         }

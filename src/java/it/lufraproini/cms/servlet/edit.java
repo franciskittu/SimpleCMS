@@ -54,8 +54,8 @@ public class edit extends HttpServlet {
         List<String> title_body_checked = new ArrayList();
         Pagina p = datalayer.getPagina(id);
         if (p != null) {
-            title_body_checked.add(SecurityLayer.stripSlashes(p.getTitolo()));
-            title_body_checked.add(SecurityLayer.stripSlashes(p.getBody()));
+            title_body_checked.add(SecurityLayer.stripSlashes(p.getTitolo().replaceAll("(\r\n|\n)", "")));
+            title_body_checked.add(SecurityLayer.stripSlashes(p.getBody().replaceAll("(\r\n|\n)", "")));
             if (p.getModello()) {
                 title_body_checked.add("1");
             } else {
@@ -70,8 +70,10 @@ public class edit extends HttpServlet {
     //funzione che aggiorna la pagina in seguito al submit della form dell'editing
     private void aggiorna_pagina(CMSDataLayerImpl datalayer, Map parametri, long id) throws ErroreGrave{
         Pagina p = datalayer.getPagina(id);
-        p.setBody(SecurityLayer.addSlashes(parametri.get("editor").toString()));
-        p.setTitolo(SecurityLayer.addSlashes(parametri.get("title").toString()));
+        String [] val = (String []) parametri.get("editor");
+        p.setBody(SecurityLayer.addSlashes(val[0].replaceAll("(\r\n|\n)", "")));
+        val = (String[]) parametri.get("title");
+        p.setTitolo(SecurityLayer.addSlashes(val[0].replaceAll("(\r\n|\n)", "")));
         if(parametri.containsKey("model")){
             p.setModello(true);
         } else {
@@ -83,26 +85,28 @@ public class edit extends HttpServlet {
     }
     
     //funzione chiamata per caricare il contenuto dell'header o del footer (richiesta AJAX)
-    private String caricamento_header_e_footer(CMSDataLayerImpl datalayer, String tipo, Utente U) throws ErroreGrave{
+    private String caricamento_header_e_footer(CMSDataLayerImpl datalayer, String [] tipo, Utente U) throws ErroreGrave{
         List<Sito> sito = datalayer.getSitobyUtente(U);
         if(sito.size() < 1){
             throw new ErroreGrave("Sembra che l'utente non abbia alcun sito!");
         }
-        if(tipo.equals("footer")){
-            return sito.get(0).getFooter();
+        if(tipo[0].equals("footer")){
+            return sito.get(0).getFooter().replaceAll("(\r\n|\n)", "");
         }
-        return sito.get(0).getHeader();
+        return sito.get(0).getHeader().replaceAll("(\r\n|\n)", "");
     }
     
-    private void aggiorna_header_e_footer(CMSDataLayerImpl datalayer, String tipo, String contenuto, Utente U) throws ErroreGrave{
+    private void aggiorna_header_e_footer(CMSDataLayerImpl datalayer, String[] tipo, String[] contenuto, Utente U) throws ErroreGrave{
         List<Sito> sito = datalayer.getSitobyUtente(U);
+        
         if(sito.size() < 1){
             throw new ErroreGrave("Sembra che l'utente non abbia alcun sito!");
         }
-        if(tipo.equals("footer")){
-            sito.get(0).setFooter(SecurityLayer.addSlashes(contenuto));
+        
+        if(tipo[0].equals("footer")){
+            sito.get(0).setFooter(SecurityLayer.addSlashes(contenuto[0].replaceAll("(\r\n|\n)", "")));
         } else {
-            sito.get(0).setHeader(SecurityLayer.addSlashes(contenuto));
+            sito.get(0).setHeader(SecurityLayer.addSlashes(contenuto[0].replaceAll("(\r\n|\n)", "")));
         }
         if(datalayer.updateSito(sito.get(0)) == null){
             throw new ErroreGrave("impossibile aggiornare il DataBase!");
@@ -134,38 +138,51 @@ public class edit extends HttpServlet {
                 
                 Utente U = datalayer.getUtente(SecurityLayer.checkNumeric(s.getAttribute("userid").toString()));
                 long id_pagina;
-                    try {
-                        id_pagina = SecurityLayer.checkNumeric(parametri.get("id").toString());
-                    } catch (NumberFormatException ex) {
-                        throw new ErroreGrave("Il parametro inviato non contiene valori compatibili per la richiesta!");
-                    }
+                    
                 //non effettuo alcun controllo (eccetto l'id) sui valori dei parametri poichè le stringhe possono contenere qualsiasi carattere
                 //gestione FORM
                 if (parametri.containsKey("title") && parametri.containsKey("editor") && parametri.containsKey("id")) {
+                    try {
+                        String[] val = (String [])parametri.get("id");
+                        id_pagina = SecurityLayer.checkNumeric(val[0]);
+                    } catch (NumberFormatException ex) {
+                        throw new ErroreGrave("Il parametro inviato non contiene valori compatibili per la richiesta!");
+                    }
                     aggiorna_pagina(datalayer, parametri, id_pagina);
                     response.sendRedirect("visualizza?pagina=account");
                 }
                 //richiesta AJAX pagina
                 else if (parametri.size() == 1 && parametri.containsKey("id")) {
+                    try {
+                        String[] val = (String [])parametri.get("id");
+                        id_pagina = SecurityLayer.checkNumeric(val[0]);
+                    } catch (NumberFormatException ex) {
+                        throw new ErroreGrave("Il parametro inviato non contiene valori compatibili per la richiesta!");
+                    }
                     List<String> dati_pagina = caricamento_pagina_esistente(datalayer, id_pagina);
                     template_data.put("outline_tpl", "");
                     template_data.put("title", dati_pagina.get(0));
                     template_data.put("body", dati_pagina.get(1));
                     template_data.put("checked", dati_pagina.get(2));
+                    template_data.put("css_old","");
+                    template_data.put("css_current","");
                     TemplateResult tr = new TemplateResult(getServletContext());
                     tr.activate("account_ajax.ftl.json", template_data, response);
                 }
                 //richiesta AJAX header e footer
                 else if(parametri.size() == 1 && parametri.containsKey("type")){
+                    String body = caricamento_header_e_footer(datalayer, (String[]) parametri.get("type"), U);
                     template_data.put("outline_tpl", "");
+                    template_data.put("body", body);     
                     template_data.put("title", "");
                     template_data.put("checked", "");
-                    template_data.put("body", caricamento_header_e_footer(datalayer, parametri.get("type").toString(), U));                    
+                    template_data.put("css_old","");
+                    template_data.put("css_current", "");
                     TemplateResult tr = new TemplateResult(getServletContext());
                     tr.activate("account_ajax.ftl.json", template_data, response);
                 }
                 else if(parametri.containsKey("type") && parametri.containsKey("editor")){
-                    aggiorna_header_e_footer(datalayer, parametri.get("type").toString(), parametri.get("editor").toString(), U);
+                    aggiorna_header_e_footer(datalayer, (String []) parametri.get("type"), (String [])parametri.get("editor"), U);
                     response.sendRedirect("visualizza?pagina=account");
                 }
                 //richiesta non gestita

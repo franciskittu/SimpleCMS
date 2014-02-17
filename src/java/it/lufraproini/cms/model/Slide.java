@@ -21,7 +21,7 @@ package it.lufraproini.cms.model;
  * @author fsfskittu
  */
 public interface Slide {
-    long getID();
+    long getId();
     
     String getDescrizione();
     void setDescrizione(String s);

@@ -38,7 +38,7 @@ import java.util.logging.Logger;
 public class CMSDataLayerImpl implements CMSDataLayer {
     
     private final PreparedStatement gCss, aCss, uCss, dCss;
-    private final Statement gManualCss, gSitiDataOrdinati;
+    private final Statement gManualCss, gSitiDataOrdinati, gPagineModello;
     private final PreparedStatement gUtente, gUtente_by_Username, aUtente, uUtente, dUtente;
     private final PreparedStatement gImmagine, gImmagini, aImmagine, uImmagine, dImmagine;
     private final PreparedStatement gPagina, aPagina, dPagina, gFiglie, dSottoAlbero, gPaginabyTitolo, gHome, uPagina, aHome, uHome;
@@ -49,6 +49,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     public CMSDataLayerImpl(Connection c) throws SQLException{
         gManualCss = c.createStatement();
         gSitiDataOrdinati = c.createStatement();
+        gPagineModello = c.createStatement();
         gHome = c.prepareStatement("SELECT pagina.* FROM sito, pagina WHERE sito.id = ? AND pagina.id = homepage;");
         aHome = c.prepareStatement("INSERT INTO pagina (titolo, body, id_sito) VALUES(?,?,?) RETURNING id");
         uHome = c.prepareStatement("UPDATE pagina SET titolo = ?, body = ?, id_sito = ?, modello = ? WHERE id = ?");
@@ -203,7 +204,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     @Override
     public Css deleteCSS(Css O) {
         try {
-            dCss.setLong(1, O.getID());
+            dCss.setLong(1, O.getId());
             if(dCss.executeUpdate() == 1){
                 deleteCSSFile(O);
                 return O;
@@ -293,7 +294,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     @Override
     public Utente deleteUtente(Utente U) {
         try{
-            dUtente.setLong(1,U.getID());
+            dUtente.setLong(1,U.getId());
             if(dUtente.executeUpdate() == 1){
                 return U;
             }
@@ -314,9 +315,9 @@ public class CMSDataLayerImpl implements CMSDataLayer {
             uUtente.setLong(6,U.getSpazio_disp_img());
             uUtente.setString(7, U.getCodiceAttivazione());
             uUtente.setBoolean(8, U.getAttivato());
-            uUtente.setLong(9,U.getID());
+            uUtente.setLong(9,U.getId());
             if(uUtente.executeUpdate() == 1){
-                return getUtente(U.getID());
+                return getUtente(U.getId());
             }
         } catch(SQLException ex){
             Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -355,7 +356,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         ResultSet rs = null;
         try {
             
-            gCoverUtente.setLong(1, U.getID());
+            gCoverUtente.setLong(1, U.getId());
             rs = gCoverUtente.executeQuery();
             if(rs.next()){
                 return new ImmagineImpl(this, rs);
@@ -382,7 +383,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
             aImmagine.setString(4,img.getFile());
             aImmagine.setString(5,img.getDigest());
             aImmagine.setTimestamp(6,img.getData_upload());
-            aImmagine.setLong(7,img.getUtente().getID());
+            aImmagine.setLong(7,img.getUtente().getId());
             aImmagine.setString(8,img.getThumb());
             chiave = aImmagine.executeQuery();
             if(chiave.next()){
@@ -416,7 +417,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     @Override
     public Immagine deleteImmagine(Immagine I) {
         try{
-            dImmagine.setLong(1,I.getID());
+            dImmagine.setLong(1,I.getId());
             if(dImmagine.executeUpdate() == 1){
                 deleteImmagineFiles(I);
                 return I;
@@ -442,7 +443,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         List<Immagine> ris = new ArrayList();
         ResultSet rs = null;
         try{
-            gImmagini.setLong(1,U.getID());
+            gImmagini.setLong(1,U.getId());
             rs = gImmagini.executeQuery();
             while(rs.next()){
                 ris.add(new ImmagineImpl(this, rs));
@@ -470,7 +471,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         try{
             aHome.setString(1, p.getTitolo());
             aHome.setString(2, p.getBody());
-            aHome.setLong(3, p.getSito().getID());
+            aHome.setLong(3, p.getSito().getId());
             chiave = aHome.executeQuery();
             if(chiave.next()){
                 return getPagina(chiave.getLong("id"));
@@ -494,8 +495,8 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         try{
             aPagina.setString(1, p_agg.getTitolo());
             aPagina.setString(2,p_agg.getBody());
-            aPagina.setLong(3,0/*p_agg.getPadre().getID()*/);
-            aPagina.setLong(4,p_agg.getSito().getID());
+            aPagina.setLong(3,p_agg.getPadre().getId());
+            aPagina.setLong(4,p_agg.getSito().getId());
             aPagina.setBoolean(5,p_agg.getModello());
             chiave = aPagina.executeQuery();
             if(chiave.next()){
@@ -538,7 +539,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     @Override
     public Pagina deletePagina(Pagina p) {
         try{
-            dPagina.setLong(1,p.getID());
+            dPagina.setLong(1,p.getId());
             if(dPagina.executeUpdate() == 1){
                 return p;
             }
@@ -553,11 +554,11 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         try{
             uHome.setString(1, p.getTitolo());
             uHome.setString(2, p.getBody());
-            uHome.setLong(3, p.getSito().getID());
+            uHome.setLong(3, p.getSito().getId());
             uHome.setBoolean(4, p.getModello());
-            uHome.setLong(5, p.getID());
+            uHome.setLong(5, p.getId());
             if(uHome.executeUpdate() == 1){
-                return getPagina(p.getID());
+                return getPagina(p.getId());
             }
         } catch (SQLException ex){
             //
@@ -569,12 +570,12 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         try{
             uPagina.setString(1, p.getTitolo());
             uPagina.setString(2, p.getBody());
-            uPagina.setLong(3, p.getPadre().getID());
-            uPagina.setLong(4, p.getSito().getID());
+            uPagina.setLong(3, p.getPadre().getId());
+            uPagina.setLong(4, p.getSito().getId());
             uPagina.setBoolean(5, p.getModello());
-            uPagina.setLong(6, p.getID());
+            uPagina.setLong(6, p.getId());
             if(uPagina.executeUpdate() == 1){
-                return getPagina(p.getID());
+                return getPagina(p.getId());
             }
         } catch (SQLException ex){
             //
@@ -588,7 +589,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         List<Pagina> ris = new ArrayList();
         ResultSet rs = null;
         try{
-            gFiglie.setLong(1, padre.getID());
+            gFiglie.setLong(1, padre.getId());
             rs = gFiglie.executeQuery();
             while(rs.next()){
                 ris.add(new PaginaImpl(this,rs));
@@ -649,12 +650,33 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     }
     
     @Override
+    public List<Pagina> getPagineModello(){
+        ResultSet rs = null;
+        List<Pagina> ris = new ArrayList<Pagina>();
+        try{
+            rs = gPagineModello.executeQuery("SELECT * FROM pagina WHERE modello = true");
+            while (rs.next()){
+                ris.add(new PaginaImpl(this, rs));
+            }
+        } catch(SQLException ex){
+            //
+        } finally {
+            try{
+                rs.close();
+            } catch (SQLException ex){
+                //
+            }
+        }
+        return ris;
+    }
+    
+    @Override
     public long getLinkPagebyTitle(Sito s, String titolo){
         SitoImpl sito = (SitoImpl) s;
         ResultSet rs = null;
         try{
             gPaginabyTitolo.setString(1, titolo);
-            gPaginabyTitolo.setLong(2,s.getID());
+            gPaginabyTitolo.setLong(2,s.getId());
             rs = gPaginabyTitolo.executeQuery();
             if(rs.next()){
                 return rs.getLong("id");
@@ -676,7 +698,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         List<Pagina> ris = new ArrayList<Pagina>();
         ResultSet rs = null;
         try{
-            gFoglie.setLong(1,s.getID());
+            gFoglie.setLong(1,s.getId());
             rs = gFoglie.executeQuery();
             while(rs.next()){
                 ris.add(new PaginaImpl(this, rs));
@@ -699,7 +721,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         ResultSet rs1 = null;
         ResultSet rs2 = null;
         try{
-            gAntenati.setLong(1, foglia.getID());
+            gAntenati.setLong(1, foglia.getId());
             rs1 = gAntenati.executeQuery();
             while(rs1.next()){
                 gPagina.setLong(1, rs1.getLong("id"));
@@ -726,7 +748,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         List<Pagina> ris = new ArrayList<Pagina>();
         ResultSet rs = null;
         try{
-            gPagineSito.setLong(1,s.getID());
+            gPagineSito.setLong(1,s.getId());
             rs = gPagineSito.executeQuery();
             while(rs.next()){
                 ris.add(new PaginaImpl(this, rs));
@@ -756,9 +778,9 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         try{
             aSito.setString(1,s_agg.getHeader());
             aSito.setString(2,s_agg.getFooter());
-            aSito.setLong(3,s_agg.getUtente().getID());
+            aSito.setLong(3,s_agg.getUtente().getId());
             aSito.setString(4,s_agg.getDescrizione());
-            aSito.setLong(5,s_agg.getCss().getID());
+            aSito.setLong(5,s_agg.getCss().getId());
             chiave = aSito.executeQuery();
             if(chiave.next()){
                 return getSito(chiave.getLong("id"));
@@ -778,7 +800,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     @Override
     public Sito deleteSito(Sito s) {
         try{
-            dSito.setLong(1,s.getID());
+            dSito.setLong(1,s.getId());
             if(dSito.executeUpdate() == 1){// il DBMS eliminerà le tuple corrispondenti alle pagine del sito
                 return s;
             }
@@ -794,13 +816,13 @@ public class CMSDataLayerImpl implements CMSDataLayer {
             uSito.setString(1, s.getDescrizione());
             uSito.setString(2, s.getHeader());
             uSito.setString(3, s.getFooter());
-            uSito.setLong(4, s.getUtente().getID());
-            uSito.setLong(5, s.getHomepage().getID());
-            uSito.setLong(6, s.getCss().getID());
+            uSito.setLong(4, s.getUtente().getId());
+            uSito.setLong(5, s.getHomepage().getId());
+            uSito.setLong(6, s.getCss().getId());
             uSito.setDate(7, s.getDataCreazione());
-            uSito.setLong(8, s.getID());
+            uSito.setLong(8, s.getId());
             if(uSito.executeUpdate() == 1){
-                return getSito(s.getID());
+                return getSito(s.getId());
             }
         } catch (SQLException ex){
             //
@@ -813,7 +835,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         List<Sito> ris = new ArrayList();
         ResultSet rs = null;
         try{
-            gSitobyUtente.setLong(1, U.getID());
+            gSitobyUtente.setLong(1, U.getId());
             rs = gSitobyUtente.executeQuery();
             while(rs.next()){
                 Sito s = new SitoImpl(this,rs);
@@ -895,7 +917,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     @Override
     public Slide deleteSlide(Slide s){
         try{
-            dSlide.setLong(1, s.getID());
+            dSlide.setLong(1, s.getId());
             if(dSlide.executeUpdate() == 1){
                 deleteSlideFile(s);
                 return s;

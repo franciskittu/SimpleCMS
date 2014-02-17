@@ -41,7 +41,7 @@ public class login extends HttpServlet {
         Utente U = datalayer.getUtentebyUsername(username);
         String password_criptata = SecurityLayer.criptaPassword(password_in_chiaro, username);
         if(U != null && password_criptata.equals(U.getPassword())){
-            return U.getID();
+            return U.getId();
         }
         return 0;
     }

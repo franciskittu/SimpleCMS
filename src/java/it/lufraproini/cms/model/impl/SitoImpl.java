@@ -61,7 +61,7 @@ public class SitoImpl implements Sito {
     }
     
     @Override
-    public long getID() {
+    public long getId() {
         return id;
     }
 

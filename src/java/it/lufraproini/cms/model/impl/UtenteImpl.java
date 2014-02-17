@@ -55,7 +55,7 @@ public class UtenteImpl implements Utente {
     }
     
     @Override
-    public long getID() {
+    public long getId() {
         return id;
     }
 

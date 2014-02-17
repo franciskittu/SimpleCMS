@@ -36,7 +36,8 @@ public class Node {
         this.page=page;
         
         this.children = new ArrayList<Node>();
-    
+        
+            
     }
     
     public void setPage(Pagina page){
@@ -73,4 +74,5 @@ public class Node {
     
         return !(this.children.isEmpty());
     }    
+    
 }

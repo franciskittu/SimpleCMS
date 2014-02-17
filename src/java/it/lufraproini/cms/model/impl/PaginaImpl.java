@@ -16,7 +16,6 @@
  */
 package it.lufraproini.cms.model.impl;
 
-import it.lufraproini.cms.model.Css;
 import it.lufraproini.cms.model.Pagina;
 import it.lufraproini.cms.model.Sito;
 import java.sql.ResultSet;
@@ -28,7 +27,7 @@ public class PaginaImpl implements Pagina {
     private long id, id_padre, id_sito;
     private String titolo, body;
     private Sito sito;
-    private Pagina pagina_padre;
+    private Pagina padre;
     private boolean modello;
     private CMSDataLayerImpl datalayer;
     
@@ -52,7 +51,7 @@ public class PaginaImpl implements Pagina {
         this.datalayer = datalayer;
     }
     @Override
-    public long getID() {
+    public long getId() {
         return id;
     }
 
@@ -88,15 +87,15 @@ public class PaginaImpl implements Pagina {
     
     @Override
     public Pagina getPadre() {
-        if(pagina_padre == null){
-            pagina_padre = datalayer.getPagina(id_padre);
+        if(padre == null){
+            padre = datalayer.getPagina(id_padre);
         }
-        return pagina_padre;
+        return padre;
     }
 
     @Override
     public void setPadre(Pagina p) {
-        pagina_padre = p;
+        padre = p;
     }
     
     @Override

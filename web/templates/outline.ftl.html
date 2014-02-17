@@ -21,14 +21,14 @@
                             
                             <div class="logo"><h1><a href="visualizza">  <span class="white">Simple</span><span class="cyan">CMS</span></a></h1></div>
                             <#if (utente??)>
-                            <div class="login"><a href="logout">Logout</a></div>
+                            <div class="login"><a href="visualizza?pagina=account">${utente?html}</a><br /><a href="logout">Logout</a></div>
                             <#else>
                             <div class="login"><a href="visualizza?pagina=login">Login</a></div>
                             </#if>
                             <div class="menu">
                                 <ul>
                                     <li><a href="visualizza">Home </a></li>
-                                    <li><a href="#">What is SimpleCMS?</a></li>
+                                    <li><a href="visualizza?pagina=whatis">What is SimpleCMS?</a></li>
                                     <li><span>Contact</span>
                                         <div><a href="mailto:info@simpleCMS.com">info@simpleCMS.com</a> </div>
                                     </li>
