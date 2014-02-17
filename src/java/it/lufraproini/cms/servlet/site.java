@@ -52,11 +52,11 @@ public class site extends HttpServlet {
     private List<String> componiPagina(Sito s, Pagina p) throws ErroreGrave {
         List<String> title_header_body_footer = new ArrayList();
         //controllo se la pagina richiesta è nell'albero del sito richiesto
-        if (p.getSito().getID() == s.getID()) {
-            title_header_body_footer.add(p.getTitolo());
-            title_header_body_footer.add(s.getHeader());
-            title_header_body_footer.add(p.getBody());
-            title_header_body_footer.add(s.getFooter());
+        if (p.getSito().getId() == s.getId()) {
+            title_header_body_footer.add(SecurityLayer.stripSlashes(p.getTitolo()));
+            title_header_body_footer.add(SecurityLayer.stripSlashes(s.getHeader()));
+            title_header_body_footer.add(SecurityLayer.stripSlashes(p.getBody()));
+            title_header_body_footer.add(SecurityLayer.stripSlashes(s.getFooter()));
         } else {
             throw new ErroreGrave("la pagina " + p.getTitolo() + " non appartiene al sito " + s.getUtente().getUsername() + "!");
         }
@@ -66,12 +66,12 @@ public class site extends HttpServlet {
     /*la seguente funzione ordina alfabeticamente per titolo il menu della pagina*/
     private List<Map> componiMenu(Sito s, Pagina p, CMSDataLayerImpl datalayer) {
         List<Pagina> figlie = datalayer.getFiglie(p);
-        Pagina homepage = datalayer.getPagina(s.getHomepage().getID());
+        Pagina homepage = datalayer.getPagina(s.getHomepage().getId());
         List<Map> menu_ordinato_per_titolo = new ArrayList();//valore di ritorno
         /*se la pagina non è l'homepage allora deve contenere un link ad essa*/
-        if(homepage.getID() != p.getID()){
+        if(homepage.getId() != p.getId()){
             Map home = new HashMap();
-            home.put("id", homepage.getID());
+            home.put("id", homepage.getId());
             home.put("titolo", homepage.getTitolo());
             menu_ordinato_per_titolo.add(home);
         }
@@ -89,7 +89,7 @@ public class site extends HttpServlet {
             }
             /*inserimento elemento in lista*/
             Pagina el = figlie.get(min);
-            item.put("id", el.getID());
+            item.put("id", el.getId());
             item.put("titolo",el.getTitolo());
             menu_ordinato_per_titolo.add(item);
         }

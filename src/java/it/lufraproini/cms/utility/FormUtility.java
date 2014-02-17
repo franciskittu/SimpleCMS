@@ -39,7 +39,7 @@ public class FormUtility {
         for (Map.Entry<String, String[]> field : fieldset) {
             //itero sui vari campi
             String nome = field.getKey();
-
+            
             if (regex.containsKey(nome)) {
                 //il valore, anche se semplice, è sempre un array
                 String[] valori = field.getValue();

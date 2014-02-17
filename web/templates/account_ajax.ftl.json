@@ -1,8 +1,9 @@
-[{
-    "body": "${corpo_pagina!""?js_string}",
-    "title" : "${titolo_pagina!""?js_string}",
-    "checked" : "${modello!""?js_string}",
-    "css_old" : "${id_old_css!""?js_string}",
-    "css_current" : "${id_new_css!""?js_string}"
+{
+    "body": "${body!""}",
+    "title": "${title!""}",
+    "checked": "${checked!""}",
+    "css_current" : "${css_current!""}",
+    "css_old" : "${css_old!""}",
+    "img_current" : "${img_current!""}",
+    "img_old" : "${img_old!""}"
 }
-]

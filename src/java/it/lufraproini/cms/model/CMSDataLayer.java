@@ -98,6 +98,8 @@ public interface CMSDataLayer {
     
     List<Pagina> getPagineSito(Sito s);
     
+    List<Pagina> getPagineModello();
+    
     /* SITO */
     
     Sito createSito();

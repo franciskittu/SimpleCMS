@@ -7,7 +7,7 @@ function importModel(){
         CKEDITOR.instances.editor.setData('');
     }else{
         $.ajax({
-                url: "Edit",
+                url: "edit",
                 dataType: 'json',
                 data: {
                     id:encodeURIComponent(id)
@@ -24,11 +24,13 @@ function importModel(){
 
 function addImg(e){
     var img=e.data.img;
+    var name = e.data.name;
     var arr_img= img.split('/');
     var length=arr_img.length;
-    var name= arr_img[length-1]; 
+    var file_name= arr_img[length-1];
+    var src=arr_img[0];
     var editor=e.data.editor;
-    editor.insertHtml('<img src="'+img+'" alt='+name+'" ></img>');
+    editor.insertHtml('<img src="'+src+"/"+file_name+'" alt='+name+'" ></img>');
 }
 
 
@@ -38,14 +40,40 @@ function initButtonUpload(){
     var in_upload=$(' .images input[type=submit] ');
     var in_file=$(' .images input[type=file] ');
     in_upload.css("visibility", "hidden");
+    in_file.css("display", "none");
     var button_browse=$('<a href="javascript:void(0)" class="button browse">browse</a>');
     var button_upload=$('<a  href="javascript:void(0)"class="button upload">upload</a>');
     var wrap=$(".wrapper_content");
+     
+    if(window.ActiveXObject!==undefined){
+        in_file.bind("click", function(){
+           setTimeout(function(){
+                        if(button_browse.next().is("span")){
+                            button_browse.next().empty();
+                            button_browse.next().text(in_file.val());
+                        }else{   
+                            $("<span>"+in_file.val()+"</span>").insertAfter(button_browse);
+               
+                        }
+           }, 0);
+        });
+   }else{  
+        in_file.bind("change", function(){
+          if(button_browse.next().is("span")){
+             button_browse.next().empty();
+             button_browse.next().text(in_file.val());
+          }else{
+              $("<span>"+in_file.val()+"</span>").insertAfter(button_browse);
+               
+          }
+        });
+    }
     button_browse.bind("click", function(){in_file.click();});
     button_upload.bind("click", function(){in_upload.click();});
     wrap.append(button_browse);
     wrap.append(button_upload);
-    
+     
+ 
 }
 
 //nasconde l'albero e mostra l'editor
@@ -99,11 +127,12 @@ function smartButtonEditHF(button){
         
         $("#form_edit input[name=type]").removeAttr("disabled");
         $("#form_edit input[name=type]").val(type);
+        alert(data.body+" "+data.title+" "+data.checked);
         CKEDITOR.instances.editor.insertHtml(data.body);
         showEditor();
-    }
+    };
     
-    this.error=function(){alert("Errore trasferimento dati");}
+    this.error=function(){alert("Errore trasferimento dati");};
     
     var success=this.success;
     var error=this.error;
@@ -122,7 +151,7 @@ function smartButtonEditHF(button){
         });
         }
         return false;
-    }
+    };
     
     button.bind("click", this.send);
 }
@@ -135,14 +164,15 @@ function smartButtonEdit(button){
     var id=button.attr("id").replace("edit", "");
     
     this.success=function(data){
+        
         $("#form_edit fieldset:nth-child(2)").css("display", "block");
         $("#form_edit fieldset:nth-child(4)").css("display", "block");
         $("#form_edit input[name=title]").removeAttr("disabled");
         $("#form_edit input[name=model]").removeAttr("disabled");
         $("#form_edit input[name=id]").removeAttr("disabled");
         $("#form_edit input[name=title]").val(data.title);
-        if(data.checked != ""){$("#form_edit input[type=checkbox]").attr(data.checked, data.checked);}
-        $("form_edit input[name=id]").val(id);
+        if(data.checked !== "0"){$("#form_edit input[type=checkbox]").attr(data.checked, data.checked);}
+        $("#form_edit input[name=id]").val(id);
         CKEDITOR.instances.editor.insertHtml(data.body);
         
         showEditor();
@@ -155,7 +185,7 @@ function smartButtonEdit(button){
     var error=this.error;
     
     this.send=function(e){
-        
+        alert(id);
         if( id){
             $.ajax({
                 url: "edit",
@@ -208,10 +238,10 @@ function smartButtonAdd(button){
     this.href=button.attr("href");
     
     this.success=function(data){
-                            var old= $("#img"+data.css_old);
-                            var curr=$("#img"+data.css_current);
-                            old.removeClass("active");
-                            curr.addClass("active");}
+                            var old= $("#img"+data.img_old);
+                            var curr=$("#img"+data.img_current);
+                            old.removeClass("set");
+                            curr.addClass("set");}
     
     var href=this.href;
     
@@ -224,10 +254,11 @@ function smartButtonAdd(button){
         if(id){
             
 	$.ajax({
-            url: "style",
+            url: "cover",
             dataType: 'json',
             data: {
                 id:encodeURIComponent(id),
+                json:encodeURIComponent("true")
             }
             ,
             success: success,
@@ -252,8 +283,9 @@ function smartButtonCss( button ){
  
     
     this.success=function(data){
-                            var old= $("#css"+data.old);
-                            var curr=$("#css"+data.current);
+                            alert(data.css_old+" "+data.css_current);
+                            var old= $("#css"+data.css_old);
+                            var curr=$("#css"+data.css_current);
                             old.removeClass("active");
                             curr.addClass("active");}
     
@@ -316,6 +348,7 @@ function initSmartButtons(){
     var buttons_edit=$(".edit");
     buttons_edit.css("display", "block");
     buttons_edit.each(function(){
+        
         this.button=new smartButtonEdit($(this));
     });
     
@@ -338,7 +371,8 @@ function initSmartButtons(){
     var buttons_add_img=$(".add_img");
     buttons_add_img.each(function(){ 
         var img=$(this).siblings("img").attr("src");
-        $(this).bind("click",{img:img, editor:editor}, addImg);
+        var nome_img=$(this).siblings("img").attr("alt");
+        $(this).bind("click",{img:img, editor:editor,name:nome_img}, addImg);
     });
     
     

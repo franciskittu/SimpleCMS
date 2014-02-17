@@ -23,7 +23,7 @@ import java.sql.Timestamp;
  * @author fsfskittu
  */
 public interface Immagine {
-    long getID();
+    long getId();
     
     String getNome();
     void setNome(String s);

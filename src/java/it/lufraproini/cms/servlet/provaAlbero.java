@@ -64,7 +64,7 @@ public class provaAlbero extends HttpServlet {
     
     /*funzione che si serve della ricorsione per creare l'albero del sito a partire dalla homepage*/
     private Node creaAlbero(CMSDataLayerImpl datalayer, Sito sito) throws ErroreGrave {
-        Pagina home = datalayer.getHomepage(sito.getID());
+        Pagina home = datalayer.getHomepage(sito.getId());
         if(home == null){
             throw new ErroreGrave("il sito non ha una homepage!");
         }
@@ -88,7 +88,7 @@ public class provaAlbero extends HttpServlet {
         /**/
         CMSDataLayerImpl datalayer = new CMSDataLayerImpl(connection);
         Map template_data = new HashMap();
-        Utente U = datalayer.getUtente(2);
+        Utente U = datalayer.getUtente(4);
         List<Sito> siti = datalayer.getSitobyUtente(U);
         try {
             Node home = creaAlbero(datalayer, siti.get(0));

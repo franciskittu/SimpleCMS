@@ -1,6 +1,6 @@
 <#macro showtree node >
 <ul>
-        <li> ${node.page.titolo}
+        <li> ${node.di?html}
         <#if (node.children?size>0)>
         <#list node.children as child>
             

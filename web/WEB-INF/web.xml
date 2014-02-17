@@ -61,10 +61,6 @@
         <servlet-class>it.lufraproini.cms.servlet.registration</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>user_editing</servlet-name>
-        <servlet-class>it.lufraproini.cms.servlet.user_editing</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>mostra</servlet-name>
         <servlet-class>it.lufraproini.cms.servlet.mostra</servlet-class>
     </servlet>
@@ -97,8 +93,8 @@
         <servlet-class>it.lufraproini.cms.servlet.upload_user_img</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>account</servlet-name>
-        <servlet-class>it.lufraproini.cms.servlet.account</servlet-class>
+        <servlet-name>cover</servlet-name>
+        <servlet-class>it.lufraproini.cms.servlet.cover</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>EsempioDS</servlet-name>
@@ -166,10 +162,6 @@
         <url-pattern>/registration</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>user_editing</servlet-name>
-        <url-pattern>/user_editing</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>mostra</servlet-name>
         <url-pattern>/visualizza</url-pattern>
     </servlet-mapping>
@@ -202,8 +194,8 @@
         <url-pattern>/upload_user_img</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>account</servlet-name>
-        <url-pattern>/account</url-pattern>
+        <servlet-name>cover</servlet-name>
+        <url-pattern>/cover</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

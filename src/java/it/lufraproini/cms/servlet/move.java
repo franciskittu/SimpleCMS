@@ -53,10 +53,13 @@ public class move extends HttpServlet {
         if (pag == null || nuovo_padre == null) {
             throw new ErroreGrave("Le pagine specificate nella richiesta non sono state trovate!");
         }
-        if(sito.get(0).getID() != nuovo_padre.getID()){
+        if(sito.get(0).getId() != nuovo_padre.getSito().getId()){
             throw new ErroreGrave("Le pagine non appartengono al sito dell'utente "+ U.getUsername() + " !");
         }
         pag.setPadre(nuovo_padre);
+        if(datalayer.updatePagina(pag) == null){
+            throw new ErroreGrave("Impossibile aggiornare il database!");
+        }
     }
 
     /**
@@ -83,11 +86,13 @@ public class move extends HttpServlet {
                 Map parametri = request.getParameterMap();
                 Utente U = datalayer.getUtente(SecurityLayer.checkNumeric(s.getAttribute("userid").toString()));
                 
-                if (parametri.containsKey("id_pagina") && parametri.containsKey("id_padre")) {
+                if (parametri.containsKey("current") && parametri.containsKey("padre")) {
                     long id_pagina, id_padre;
                     try {
-                        id_pagina = SecurityLayer.checkNumeric(parametri.get("id_pagina").toString());
-                        id_padre = SecurityLayer.checkNumeric(parametri.get("id_padre").toString());
+                        String [] val= (String[])parametri.get("current");
+                        id_pagina = SecurityLayer.checkNumeric(val[0]);
+                        val = (String[])parametri.get("padre");
+                        id_padre = SecurityLayer.checkNumeric(val[0]);
                     } catch (NumberFormatException ex) {
                         throw new ErroreGrave("I parametri non sono validi per l'operazione richiesta!");
                     }

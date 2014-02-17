@@ -1,6 +1,6 @@
 <#macro showpage node current>
-    <#if (current.page.id != id)> 
-        <a href="move?current=${current.page.id}&padre=${node.page.id}"> ${node.page.name} </a>
+    <#if (current.page.id != node.page.id)> 
+        <a href="move?current=${current.page.id}&padre=${node.page.id}"> ${node.page.titolo} </a>
     </#if>
     <#if (node.children?size>0)>
         <#list node.children as child>
@@ -17,13 +17,14 @@
 <#macro showtree node >
 <ul>
         <li>  
-            <div class="circle-text<#if (node.page.padre??) >home</#if>">
-                <div class="text"> ${node.page.name}</div>
-                <a class="button_view" href="page?id=${node.id}">view</a>
+            <div class="circle-text <#if (!node.page.padre??) >home</#if>">
+                <div class="text"> ${node.page.titolo}</div>
+                <a class="button_view" href="site?user=${utente}&page=${node.page.id}">view</a>
                 <div class="functions">
                     <a class="edit" href="javascript:void(0)" id="edit${node.page.id}">edit</a>
-                    <a class="move" href="javascript: void(0)">move</a><div class="moveto"><#if (node.page.padre??)> <@showpage node=home current=node/> </#if></div>
-                    <a class="delete" href="delete?id=${node.id}">delete</a>
+                    <a class="move" href="javascript: void(0)">move</a><div class="moveto"> <@showpage node=home current=node/> </div>
+                    <a class="delete" href="delete?id=${node.page.id}">del</a>
+                    <a class="delete" href="delete?id=${node.page.id}&all=">del all</a>
                     <a  class="add" href="javascript: void(0)" id="add${node.page.id}" >add</a>
                     
                 </div>

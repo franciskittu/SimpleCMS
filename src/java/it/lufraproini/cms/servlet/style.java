@@ -42,29 +42,28 @@ import javax.sql.DataSource;
 
 /**
  *
- * @author fsfskittu
- * SERVLET GRUPPO ACCOUNT
+ * @author fsfskittu SERVLET GRUPPO ACCOUNT
  */
 public class style extends HttpServlet {
 
     //la funzione cambia lo stile del sito dell'utente sul database e ritorna una lista contenente l'id del vecchio css e l'id del nuovo in quest'ordine
-    private List cambiaStile(CMSDataLayerImpl datalayer, Utente U, long id_new_css) throws ErroreGrave{
+    private List cambiaStile(CMSDataLayerImpl datalayer, Utente U, long id_new_css) throws ErroreGrave {
         List id_old_css__id_new_css = new ArrayList();
         List<Sito> sito = datalayer.getSitobyUtente(U);
         Css nuovo = datalayer.getCSS(id_new_css);
-        if(nuovo == null){
+        if (nuovo == null) {
             throw new ErroreGrave("Il foglio di stile non è stato trovato nel DataBase!");
         }
-        
-        id_old_css__id_new_css.add(sito.get(0).getCss().getID());
+
+        id_old_css__id_new_css.add(sito.get(0).getCss().getId());
         sito.get(0).setCss(nuovo);
         id_old_css__id_new_css.add(id_new_css);
-        if(datalayer.updateSito(sito.get(0)) == null){
+        if (datalayer.updateSito(sito.get(0)) == null) {
             throw new ErroreGrave("Impossibile modificare la caratteristica del sito nel database!");
         }
         return id_old_css__id_new_css;
     }
-    
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -85,23 +84,29 @@ public class style extends HttpServlet {
                 Connection connection = ds.getConnection();
                 //
                 CMSDataLayerImpl datalayer = new CMSDataLayerImpl(connection);
-                
+
                 Utente U = datalayer.getUtente(SecurityLayer.checkNumeric(s.getAttribute("userid").toString()));
                 long id_nuovo_css = SecurityLayer.checkNumeric(request.getParameter("id"));// se non è un numero verrà comunque lanciata un'eccezione in cambiaStile
                 Map template_data = new HashMap();
-                
+
                 List ids = cambiaStile(datalayer, U, id_nuovo_css);
                 //output
-                template_data.put("outline_tpl", "");
-                template_data.put("css_old", ids.get(0));
-                template_data.put("css_current", ids.get(1));
-                TemplateResult tr = new TemplateResult(getServletContext());
-                tr.activate("account_ajax.ftl.json", template_data, response);
-            } catch (SQLException ex){
+                //richiesta AJAX
+                if (request.getParameter("json") != null) {
+                    template_data.put("outline_tpl", "");
+                    template_data.put("css_old", ids.get(0));
+                    template_data.put("css_current", ids.get(1));
+                    TemplateResult tr = new TemplateResult(getServletContext());
+                    tr.activate("account_ajax.ftl.json", template_data, response);
+                } else {
+                    response.sendRedirect("visualizza?pagina=account");
+                }
+
+            } catch (SQLException ex) {
                 Logger.getLogger(add.class.getName()).log(Level.SEVERE, null, ex);
                 FailureResult res = new FailureResult(getServletContext());
                 res.activate(ex.getMessage(), request, response);
-            } catch (ErroreGrave ex){
+            } catch (ErroreGrave ex) {
                 Logger.getLogger(add.class.getName()).log(Level.SEVERE, null, ex);
                 FailureResult res = new FailureResult(getServletContext());
                 res.activate(ex.getMessage(), request, response);

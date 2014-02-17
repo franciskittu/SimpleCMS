@@ -5,18 +5,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>${title}</title>
+        <link rel="stylesheet" href="${style}" type="text/css" />
         <!-- eventuali marker per css e script -->
     </head>
     <body>
         <#if (menu?size > 0) >
-        <ul class="menu">
+        <ul class="site_menu">
         <#list menu as item>
         <a href='site?user=${nomeutente}&page=${item.id}'><li>${item.titolo?html}</li></a>
         </#list>
         </ul>
         </#if>
-        ${header}
-        ${body}
-        ${footer}
+        <div class="site_header">${header}</div>
+        <div class="site_body">${body}</div>
+        <div class="site_footer">${footer}</div>
     </body>
 </html>

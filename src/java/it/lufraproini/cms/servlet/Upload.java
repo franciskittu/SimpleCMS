@@ -366,7 +366,7 @@ public class Upload extends HttpServlet {
                     }
                     template_data.put("thumbnail", thumbnail.toString());
                     template_data.put("immagine", img);
-                    template_data.put("id", img.getID());
+                    template_data.put("id", img.getId());
                     template_data.put("id_utente", 2);
                  } //flusso css
                 else if(tipo.equals("css")){
@@ -377,7 +377,7 @@ public class Upload extends HttpServlet {
                     css.setDescrizione(SecurityLayer.stripSlashes(css.getDescrizione()));//potrebbe generare una nullpointerexception
                     css.setNome(SecurityLayer.stripSlashes(css.getNome()));
                     template_data.put("css", css);
-                    template_data.put("identifier", css.getID());
+                    template_data.put("identifier", css.getId());
                 } //flusso slide
                 else if(tipo.equals("slide")){
                     Slide img = null;
@@ -388,7 +388,7 @@ public class Upload extends HttpServlet {
                     img.setDescrizione(SecurityLayer.stripSlashes(img.getDescrizione()));
                     img.setNome(SecurityLayer.stripSlashes(img.getNome()));
                     template_data.put("slide", img);
-                    template_data.put("id", img.getID());
+                    template_data.put("id", img.getId());
                 }
                 template_data.put("outline_tpl", "");
                 TemplateResult tr = new TemplateResult(getServletContext());

@@ -154,7 +154,7 @@ public class AggiungiCSS extends HttpServlet {
         
         Css U = datalayer.addCSS(Obj);
         data.put("css", U);
-        data.put("identifier", U.getID());
+        data.put("identifier", U.getId());
         
         //riazzeriamo l'outline
         data.put("outline_tpl","");
