@@ -9,15 +9,23 @@
         <!-- eventuali marker per css e script -->
     </head>
     <body>
+        <div class="site_header">
+        ${header}
+        </div>
         <#if (menu?size > 0) >
-        <ul class="site_menu">
+        <div class="site_menu" >
+        <ul>
         <#list menu as item>
         <a href='site?user=${nomeutente}&page=${item.id}'><li>${item.titolo?html}</li></a>
         </#list>
         </ul>
+        </div>
         </#if>
-        <div class="site_header">${header}</div>
-        <div class="site_body">${body}</div>
-        <div class="site_footer">${footer}</div>
+        <div class="site_body">
+        ${body}
+        </div>
+        <div class="site_footer">
+        ${footer}
+        </div>
     </body>
 </html>

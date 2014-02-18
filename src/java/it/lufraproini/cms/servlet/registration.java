@@ -178,6 +178,9 @@ public class registration extends HttpServlet {
             throw new ErroreGrave("non è stato fornito l'id dell'utente!");
         }
         U = datalayer.getUtente(id);
+        if(U == null){
+            throw new ErroreGrave("non esiste alcun utente con id "+id+"!");
+        }
         if (cod_att.equals(U.getCodiceAttivazione())) {
             U.setAttivato(true);
         }

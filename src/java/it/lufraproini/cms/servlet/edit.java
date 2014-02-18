@@ -195,7 +195,7 @@ public class edit extends HttpServlet {
                     response.sendRedirect("visualizza?pagina=account");
                 }
                 //update nome del sito
-                else if(parametri.size() == 1 && parametri.containsKey("nome_sito")){
+                else if(parametri.size() == 2 && parametri.containsKey("nome_sito")){
                     List<Sito> sito = datalayer.getSitobyUtente(U);
                     String[] val = (String[])parametri.get("nome_sito");
                     sito.get(0).setNome(SecurityLayer.addSlashes(val[0]));

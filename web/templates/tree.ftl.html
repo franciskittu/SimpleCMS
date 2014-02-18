@@ -23,9 +23,10 @@
                 <div class="functions">
                     <a class="edit" href="javascript:void(0)" id="edit${node.page.id}">edit</a>
                     <#if (node.page.padre??) >
-                    <a class="move" href="javascript: void(0)">move</a><div class="moveto"> <@showpage node=home current=node/> </div>
-                    <a class="delete" href="delete?id=${node.page.id}">del</a>
-                    <a class="delete" href="delete?id=${node.page.id}&all=">del all</a>
+                    <a class="move" href="javascript: void(0)">move</a><div class="submenu"> <@showpage node=home current=node/> </div>
+                    <a class="delete" href="delete?id=${node.page.id}">delete</a>
+                    <div class="submenu">
+                    <a  href="delete?id=${node.page.id}">delete</a><a  href="delete?id=${node.page.id}&amp;all=">delete all</a></div>
                     </#if>
                     <a  class="add" href="javascript: void(0)" id="add${node.page.id}" >add</a>
                     
@@ -55,7 +56,7 @@
 
 
 <div id="tree">
-    <form id="form_title" action="edit"><fieldset> <input title="clicca e cambia il titolo del sito" type="text" name="nome_sito" value="${nome_sito}"/> <input type="submit" name="change" value="change" /><span>Titolo</span></fieldset></form>
+    <form id="form_title" action="edit"><fieldset> <input title="clicca e cambia il titolo del sito" type="text" name="nome_sito" value="${nome_sito}"/> <input type="submit" name="change" value="change" /><span>Titolo: ${nome_sito}</span></fieldset></form>
     <a href="javascript:void(0)" id="header" class="button ">Edit Header</a>
     <a href="javascript:void(0)" id="footer" class="button ">Edit Footer</a>   
     <@showtree node=home />
