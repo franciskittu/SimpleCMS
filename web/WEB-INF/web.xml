@@ -25,16 +25,8 @@
         <listener-class>it.lufraproini.cms.config.ContextInitializer</listener-class>
     </listener>
     <servlet>
-        <servlet-name>EsempioDS</servlet-name>
-        <servlet-class>it.lufraproini.cms.servlet.EsempioDS</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>ProvaFreemarkereDB</servlet-name>
         <servlet-class>it.lufraproini.cms.ProvaFreemarkereDB</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AggiungiCSS</servlet-name>
-        <servlet-class>it.lufraproini.cms.servlet.AggiungiCSS</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Upload</servlet-name>
@@ -65,10 +57,6 @@
         <servlet-class>it.lufraproini.cms.servlet.mostra</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>provaAlbero</servlet-name>
-        <servlet-class>it.lufraproini.cms.servlet.provaAlbero</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>edit</servlet-name>
         <servlet-class>it.lufraproini.cms.servlet.edit</servlet-class>
     </servlet>
@@ -96,10 +84,6 @@
         <servlet-name>cover</servlet-name>
         <servlet-class>it.lufraproini.cms.servlet.cover</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>EsempioDS</servlet-name>
-        <url-pattern>/EsempioDS</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ProvaFreemarkereDB</servlet-name>
         <url-pattern>/ProvaFreemarkereDB</url-pattern>
@@ -134,10 +118,6 @@
         <param-value>error.ftl.html</param-value>
     </context-param>
     <servlet-mapping>
-        <servlet-name>AggiungiCSS</servlet-name>
-        <url-pattern>/AggiungiCSS</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>Upload</servlet-name>
         <url-pattern>/Upload</url-pattern>
     </servlet-mapping>
@@ -164,10 +144,6 @@
     <servlet-mapping>
         <servlet-name>mostra</servlet-name>
         <url-pattern>/visualizza</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>provaAlbero</servlet-name>
-        <url-pattern>/provaAlbero</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>edit</servlet-name>

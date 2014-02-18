@@ -68,12 +68,18 @@ public class site extends HttpServlet {
         List<Pagina> figlie = datalayer.getFiglie(p);
         Pagina homepage = datalayer.getPagina(s.getHomepage().getId());
         List<Map> menu_ordinato_per_titolo = new ArrayList();//valore di ritorno
-        /*se la pagina non è l'homepage allora deve contenere un link ad essa*/
+        /*se la pagina non è l'homepage allora deve contenere un link ad essa ed al suo padre*/
         if(homepage.getId() != p.getId()){
             Map home = new HashMap();
             home.put("id", homepage.getId());
             home.put("titolo", homepage.getTitolo());
             menu_ordinato_per_titolo.add(home);
+            if(homepage.getId() != p.getPadre().getId()){
+                Map pag = new HashMap();
+                pag.put("id", p.getPadre().getId());
+                pag.put("titolo", p.getPadre().getTitolo());
+                menu_ordinato_per_titolo.add(pag);
+            }
         }
         /*ordinamento
         tempo O(n^2)*/
@@ -109,6 +115,7 @@ public class site extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
+     * @throws java.sql.SQLException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
@@ -131,8 +138,8 @@ public class site extends HttpServlet {
             if (site == null) {
                 throw new ErroreGrave("Non è stato specificato alcun sito su cui accedere!");
             }
-            List<String> title_header_body_footer = new ArrayList<String>();//pagina html
-            List<Map> menu_ordinato = new ArrayList();//menu della pagina
+            List<String> title_header_body_footer = null;//pagina html
+            List<Map> menu_ordinato = null;//menu della pagina
             Utente U = datalayer.getUtentebyUsername(site);//creatore del sito
             List<Sito> sito = datalayer.getSitobyUtente(U);//per il momento è stato solo implementata la possibilità di avere un sito per utente.
             if (sito.size() < 1) {
