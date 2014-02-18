@@ -40,7 +40,7 @@ public class login extends HttpServlet {
     private long check_access_credential(String username, String password_in_chiaro, CMSDataLayerImpl datalayer){
         Utente U = datalayer.getUtentebyUsername(username);
         String password_criptata = SecurityLayer.criptaPassword(password_in_chiaro, username);
-        if(U != null && password_criptata.equals(U.getPassword())){
+        if(U != null && password_criptata.equals(U.getPassword()) && U.getAttivato()){
             return U.getId();
         }
         return 0;

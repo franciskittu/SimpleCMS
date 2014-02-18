@@ -16,6 +16,7 @@
  */
 package it.lufraproini.cms.model;
 
+
 import java.util.List;
 /* 
  * Questa interfaccia contiene la lista di funzionalità astratte di cui la

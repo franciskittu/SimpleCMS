@@ -48,23 +48,29 @@ public class cover extends HttpServlet {
     private List cambia_cover(CMSDataLayerImpl datalayer, Utente U, long id) throws ErroreGrave {
         List id_old__id_new = new ArrayList();
         List<Immagine> user_imgs = datalayer.getAllUsersImages(U);
-        boolean trovata_nuova = false;
-        boolean trovata_vecchia = false;
+        Immagine cover_nuova = null;
+        Immagine cover_vecchia = null;
         for (Immagine img : user_imgs) {
             if (img.getCover()) {
                 //vecchia cover
                 id_old__id_new.add(img.getId());
-                trovata_vecchia = true;
+                cover_vecchia=img;
+                cover_vecchia.setCover(false);
             }
             if (img.getId() == id) {
-                trovata_nuova = true;
+                cover_nuova = img;
+                cover_nuova.setCover(true);
             }
         }
-        if (!trovata_vecchia) {
+        if (cover_vecchia == null) {
             id_old__id_new.add(0);
         }
-        if (trovata_nuova) {
+        if (cover_nuova != null) {
             id_old__id_new.add(id);
+            datalayer.updateImmagine(cover_nuova);
+            if(cover_vecchia != null){
+                datalayer.updateImmagine(cover_vecchia);
+            }
         } else {
             throw new ErroreGrave("L'immagine non appartiene all'utente " + U.getUsername() + " !");
         }

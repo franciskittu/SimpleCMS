@@ -139,7 +139,7 @@ public class upload_user_img extends HttpServlet {
                 temp_file.delete();
             }
         } catch (Exception ex) {
-            throw new ErroreGrave("operazioni sul file!");
+            throw new ErroreGrave("operazioni sul file! "+ex.getMessage());
         }
     }
 
@@ -150,8 +150,8 @@ public class upload_user_img extends HttpServlet {
         String path_img = getServletContext().getRealPath(cartella_img);
         String cartella_thumb = getServletContext().getInitParameter("system.thumb_directory");
         String path_thumb = getServletContext().getRealPath(cartella_thumb);
-        int altezza_thumb = 200;
-        int larghezza_thumb = 200;
+        int altezza_thumb = 250;
+        int larghezza_thumb = 250;
         BufferedImage thumb = new BufferedImage(larghezza_thumb, altezza_thumb, BufferedImage.TYPE_INT_RGB);
         String file_thumb = info.get("digest")+"." + info.get("estensione");
         

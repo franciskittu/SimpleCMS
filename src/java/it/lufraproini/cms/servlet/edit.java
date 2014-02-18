@@ -79,7 +79,14 @@ public class edit extends HttpServlet {
         } else {
             p.setModello(false);
         }
-        if(datalayer.updatePagina(p) == null){
+        Pagina res;
+        if(p.getPadre()==null){
+            res = datalayer.updateHomepage(p);
+        }
+        else {
+            res = datalayer.updatePagina(p);
+        }
+        if( res == null){
             throw new ErroreGrave("impossibile aggiornare la pagina sul DataBase!");
         }
     }
@@ -166,6 +173,8 @@ public class edit extends HttpServlet {
                     template_data.put("checked", dati_pagina.get(2));
                     template_data.put("css_old","");
                     template_data.put("css_current","");
+                    template_data.put("img_old", "");
+                    template_data.put("img_current", "");
                     TemplateResult tr = new TemplateResult(getServletContext());
                     tr.activate("account_ajax.ftl.json", template_data, response);
                 }
@@ -183,6 +192,14 @@ public class edit extends HttpServlet {
                 }
                 else if(parametri.containsKey("type") && parametri.containsKey("editor")){
                     aggiorna_header_e_footer(datalayer, (String []) parametri.get("type"), (String [])parametri.get("editor"), U);
+                    response.sendRedirect("visualizza?pagina=account");
+                }
+                //update nome del sito
+                else if(parametri.size() == 2 && parametri.containsKey("nome_sito")){
+                    List<Sito> sito = datalayer.getSitobyUtente(U);
+                    String[] val = (String[])parametri.get("nome_sito");
+                    sito.get(0).setNome(SecurityLayer.addSlashes(val[0]));
+                    datalayer.updateSito(sito.get(0));
                     response.sendRedirect("visualizza?pagina=account");
                 }
                 //richiesta non gestita

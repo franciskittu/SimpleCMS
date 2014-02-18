@@ -12,7 +12,7 @@ function importModel(){
                 data: {
                     id:encodeURIComponent(id)
                 },
-                success: function(data){$("input[name=title]").val(data.title); CKEDITOR.instances.editor.setData('', function(){CKEDITOR.instances.editor.insertHtml(data.body); }); },
+                success: function(data){$("#form_edit input[name=title]").val(data.title); CKEDITOR.instances.editor.setData('', function(){CKEDITOR.instances.editor.insertHtml(data.body); }); },
                 error: function(){alert('Errore trasferimento dati');}
         });
         
@@ -80,7 +80,7 @@ function initButtonUpload(){
 
 function showEditor(){
         
-        $(".add_img").css("bottom", "0");
+        $(".add_img").css("bottom", "5px");
         $("#tree").css("left", "-100%");
         setTimeout(function(){$("#tree").css("height", "0");$("#form_edit").css("height", "auto");},1000);
 
@@ -124,10 +124,10 @@ function smartButtonEditHF(button){
     
     
     this.success=function(data){
-        
+        alert(data.body+" "+data.img_old);
         $("#form_edit input[name=type]").removeAttr("disabled");
         $("#form_edit input[name=type]").val(type);
-        alert(data.body+" "+data.title+" "+data.checked);
+        
         CKEDITOR.instances.editor.insertHtml(data.body);
         showEditor();
     };
@@ -185,7 +185,7 @@ function smartButtonEdit(button){
     var error=this.error;
     
     this.send=function(e){
-        alert(id);
+        
         if( id){
             $.ajax({
                 url: "edit",
@@ -214,8 +214,8 @@ function smartButtonAdd(button){
         $("#form_edit").get(0).setAttribute("action", "add");
         $("#form_edit fieldset:nth-child(2)").css("display", "block");
         $("#form_edit fieldset:nth-child(4)").css("display", "block");
-        $("#form_edit select").css("display", "initial");
-        $("#form_edit span.select").css("display", "initial");
+        $("#form_edit select").css("display", "inline");
+        $("#form_edit span.select").css("display", "inline");
         $("#form_edit input[name=title]").removeAttr("disabled");
         $("#form_edit input[name=model]").removeAttr("disabled");
         $("#form_edit input[name=id]").removeAttr("disabled");
@@ -259,8 +259,7 @@ function smartButtonAdd(button){
             data: {
                 id:encodeURIComponent(id),
                 json:encodeURIComponent("true")
-            }
-            ,
+            },
             success: success,
             error: error
             });          
@@ -283,7 +282,7 @@ function smartButtonCss( button ){
  
     
     this.success=function(data){
-                            alert(data.css_old+" "+data.css_current);
+                           
                             var old= $("#css"+data.css_old);
                             var curr=$("#css"+data.css_current);
                             old.removeClass("active");

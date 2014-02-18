@@ -152,7 +152,7 @@ function CheckEmail(){
      this.check=function(s){ 
         
         $.ajax({
-            url:"test", dataType:"json", data:{ username:s}, async:false, success: function(data){result=data.result;}
+            url:"registration", dataType:"json", data:{ username_ajax:s}, async:false, success: function(data){result=data.result;}
             
         });
 

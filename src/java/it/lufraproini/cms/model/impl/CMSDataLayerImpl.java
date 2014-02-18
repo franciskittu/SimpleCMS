@@ -65,15 +65,15 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         gImmagine = c.prepareStatement("SELECT * FROM immagine WHERE id = ?");
         aImmagine = c.prepareStatement("INSERT INTO immagine (nome,dimensione,tipo,file,digest,data_upload,id_utente,thumb) VALUES (?,?,?,?,?,?,?,?) RETURNING id");
         dImmagine = c.prepareStatement("DELETE FROM immagine WHERE id = ?");
-        uImmagine = c.prepareStatement("UPDATE immagine SET nome = ?, dimensione = ?, tipo = ?, file = ?, digest = ?, data_upload = ?, id_utente = ?, thumb = ?");
+        uImmagine = c.prepareStatement("UPDATE immagine SET nome = ?, dimensione = ?, tipo = ?, file = ?, digest = ?, data_upload = ?, id_utente = ?, thumb = ?, cover =? WHERE id = ?");
         gImmagini = c.prepareStatement("SELECT * FROM immagine WHERE id_utente = ?");
         gPagina = c.prepareStatement("SELECT * FROM pagina WHERE id = ?");
         aPagina = c.prepareStatement("INSERT INTO pagina (titolo, body, id_padre, id_sito, modello) VALUES(?,?,?,?,?) RETURNING id");
         uPagina = c.prepareStatement("UPDATE pagina SET titolo = ?, body = ?, id_padre = ?, id_sito = ?, modello = ? WHERE id = ?");
         dPagina = c.prepareStatement("DELETE FROM pagina WHERE id = ?");
-        aSito = c.prepareStatement("INSERT INTO sito (header, footer, id_utente, descrizione, id_css) VALUES (?,?,?,?,?)RETURNING id");
+        aSito = c.prepareStatement("INSERT INTO sito (header, footer, id_utente, nome, id_css) VALUES (?,?,?,?,?)RETURNING id");
         gSito = c.prepareStatement("SELECT * FROM sito WHERE id = ?");
-        uSito = c.prepareStatement("UPDATE sito SET descrizione = ?, header = ?, footer = ?, id_utente = ?, homepage = ?, id_css = ?, data_creazione = ? WHERE id = ?");
+        uSito = c.prepareStatement("UPDATE sito SET nome = ?, header = ?, footer = ?, id_utente = ?, homepage = ?, id_css = ?, data_creazione = ? WHERE id = ?");
         dSito = c.prepareStatement("DELETE FROM sito WHERE id = ?");
         gSlide = c.prepareStatement("SELECT * FROM slide WHERE id = ?");
         aSlide = c.prepareStatement("INSERT INTO slide (descrizione, posizione, file, nome) VALUES(?,?,?,?) RETURNING id");
@@ -372,7 +372,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
         }
         return null;
     }
-    @Override
+    
     public Immagine addImmagine(Immagine I) {
         Immagine img = (ImmagineImpl) I;
         ResultSet chiave = null;
@@ -390,6 +390,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
                 return getImmagine(chiave.getLong("id"));
             }
         } catch(SQLException ex){
+            
             Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try{
@@ -430,7 +431,24 @@ public class CMSDataLayerImpl implements CMSDataLayer {
 
     @Override
     public Immagine updateImmagine(Immagine I) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try{
+            uImmagine.setString(1, I.getNome());
+            uImmagine.setLong(2,I.getDimensione());
+            uImmagine.setString(3, I.getTipo());
+            uImmagine.setString(4,I.getFile());
+            uImmagine.setString(5,I.getDigest());
+            uImmagine.setTimestamp(6, I.getData_upload());
+            uImmagine.setLong(7, I.getUtente().getId());
+            uImmagine.setString(8, I.getThumb());
+            uImmagine.setBoolean(9, I.getCover());
+            uImmagine.setLong(10, I.getId());
+            if(uImmagine.executeUpdate() == 1){
+                return getImmagine(I.getId());
+            }
+        } catch (SQLException ex){
+            Logger.getLogger(CMSDataLayerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        return null;
     }
 
     @Override
@@ -779,7 +797,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
             aSito.setString(1,s_agg.getHeader());
             aSito.setString(2,s_agg.getFooter());
             aSito.setLong(3,s_agg.getUtente().getId());
-            aSito.setString(4,s_agg.getDescrizione());
+            aSito.setString(4,s_agg.getNome());
             aSito.setLong(5,s_agg.getCss().getId());
             chiave = aSito.executeQuery();
             if(chiave.next()){
@@ -813,7 +831,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     @Override
     public Sito updateSito(Sito s) {
         try{
-            uSito.setString(1, s.getDescrizione());
+            uSito.setString(1, s.getNome());
             uSito.setString(2, s.getHeader());
             uSito.setString(3, s.getFooter());
             uSito.setLong(4, s.getUtente().getId());

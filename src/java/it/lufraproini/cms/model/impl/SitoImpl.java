@@ -29,7 +29,7 @@ public class SitoImpl implements Sito {
 
     private CMSDataLayerImpl datalayer;
     private long id, id_utente/*chiave esterna*/, id_homepage/*chiave esterna*/, id_css/*chiave esterna*/;
-    private String header, footer, descrizione;
+    private String header, footer, nome;
     private Date data_creazione;
     
     private Pagina homepage;
@@ -41,7 +41,7 @@ public class SitoImpl implements Sito {
         id_utente = 0;
         id_homepage = 0;
         id_css = 0;
-        descrizione = "";
+        nome = "";
         header = "";
         footer = "";
         data_creazione = null;
@@ -53,7 +53,7 @@ public class SitoImpl implements Sito {
         id_utente = data.getLong("id_utente");
         id_homepage = data.getLong("homepage");
         id_css = data.getLong("id_css");
-        descrizione = data.getString("descrizione");
+        nome = data.getString("nome");
         header = data.getString("header");
         footer = data.getString("footer");
         data_creazione = data.getDate("data_creazione");
@@ -66,13 +66,13 @@ public class SitoImpl implements Sito {
     }
 
     @Override
-    public String getDescrizione(){
-        return descrizione;
+    public String getNome(){
+        return nome;
     }
     
     @Override
-    public void setDescrizione(String s){
-        descrizione = s;
+    public void setNome(String s){
+        nome = s;
     }
     @Override
     public String getHeader() {

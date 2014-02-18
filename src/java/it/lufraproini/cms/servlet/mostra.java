@@ -106,7 +106,7 @@ public class mostra extends HttpServlet {
                 continue;
             }
             Map info_sito = new HashMap();
-            info_sito.put("name", ultimi_siti.get(i).getDescrizione());
+            info_sito.put("name", ultimi_siti.get(i).getNome());
             info_sito.put("nome_e_cognome", U.getNome() + " " + U.getCognome());
             info_sito.put("image", cover_utente.getFile());
             info_sito.put("user", U.getUsername());
@@ -197,6 +197,7 @@ public class mostra extends HttpServlet {
                         //albero
                         template_data.put("tree", "tree.ftl.html");
                         List<Sito> siti = datalayer.getSitobyUtente(U);
+                        template_data.put("nome_sito", siti.get(0).getNome());
                         Node home = creaAlbero(datalayer, siti.get(0));
                         template_data.put("home", home);
                         //immagini
@@ -207,8 +208,8 @@ public class mostra extends HttpServlet {
                         template_data.put("styles", getAllCSS(datalayer, U));
                         html = "sitemanager.ftl.html";
                     } else {
-                        err = "non si possiedono i permessi per accedere al contenuto!";
-                        par = "home";
+                        
+                        par = "login";
                     }
                 } else if (par.equals("login")) {
                     permesso = true;
