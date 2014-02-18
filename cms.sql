@@ -151,9 +151,9 @@ CREATE TABLE sito (
     footer text NOT NULL,
     id_utente integer NOT NULL,
     homepage integer,
-    descrizione character varying(255),
     id_css integer,
-    data_creazione date DEFAULT ('now'::text)::date
+    data_creazione date DEFAULT ('now'::text)::date,
+    nome character varying(50) NOT NULL
 );
 
 
@@ -319,86 +319,89 @@ SELECT pg_catalog.setval('css_id_seq', 13, true);
 -- Data for Name: immagine; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (9, 'blind', 6304, 'images/30102-152575-91-26-59-8069-30-6468529816108-43-87.gif', '30102-152575-91-26-59-8069-30-6468529816108-43-87', '2014-02-14 12:24:30.32', 4, 'image/gif', NULL, false);
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (11, 'smile', 707, 'images/-24884-7447-61-40-415461-101123124-78-43-81-396665113.gif', '-24884-7447-61-40-415461-101123124-78-43-81-396665113', '2014-02-14 12:28:20.826', 4, 'image/gif', NULL, false);
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (12, 'yoyo', 34148, 'images/-98-90-27372327389-76-844-15-5821-5775116633110.jpg', '-98-90-27372327389-76-844-15-5821-5775116633110', '2014-02-14 12:29:13.283', 4, 'image/jpeg', NULL, false);
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (13, 'nevermind', 548121, 'images/978389-96-71661633190-125-68-1411688-5834-49748.jpg', '978389-96-71661633190-125-68-1411688-5834-49748', '2014-02-14 12:30:32.62', 4, 'image/jpeg', NULL, false);
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (14, 'plin', 6304, 'images/30102-152575-91-26-59-8069-30-6468529816108-43-87.gif', '30102-152575-91-26-59-8069-30-6468529816108-43-87', '2014-02-14 16:49:42.661', 4, 'image/gif', '', false);
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (10, 'nirvana', 1298117, 'images/65-79-50-23-114540-4042125-6-108-12812178-53-13-336847.jpg', '65-79-50-23-114540-4042125-6-108-12812178-53-13-336847', '2014-02-14 12:24:41.663', 4, 'image/jpeg', NULL, true);
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (19, 'Nirvana-01', 79151, 'images/-69-84-5727-30-6168-18050-2263-55-107-46-32-84-11852-64.jpg', '-69-84-5727-30-6168-18050-2263-55-107-46-32-84-11852-64', '2014-02-17 00:52:28.129', 8, 'image/jpeg', 'images/thumbs/-69-84-5727-30-6168-18050-2263-55-107-46-32-84-11852-64.jpg', false);
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (20, 'nirvana_wallpaper_6-800x600', 174050, 'images/-9361-83-5120497896-293-33123-384838-412-96-1515.jpg', '-9361-83-5120497896-293-33123-384838-412-96-1515', '2014-02-17 00:54:34.309', 8, 'image/jpeg', 'images/thumbs/-9361-83-5120497896-293-33123-384838-412-96-1515.jpg', false);
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (23, 'Killers', 173425, 'images/-1208-70103-19-26-5317-2236-9118-4991-4510488734559.jpg', '-1208-70103-19-26-5317-2236-9118-4991-4510488734559', '2014-02-17 15:50:08.011', 8, 'image/jpeg', 'images/thumbs/-1208-70103-19-26-5317-2236-9118-4991-4510488734559.jpg', false);
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (24, 'the_stooges_-_fun_house_-_front', 114359, 'images/16-215611-2969-6789115-117-26-16-94-1792-11780-956564.jpg', '16-215611-2969-6789115-117-26-16-94-1792-11780-956564', '2014-02-17 15:50:30.862', 8, 'image/jpeg', 'images/thumbs/16-215611-2969-6789115-117-26-16-94-1792-11780-956564.jpg', false);
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (25, 'south_saturn_delta', 174377, 'images/-1162084-4-5611-94-128-9184-31-31-12428-51-6542-100-64.jpg', '-1162084-4-5611-94-128-9184-31-31-12428-51-6542-100-64', '2014-02-17 15:51:02.197', 8, 'image/jpeg', 'images/thumbs/-1162084-4-5611-94-128-9184-31-31-12428-51-6542-100-64.jpg', false);
-INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (26, 'guitar', 313586, 'images/43-12498401816-1121116-30-5067959118-8730318-101.jpg', '43-12498401816-1121116-30-5067959118-8730318-101', '2014-02-17 15:59:03.373', 8, 'image/jpeg', 'images/thumbs/43-12498401816-1121116-30-5067959118-8730318-101.jpg', false);
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (49, 'bacialassio_450ingr', 26766, 'images/-4625112-6222-10214050-1076112-5120-1082839-51-14.jpg', '-4625112-6222-10214050-1076112-5120-1082839-51-14', '2014-02-18 16:49:02.046', 24, 'image/jpeg', 'images/thumbs/-4625112-6222-10214050-1076112-5120-1082839-51-14.jpg', false);
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (50, 'baciok_seq1', 39378, 'images/-1113746-818735-5191-21-231-68118120-33-74-120-28-79.jpg', '-1113746-818735-5191-21-231-68118120-33-74-120-28-79', '2014-02-18 16:49:10.005', 24, 'image/jpeg', 'images/thumbs/-1113746-818735-5191-21-231-68118120-33-74-120-28-79.jpg', false);
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (51, 'baciok_seq2', 27833, 'images/-126103-54342299109-65-9194-115-113-84110-63-62115-57-75.jpg', '-126103-54342299109-65-9194-115-113-84110-63-62115-57-75', '2014-02-18 16:49:23.163', 24, 'image/jpeg', 'images/thumbs/-126103-54342299109-65-9194-115-113-84110-63-62115-57-75.jpg', false);
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (48, 'dolciumi', 291829, 'images/-1077-86-3462-789252-81462-105-64-71-87-65105-68104-50.jpg', '-1077-86-3462-789252-81462-105-64-71-87-65105-68104-50', '2014-02-18 16:48:51.557', 24, 'image/jpeg', 'images/thumbs/-1077-86-3462-789252-81462-105-64-71-87-65105-68104-50.jpg', true);
+INSERT INTO immagine (id, nome, dimensione, file, digest, data_upload, id_utente, tipo, thumb, cover) VALUES (52, 'logo_dolci', 76839, 'images/-30-55-521993-104-100-54-123-26-1255-10010941-44-111-19-9329.gif', '-30-55-521993-104-100-54-123-26-1255-10010941-44-111-19-9329', '2014-02-18 17:08:47.33', 24, 'image/gif', 'images/thumbs/-30-55-521993-104-100-54-123-26-1255-10010941-44-111-19-9329.gif', false);
 
 
 --
 -- Name: immagine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('immagine_id_seq', 26, true);
+SELECT pg_catalog.setval('immagine_id_seq', 52, true);
 
 
 --
 -- Data for Name: pagina; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (3, 'homepage', '<div>questo è il corpo della homepage</div>', NULL, 5, false);
-INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (5, 'pagina2', '<div>questo è il corpo della pagina2</div>', 3, 5, false);
-INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (6, 'pagina3', '<div>questo è il corpo della pagina3 che è foglia della pagina 1</div>', 4, 5, false);
-INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (7, 'pagina4', '<div>questo è il corpo della pagina4 che è figlia della pagina 1</div>', 4, 5, false);
-INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (8, 'pagina5', '<div>questo è il corpo della pagina5 che è figlia di pagina 2</div>', 5, 5, false);
-INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (9, 'pagina6', '<div>questo è il corpo della pagina6</div>', 3, 5, false);
-INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (16, 'Homepage', '<p>Scrivere contenuto!</p>', NULL, 13, false);
-INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (4, 'pagina1', '<div>questo è il corpo della pagina1</div>', 3, 5, true);
-INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (20, 'Metal', '<blockquote><p>The gods made heavy metal and it&#39;s never gonna die!<br />&nbsp;Gli dei crearono l&#39;heavy metal, e mai morir&agrave;!<br />(Manowar, The Gods Made Heavy Metal)</p></blockquote><p>L&#39;heavy metal (spesso abbreviato in metal[1] in lingua italiana letteralmente &quot;metallo pesante&quot;), &egrave; un genere di musica rock[2][3][4][5]. Derivante dall&#39;hard rock, &egrave; caratterizzato da ritmi fortemente aggressivi e da un suono potente, ottenuto attraverso l&#39;enfatizzazione dell&#39;amplificazione e della distorsione delle chitarre, dei bassi, e, spesso, persino delle voci. Esiste una moltitudine di stili e sottogeneri dell&#39;heavy metal; di conseguenza esistono sottogeneri pi&ugrave; melodici e commerciali, ed altri dalle sonorit&agrave; estreme e underground.[6]</p><p>Gi&agrave; molto popolare negli anni settanta ed ottanta, ha continuato ad avere successo nei decenni seguenti e si &egrave; inoltre diversificato in numerosi sottogeneri. Moltissimi sono gli artisti e i gruppi ascritti al metal, sia nei meccanismi musicali ufficiali che in ambito underground.<br />Esso ha dato vita ad un movimento (cosiddetto movimento metal) prevalentemente apolitico che spaziava a volte nell&#39;anarchia, e sfruttava i simboli che sottolineassero una rottura con la morale vigente.</p>', 16, 13, false);
-INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (26, 'Metallica', '<h1>METALLICA</h1>
+INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (50, 'Frutta', '<h1><b>FRUTTA</b></h1>
 
-<p>I Metallica (IPA: /mÉËt&aelig;lÉ¨kÉ/) sono un gruppo musicale thrash metal statunitense, formatosi a Los Angeles nel 1981. I loro primi lavori, grazie alla velocit&agrave; dei pezzi, tecnicismi strumentali ed aggressivit&agrave;, li hanno portati ad entrare nei &quot;Big Four&quot; del thrash metal, accanto a Slayer, Megadeth ed Anthrax.[2][3]</p>
+<h2><b>Lo sapevi che ...?</b></h2>
 
-<p>La band si guadagn&ograve; in poco tempo un crescente seguito di fan[4] e, con la pubblicazione di Master of Puppets nel 1986, raggiunse secondo molti l&#39;apice della carriera.[5] Il successo commerciale arriv&ograve; nel 1991 con l&#39;album omonimo, che esord&igrave; alla prima posizione della classifica Billboard 200.[6] Con questo lavoro la band ampli&ograve; molto la sua direzione musicale, rivolgendosi non pi&ugrave; ai soli fan del thrash e, grazie a sonorit&agrave; pi&ugrave; semplici ed orecchiabili, divennero una delle maggiori realt&agrave; musicali del periodo.[7][8][9]</p>
+<p>Con la parola frutta si raggruppano comunemente vari tipi di frutto commestibili compresi alcuni che non sono propriamente frutti, come le pomacee, ed escludendone altri come i pomodori principalmente in base al tipo di uso che se ne fa nell&#39;alimentazione.</p>
+', 47, 20, false);
+INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (51, 'Torta di Frutta', '<h1>TORTA DI FRUTTA</h1>
 
-<p>Nel 2000 presentarono una causa contro Napster per la condivisione gratuita di materiale protetto da copyright prodotto dalla band senza il loro consenso.[10]</p>
+<p>&nbsp;</p>
 
-<p>In carriera il gruppo ha vinto nove Grammy Awards ed ebbe cinque album consecutivi che esordirono al primo posto nella Billboard 200.[11] L&#39;album Metallica, inoltre, vendette oltre 15 milioni di copie negli Stati Uniti, e pi&ugrave; di 22 milioni di copie nel resto del mondo.[12]</p>
+<p><img alt=\"logo_dolci&quot;\" src=\"images/-30-55-521993-104-100-54-123-26-1255-10010941-44-111-19-9329.gif\" /></p>
+', 50, 20, false);
+INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (47, 'Homepage', '<p>Ciao sono Rita Rinaldi ed ho una pasticceria nel cuore di Rieti!</p><p>Ho creato questo sito per condividere tutte le mie ricette con il mondo!</p>', NULL, 20, false);
+INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (48, 'Baci di Alassio', '<h1>BACI DI ALASSIO</h1>
 
-<p>Con pi&ugrave; di 100 milioni di dischi venduti,[13] di cui 60 milioni[14] nei soli Stati Uniti,[15] la band &egrave; annoverata come una delle formazioni di maggior successo nella storia dell&#39;heavy metal e del rock contemporaneo.</p>
+<p>I Baci di Alassio prendono il nome dalla cittadina ligure alla quale appartengono come storia e prima preparazione.<br />
+I Baci di Alassio sono dei dolcetti dal cuore di cioccolata e preparati con semplicit&agrave; ma dal gusto morbido e sempre attuale.</p>
 
-<p>A novembre 2012 i Metallica fondarono la propria etichetta discografica indipendente, la Blackened Recordings.[16] Il primo disco pubblicato attraverso la loro etichetta &egrave; stato il DVD Quebec Magnetic, uscito il 10 dicembre dello stesso anno.</p>
-', 20, 13, false);
-INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (25, 'Iron Maiden', '<h1>IRON MAIDEN</h1>
+<p><img alt=\"bacialassio_450ingr&quot;\" src=\"images/-4625112-6222-10214050-1076112-5120-1082839-51-14.jpg\" /></p>
 
-<p>Gli Iron Maiden (IPA: [ËaÉªÌ¯É(É¹)n ËmeÉªÌ¯.dÉn]) sono un gruppo musicale heavy metal britannico, formatosi a Londra nel 1975[6] per iniziativa del bassista Steve Harris. Sono considerati uno dei gruppi pi&ugrave; importanti ed influenti del genere[1] e, assieme ad artisti come Saxon, Angel Witch, Samson, Def Leppard, Raven e Venom, fanno parte della New Wave of British Heavy Metal (N.W.O.B.H.M.),[7] corrente al cui sviluppo hanno fortemente contribuito.[8][9][10]</p>
+<p><b><i>Per i baci</i></b></p>
 
-<p>Pubblicarono il loro album di debutto nel 1980, diventando rapidamente uno dei gruppi pi&ugrave; rappresentativi della scena metal del periodo.[11][12] Poco dopo l&#39;uscita del loro secondo album, Killers, il cantante Paul Di&#39;Anno venne sostituito da Bruce Dickinson con cui il gruppo pubblic&ograve;, nel 1982, The Number of the Beast, uno dei pi&ugrave; importanti lavori della storia della band.[13] Per tutta la durata degli anni ottanta la band trov&ograve; il suo maggior successo commerciale con album come Piece of Mind, Powerslave, Somewhere in Time, Seventh Son of a Seventh Son che divennero presto dischi d&#39;oro e di platino in numerosi paesi.[14]</p>
+<ul>
+	<li>Nocciole farina 500 gr</li>
+	<li>Uova 3 albumi</li>
+	<li>Zucchero semolato 250 gr</li>
+	<li>Cacao in polvere amaro 40 gr</li>
+	<li>Miele acacia o millefiori 30 gr</li>
+</ul>
 
-<p>La formazione rimase intatta sino all&#39;abbandono di Adrian Smith che durante le registrazioni di No Prayer for the Dying (1990) venne sostituito da Janick Gers. Fear of the Dark (1992) fu l&#39;ultimo album della band con alla voce Dickinson, il quale venne sostituito l&#39;anno seguente da Blaze Bayley, con il quale gli Iron Maiden non trovarono il successo sperato.[12][15] Dickinson e Smith tornarono in gruppo nel 1999, rimpiazzando il cantante Blaze Bayley ma non il chitarrista Janick Gers, diventando cos&igrave; un sestetto. L&#39;anno seguente venne pubblicato un nuovo album: Brave New World, e di conseguenza ci fu il Brave New World Tour.</p>
+<p><b><i>Per la ganache</i></b></p>
 
-<p>Il loro ultimo lavoro, The Final Frontier (2010), ha riscosso un ottimo successo raggiungendo anche la posizione numero quattro nella classifica Billboard 200,[16] superando cos&igrave; il risultato ottenuto con il precedente disco A Matter of Life and Death che si ferm&ograve; alla posizione numero nove.[17]</p>
-', 20, 13, false);
+<ul>
+	<li>Panna 100 gr</li>
+	<li>Cioccolato fondente 150 gr</li>
+</ul>
+
+<h2>Preparazione</h2>
+
+<p><img alt=\"baciok_seq1&quot;\" src=\"images/-1113746-818735-5191-21-231-68118120-33-74-120-28-79.jpg\" /></p>
+
+<p>Tostate in forno caldo a 180&deg; le nocciole sparse su una teglia per circa 5 minuti, cos&igrave; che rilascino il loro olio; fatele raffreddare e poi trasferitele nel mixer insieme al cacao e allo zucchero semolato (1); azionare fino a ottenere una polvere il pi&ugrave; liscia possibile. (2) Montate a neve molto ferma gli albumi con un pizzico di sale. Trasferite la farina ottenuta in una terrina e aggiungete gli albumi in un paio di riprese mescolando delicatamente con una spatola; in ultimo il miele (3).</p>
+', 49, 20, true);
+INSERT INTO pagina (id, titolo, body, id_padre, id_sito, modello) VALUES (49, 'Cioccolato', '<h1><b>CIOCCOLATO</b></h1><h2><b>Lo sapevi che ...?</b></h2><p>Il cioccolato (o cioccolata, specie se fuso) &egrave; un alimento derivato dai semi dell&#39;albero del cacao, molto diffuso e ampiamente consumato nel mondo intero. Nella produzione artigianale di qualit&agrave;, il cioccolato &egrave; preparato utilizzando la pasta di cacao come realizzata ed imballata nei paesi origine, con l&#39;aggiunta di ingredienti ed aromi. Nella produzione industriale o comunque di minor pregio qualitativo, &egrave; preparato miscelando il burro di cacao (la parte grassa dei semi di cacao) con polvere di semi di cacao, zucchero e altri ingredienti facoltativi, quali il latte, le mandorle, le nocciole o altri aromi.</p><p>Oltre a ci&ograve;, il cioccolato &egrave; anche un ingrediente di svariati dolciumi, tra cui gelati, torte, biscotti e budini.</p><p>Alcuni studi sembrano confermare che il consumo frequente di cioccolato possa condurre ad una particolare forma di dipendenza detta, per analogia con l&#39;alcolismo, cioccolismo.[1] Altri studi dimostrano come l&#39;assunzione di cioccolato stimoli il rilascio di endorfine, in grado di aumentare il buon umore.</p><p>Il termine &quot;cioccolata&quot; viene utilizzato come sinonimo di &quot;cioccolato&quot; oppure per indicare una bevanda liquida a base di polvere di semi di cacao, nell&#39;uso occidentale contemporaneo invariabilmente con l&#39;aggiunta di zucchero (al contrario di come veniva consumato il cacao in bevande salate e speziate nelle culture precolombiane).</p><p>La cioccolata &egrave; un fluido non newtoniano.</p>', 47, 20, true);
 
 
 --
 -- Name: pagina_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('pagina_id_seq', 26, true);
+SELECT pg_catalog.setval('pagina_id_seq', 51, true);
 
 
 --
 -- Data for Name: sito; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO sito (id, header, footer, id_utente, homepage, descrizione, id_css, data_creazione) VALUES (5, '<div><h1>Questa &egrave; l\intestazione</h1></div>', '<div><h2>Questo è il pi&egrave; di pagina</h2></div>', 4, 3, 'rita_rinaldi', NULL, '2014-02-14');
-INSERT INTO sito (id, header, footer, id_utente, homepage, descrizione, id_css, data_creazione) VALUES (13, '<p><img alt=\"guitar&quot;\" height=\"398\" src=\"images/43-12498401816-1121116-30-5067959118-8730318-101.jpg\" width=\"1119\" /></p>', '<p>info: rock4ever@gmail.com</p>', 8, 16, 'rock4ever', 13, '2014-02-15');
+INSERT INTO sito (id, header, footer, id_utente, homepage, id_css, data_creazione, nome) VALUES (20, '<p><img alt=\"dolciumi&quot;\" height=\"506\" src=\"images/-1077-86-3462-789252-81462-105-64-71-87-65105-68104-50.jpg\" width=\"970\" /></p>', '<p>info: rita_rinaldi@gmail.com</p>', 24, 47, 12, '2014-02-18', 'Ricettario di Rita');
 
 
 --
 -- Name: sito_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('sito_id_seq', 13, true);
+SELECT pg_catalog.setval('sito_id_seq', 20, true);
 
 
 --
@@ -418,18 +421,14 @@ SELECT pg_catalog.setval('slide_id_seq', 2, true);
 -- Data for Name: utente; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO utente (id, username, password, nome, cognome, email, spazio_disp_img, codice_attivazione, attivato, admin) VALUES (3, 'marta_proietti', '-1-128-29-111-54-107-6823-10-45265240-116-7123-1154210-44', 'marta', 'proietti', 'marta.proietti06@yahoo.it', 10000000, '1D6QEhruzTIfvinTRdVe', true, false);
-INSERT INTO utente (id, username, password, nome, cognome, email, spazio_disp_img, codice_attivazione, attivato, admin) VALUES (2, 'franciskittu', 'password', 'francesco', 'proietti', 'franciskittu@gmail.com', 7369618, NULL, false, true);
-INSERT INTO utente (id, username, password, nome, cognome, email, spazio_disp_img, codice_attivazione, attivato, admin) VALUES (4, 'rita_rinaldi', '-46-5830-1764-26111111-90-125-4966-3382-9609311081-38', 'Rita', 'Rinaldi', 'proietti.francesco.91@gmail.com', 3984838, '6nWcHul2zdEGEIJed4i2', true, false);
-INSERT INTO utente (id, username, password, nome, cognome, email, spazio_disp_img, codice_attivazione, attivato, admin) VALUES (5, 'chebanca', '707539127-5617-8473-120-74-37-40-116-938-64-32-6548117', 'Claudio', 'Proietti', 'franciskittu@gmail.com', 10000000, 'Krmspoq3r26pDRY9Bez5', true, false);
-INSERT INTO utente (id, username, password, nome, cognome, email, spazio_disp_img, codice_attivazione, attivato, admin) VALUES (8, 'rock4ever', '-120100-8-128-69-126126124-9611369-30-102-34-75695212512-80', 'Francesco', 'Proietti', 'proietti.francesco.91@gmail.com', 7318679, 'F5gEzXuQUUGHiWfchCAN', true, false);
+INSERT INTO utente (id, username, password, nome, cognome, email, spazio_disp_img, codice_attivazione, attivato, admin) VALUES (24, 'rita_rinaldi60', '56-70-1141052143-12-64-44-52-8111-8655120-27898473-31', 'Rita', 'Rinaldi', 'franciskittu@gmail.com', 9537355, '4NKin5UDJ4IK1sXs6hze', true, false);
 
 
 --
 -- Name: utente_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('utente_id_seq', 8, true);
+SELECT pg_catalog.setval('utente_id_seq', 24, true);
 
 
 --
