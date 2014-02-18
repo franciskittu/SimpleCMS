@@ -1,6 +1,6 @@
 <#macro showpage node current>
     <#if (current.page.id != node.page.id)> 
-        <a href="move?current=${current.page.id}&padre=${node.page.id}"> ${node.page.titolo} </a>
+        <a href="move?current=${current.page.id}&amp;padre=${node.page.id}"> ${node.page.titolo} </a>
     </#if>
     <#if (node.children?size>0)>
         <#list node.children as child>
@@ -19,12 +19,12 @@
         <li>  
             <div class="circle-text <#if (!node.page.padre??) >home</#if>">
                 <div class="text"> ${node.page.titolo}</div>
-                <a class="button_view" href="site?user=${utente}&page=${node.page.id}">view</a>
+                <a class="button_view" href="site?user=${utente}&amp;page=${node.page.id}">view</a>
                 <div class="functions">
                     <a class="edit" href="javascript:void(0)" id="edit${node.page.id}">edit</a>
-                    <a class="move" href="javascript: void(0)">move</a><div class="moveto"> <@showpage node=home current=node/> </div>
-                    <a class="delete" href="delete?id=${node.page.id}">del</a>
-                    <a class="delete" href="delete?id=${node.page.id}&all=">del all</a>
+                    <#if (node.page.padre??) ><a class="move" href="javascript: void(0)">move</a><div class="submenu"> <@showpage node=home current=node/> </div> </#if>
+                    <#if (node.page.padre??) ><a class="delete" href="javascript: void(0)">delete</a><div class="submenu"><a  href="delete&amp;id=${node.page.id}">delete</a><a  href="delete?id=${node.page.id}&amp;all=">delete all</a></div></#if>
+                    
                     <a  class="add" href="javascript: void(0)" id="add${node.page.id}" >add</a>
                     
                 </div>
@@ -53,6 +53,7 @@
 
 
 <div id="tree"> 
+    <form id="form_title" action="edit"><fieldset> <input title="clicca e cambia il titolo del sito" type="text" name="title" value="Titolo"/> <input type="submit" name="change" value="change" /><span>Titolo</span></fieldset></form>
     <a href="javascript:void(0)" id="header" class="button ">Edit Header</a>
     <a href="javascript:void(0)" id="footer" class="button ">Edit Footer</a>   
     <@showtree node=home />

@@ -133,14 +133,14 @@ a.button {
 #form_edit fieldset:last-child{margin: 0 0 0 30px;}
 #form_edit fieldset:nth-child(2){display: none;}
 #form_edit fieldset:nth-child(4){display: none;}
-#form_edit input {
+#form_edit input, #form_title input {
     background-color: #FCFCFC;
     border: 1px solid #B6B6B6;
     height: 21px;
     padding: 3px;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
 }
-#form_edit input[type="submit"] {
+#form_edit input[type="submit"] , #form_title input[type="submit"]{
     background-color: #1BADE9;
     border-radius: 3px;
     color: #FFFFFF;
@@ -151,11 +151,20 @@ a.button {
     transition: all 0.15s ease-out 0s;
     border: none;
     padding: 5px 10px;
+    font-weight: 100;
     height: 30px;
     font-size: 16px;
 }
-
+#form_title input{margin-right: 1%;display: none;}
+#form_title:hover span{ display: none;}
+#form_title span {height: 40px;padding-top: 5px;}
+#form_title:hover input[type="text"]{ display: initial;}
+#form_title input:focus, #form_title input:focus+input{display: initial;}
+#form_title input:focus~ span{display: none;}
+#form_title input[type="text"], #form_title span{height: 40px;border: none; background: transparent   ;font-size: 28px; font-family: Helvetica Neue, Arial, serif, sans-serif; }
+#form_title input[type="submit"]:hover{display: initial;position: relative; bottom: 5%;    background-color: #09bdfd;}
 #form_edit  input[type="checkbox"]{margin-right: 10%; padding: 0;height: auto;}
+#header,#footer{margin-top: 2%;}
 #form_edit select{display: none;}
 #form_edit span.select{display: none;}
 #form_edit #back img{ width: 30px; }
@@ -211,19 +220,22 @@ a.button {
 .circle-text:hover .move{top:25%;}
 .circle-text:hover .add{top:50%;}
 .circle-text:hover .delete{top:75%;}
+.circle-text.home:hover .edit{top:25%;}
+.circle-text.home:hover .add{top:50%;}
 .circle-text .button_view{color: whitesmoke; position: absolute; background-color: #4679BD;border-radius: 10%;top:76%;left:33%;padding: 2px 5px; }
 .circle-text.home  .button_view{ background-color: #454444;}
 .circle-text .button_view:hover{background-color: #4f6dd2; color: white;}
 .circle-text.home  .button_view:hover{background-color: #242222;}
-.circle-text  .moveto{position: absolute;left: 80%;overflow: hidden; width:100px;height: 0;padding: 0 10px;  }
-.move:hover+.moveto{  height: auto;}
-.circle-text  .moveto:hover{height: auto;  }
-.circle-text  .moveto a{display: block; position: initial;z-index: 10;background-color: #555;margin: 1px;}
+.circle-text  .submenu{position: absolute;left: 80%;overflow: hidden; height: 0;padding: 0 10px;  }
+.move:hover+.submenu,.delete:hover+.submenu{  height: auto;}
+.circle-text  .submenu:hover{height: auto;  }
+.circle-text  .submenu a{text-align: center;display: block; position: initial;z-index: 10;background-color: #555;margin: 1px;width: auto;}
+.circle-text .delete + .submenu{top:60px;}
 
 .sitemap .title{float:none; }
 .sitemap .button{float: left;background-color:#343333 ;margin: 1%; padding: 5px 10px; font-weight: 100;}
 .sitemap .button:hover{color:#1BADE9;opacity: 0.8;}
-.sitemap #tree{margin-top: 19px; overflow:hidden;position: relative; left:0;transition: all 2s; -moz-transition: all 2s; -webkit-transition: all 2s; -o-transition: all 2s;}
+.sitemap #tree{padding :10px;margin-top: 19px; overflow:hidden;position: relative; left:0;transition: all 2s; -moz-transition: all 2s; -webkit-transition: all 2s; -o-transition: all 2s;}
 .sitemap ul ul{margin-top: 3%;} 
 #tree > ul{ margin-top: 67px;}
 .style .button{background-color:#343333;padding: 5px 10px; font-weight: 100;float:left; margin: 1%;}
@@ -233,7 +245,7 @@ a.button {
 .wrapper_content{position: relative;  background-color: #f0f0f0; border: 1px solid #d9d9d9; border-radius: 3px;  }
 .content{width: 100%; height:100%;overflow: auto;max-height: 550px;min-height: 100px;margin: 5px  7px 5px 0;;}
 .content span{display: block; margin-top: 5%; font-family: Helvetica, Arial, serif, sans-serif; color: #ccc; font-size: 20px;text-align: center; font-weight: 200;  }
-.images .columns{overflow: hidden;position: relative;margin-bottom: 5px; height: 150px; }
+.images .columns{overflow: hidden;position: relative;margin-bottom: 5px; }
 .images .columns .delete_img{z-index: 1; color: whitesmoke; position: absolute; top: 0; width: 20%; left:80%;text-align: center;font-family: Helvetica Neue, Helvetica, Arial, serif, sans-serif; font-weight: 100; background-color: rgba(0,0,0, 0.2);font-size: 30px;}
 .images .columns .delete_img:hover{background-color: rgba(0,0,0, 0.4); color:white;}
 .images .columns .add_img{z-index: 1;transition: bottom 2s; -moz-transition: bottom 2s; -webkit-transition: bottom 2s; -o-transition: bottom 2s;color: white; position: absolute; bottom:-100%; width: 20%; right:80%;text-align: center;font-family: Helvetica Neue, Helvetica, Arial, serif, sans-serif; font-weight: 100; background-color: rgba(0,0,0, 0.2);font-size: 30px;}
@@ -248,7 +260,7 @@ a.button {
 .images .columns .cover:hover{color:#1BADE9;left: 0;}
 .images .columns .cover.set{color:#1BADE9;left: 0;}
 
-.images img{height:100%;opacity: 0.9; }
+.images img{width:100%;opacity: 0.9; }
 .images img:hover{opacity: 1;}
 .images form{height: 40px;}
 .images input{margin:0 4%; position: absolute;}
@@ -289,6 +301,12 @@ a.button {
   text-overflow: ellipsis;
   overflow: hidden;
   
+}
+
+.images span.empty{
+    bottom:70px;
+    font-size: 20px;
+    left:150px;
 }
 
 /*End-Sitemap*/
@@ -379,7 +397,6 @@ body,html {
     .wrapper_form input{font-size: 0.8em;}
     .container .sitemap.columns{width: 100%;}
     .container .style_img.columns{width: 100%;}
-    .images .content {max-height: none;}
     .container .images .eight.columns{width: 25%;}
 }
 

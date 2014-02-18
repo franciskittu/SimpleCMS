@@ -11,5 +11,5 @@
       type="javax.sql.DataSource" 
       url="jdbc:mariadb://localhost/csm"
   />-->
-  <Resource auth="Container" driverClassName="org.postgresql.Driver" maxActive="15" maxIdle="10" maxWait="10000" name="jdbc/cms" password="cms_password" type="javax.sql.DataSource" url="jdbc:postgresql://localhost/cms" username="cms_user"/>
+  <Resource auth="Container" driverClassName="org.postgresql.Driver" maxActive="15" maxIdle="10" maxWait="10000000" name="jdbc/cms" password="cms_password" type="javax.sql.DataSource" url="jdbc:postgresql://localhost/cms" username="cms_user"/>
 </Context>
