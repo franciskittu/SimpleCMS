@@ -155,14 +155,15 @@ a.button {
     height: 30px;
     font-size: 16px;
 }
+#form_title{display: block; width: 100%; height: 50px;}
 #form_title input{margin-right: 1%;display: none;}
 #form_title:hover span{ display: none;}
 #form_title span {height: 40px;padding-top: 5px;}
-#form_title:hover input[type="text"]{ display: initial;}
-#form_title input:focus, #form_title input:focus+input{display: initial;}
+#form_title:hover input[type="text"]{ display: inline;}
+#form_title input:focus, #form_title input:focus+input{display: inline;}
 #form_title input:focus~ span{display: none;}
 #form_title input[type="text"], #form_title span{height: 40px;border: none; background: transparent   ;font-size: 28px; font-family: Helvetica Neue, Arial, serif, sans-serif; }
-#form_title input[type="submit"]:hover{display: initial;position: relative; bottom: 5%;    background-color: #09bdfd;}
+#form_title input[type="submit"]:hover{display: inline;position: relative; bottom: 5%;    background-color: #09bdfd;}
 #form_edit  input[type="checkbox"]{margin-right: 10%; padding: 0;height: auto;}
 #header,#footer{margin-top: 2%;}
 #form_edit select{display: none;}
@@ -229,7 +230,7 @@ a.button {
 .circle-text  .submenu{position: absolute;left: 80%;overflow: hidden; height: 0;padding: 0 10px;  }
 .move:hover+.submenu,.delete:hover+.submenu{  height: auto;}
 .circle-text  .submenu:hover{height: auto;  }
-.circle-text  .submenu a{text-align: center;display: block; position: initial;z-index: 10;background-color: #555;margin: 1px;width: auto;}
+.circle-text  .submenu a{text-align: center;display: block; position: relative;z-index: 10;background-color: #555;margin: 1px;width: auto;}
 .circle-text .delete + .submenu{top:60px;}
 
 .sitemap .title{float:none; }
@@ -392,7 +393,7 @@ body,html {
     .features .descr h3:last-child{display: none;}
     .container .sixteen.columns{width: 100%;}
     .wrapper_form{width: 100%; margin: 0;}
-    .wrapper_form fieldset{float: left;margin:5% 2%; width: 130px; }
+    .wrapper_form fieldset{float: left;margin:5% 11%; width: 130px; }
     .wrapper_form span{font-size: 0.8em;}
     .wrapper_form input{font-size: 0.8em;}
     .container .sitemap.columns{width: 100%;}

@@ -3,7 +3,7 @@ function importModel(){
     var selected=$(this).children("option:selected");
     var id= selected.val();
     if(id=="0"){
-        $("input[name=title]").val('');
+        $("#form_edit input[name=title]").val('');
         CKEDITOR.instances.editor.setData('');
     }else{
         $.ajax({
@@ -12,7 +12,7 @@ function importModel(){
                 data: {
                     id:encodeURIComponent(id)
                 },
-                success: function(data){$("input[name=title]").val(data.title); CKEDITOR.instances.editor.setData('', function(){CKEDITOR.instances.editor.insertHtml(data.body); }); },
+                success: function(data){$("#form_edit input[name=title]").val(data.title); CKEDITOR.instances.editor.setData('', function(){CKEDITOR.instances.editor.insertHtml(data.body); }); },
                 error: function(){alert('Errore trasferimento dati');}
         });
         
@@ -210,8 +210,8 @@ function smartButtonAdd(button){
         $("#form_edit").get(0).setAttribute("action", "add");
         $("#form_edit fieldset:nth-child(2)").css("display", "block");
         $("#form_edit fieldset:nth-child(4)").css("display", "block");
-        $("#form_edit select").css("display", "initial");
-        $("#form_edit span.select").css("display", "initial");
+        $("#form_edit select").css("display", "inline");
+        $("#form_edit span.select").css("display", "inline");
         $("#form_edit input[name=title]").removeAttr("disabled");
         $("#form_edit input[name=model]").removeAttr("disabled");
         $("#form_edit input[name=id]").removeAttr("disabled");
