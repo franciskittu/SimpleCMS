@@ -23,14 +23,10 @@ function importModel(){
 //aggiunge l'immagine selezionata nell'editor
 
 function addImg(e){
-    var img=e.data.img;
+    var src=e.data.src;
     var name = e.data.name;
-    var arr_img= img.split('/');
-    var length=arr_img.length;
-    var file_name= arr_img[length-1];
-    var src=arr_img[0];
     var editor=e.data.editor;
-    editor.insertHtml('<img src="'+src+"/"+file_name+'" alt='+name+'" ></img>');
+    editor.insertHtml('<img src="'+src+'" alt="'+name+'" />');
 }
 
 
@@ -80,7 +76,7 @@ function initButtonUpload(){
 
 function showEditor(){
         
-        $(".add_img").css("bottom", "0");
+        $(".add_img").css("bottom", "5px");
         $("#tree").css("left", "-100%");
         setTimeout(function(){$("#tree").css("height", "0");$("#form_edit").css("height", "auto");},1000);
 
@@ -370,9 +366,9 @@ function initSmartButtons(){
     
     var buttons_add_img=$(".add_img");
     buttons_add_img.each(function(){ 
-        var img=$(this).siblings("img").attr("src");
+        var img=$(this).siblings("img").attr("src").replace("/thumbs","");
         var nome_img=$(this).siblings("img").attr("alt");
-        $(this).bind("click",{img:img, editor:editor,name:nome_img}, addImg);
+        $(this).bind("click",{src:img, editor:editor,name:nome_img}, addImg);
     });
     
     
