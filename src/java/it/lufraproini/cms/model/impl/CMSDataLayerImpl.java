@@ -41,7 +41,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     private final Statement gManualCss, gSitiDataOrdinati, gPagineModello;
     private final PreparedStatement gUtente, gUtente_by_Username, aUtente, uUtente, dUtente;
     private final PreparedStatement gImmagine, gImmagini, aImmagine, uImmagine, dImmagine;
-    private final PreparedStatement gPagina, aPagina, dPagina, gFiglie, dSottoAlbero, gPaginabyTitolo, gHome, uPagina, aHome, uHome;
+    private final PreparedStatement gPagina, aPagina, dPagina, gFiglie, gPaginabyTitolo, gHome, uPagina, aHome, uHome;
     private final PreparedStatement gSito, aSito, dSito, gSitobyUtente, uSito;
     private final PreparedStatement gSlide, aSlide, uSlide, dSlide;
     private final PreparedStatement gAntenati, gFoglie, gPagineSito, gCoverUtente;
@@ -90,7 +90,6 @@ public class CMSDataLayerImpl implements CMSDataLayer {
                 + "SELECT p.id_padre FROM func f, pagina p WHERE f.id = p.id) " 
                 + "SELECT id FROM func;");
         gPagineSito = c.prepareStatement("SELECT * FROM pagina WHERE id_sito = ?");
-        dSottoAlbero = c.prepareStatement("WITH ");
         gCoverUtente = c.prepareStatement("SELECT * FROM immagine WHERE immagine.cover = true AND immagine.id_utente = ? ");
     }
     

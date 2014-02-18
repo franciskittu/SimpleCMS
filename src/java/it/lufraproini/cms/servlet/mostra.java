@@ -33,8 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -108,7 +106,7 @@ public class mostra extends HttpServlet {
             Map info_sito = new HashMap();
             info_sito.put("name", ultimi_siti.get(i).getNome());
             info_sito.put("nome_e_cognome", U.getNome() + " " + U.getCognome());
-            info_sito.put("image", cover_utente.getFile());
+            info_sito.put("image", cover_utente.getThumb());
             info_sito.put("user", U.getUsername());
             struttura_ultimi_siti.add(info_sito);
         }
@@ -224,10 +222,10 @@ public class mostra extends HttpServlet {
                         template_data.put("errors_login", err_login);
                     }
                     if (act_ok != null) {
-                        template_data.put("mex_attivazione", "Complimenti, il suo account è stato attivato!");
+                        template_data.put("messaggio", "Complimenti, il suo account è stato attivato!");
                     }
                     if (reg_ok != null) {
-                        template_data.put("mex_registrazione", "Complimenti, la registrazione è stata effettuata con successo!<br/>Controlli la sua e-mail per coompletare la procedura di attivazione!");
+                        template_data.put("messaggio", "Complimenti, la registrazione è stata effettuata con successo!<br/>Controlli la sua e-mail per coompletare la procedura di attivazione!");
                     }
                     html = "login.ftl.html";
                 } else if(par.equals("whatis")){
