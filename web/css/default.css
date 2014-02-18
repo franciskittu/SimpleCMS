@@ -42,8 +42,8 @@ a.button {
 .menu ul li div{overflow:hidden; transition: 0.8s ease-out;width: 160px; background-color: #575555; height: 0;position: absolute;top: 40px; border-radius: 0 0 3px 3px;-moz-border-radius: 0 0 3px 3px;-webkit-border-radius: 0 0 3px 3px;left:255px;z-index: 10;}
 .menu ul li div a{ font-size: 11px; position: relative;left:20px;color:#ccc;top:13px; }
 .menu ul li div a:hover{color: #dedede}
-.login{position:absolute;top:5px; right: 10px;height: 20px; width: 60px;  }
-.login a{color:#aaa;font-family: "Open Sans",Helvetica,Arial, serif,sans-serif;}
+.login{position:absolute;top:22px; right: 50px;height: 20px; width: 60px;  }
+.login a{color:#aaa;font-family: "Open Sans",Helvetica,Arial, serif,sans-serif;font-size: 14px;}
 .login a:hover{color:#09bdfd;}
 /*End-Header*/
 
@@ -117,9 +117,9 @@ a.button {
 
 
 /*Sitemap*/
-#avviso{position:relative; top:-10px;}
-#avviso .columns{ background-color: rgba(210,210,210,0.4); text-align:center;padding: 20px 0; border:1 px solid rgba(140, 140, 140, 0.5); }
-#avviso span{color:#333; font-size:17px; font-family: "Open Sans", Helvetica , Arial, serif, sans serif;}
+#avviso , .messaggio{position:relative; top:-10px;}
+#avviso .columns, .messaggio .columns{ background-color: rgba(210,210,210,0.4); text-align:center;padding: 20px 0; border:1 px solid rgba(140, 140, 140, 0.5); }
+#avviso span, .messaggio span{color:#333; font-size:17px; font-family: "Open Sans", Helvetica , Arial, serif, sans serif;}
 #form_edit {
     background-color: #F3F3F3;
     border: 1px solid #DFDFDF;

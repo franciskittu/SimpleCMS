@@ -1,3 +1,11 @@
+         <#if messaggio??> 
+                <div class="row messaggio" >
+                    <div class="sixteen columns">
+                            <span>${messaggio}</span>
+                     </div>
+                </div>
+          </#if> 
+
 
             <div class="row">     
                 <div class="ten columns wrapper_form">
@@ -10,9 +18,6 @@
                                 </#list>
                             </#if>
                         </div>
-                        <#if messaggio??>
-                            <div>${messaggio}</div>
-                        </#if>
                         <form action="registration" method="post" class="signup_form" >
                             <fieldset>
                                 <span> Nome</span><input type="text" class="required"  name="nome" value="" /> 
