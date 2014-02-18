@@ -139,7 +139,7 @@ public class upload_user_img extends HttpServlet {
                 temp_file.delete();
             }
         } catch (Exception ex) {
-            throw new ErroreGrave("operazioni sul file!");
+            throw new ErroreGrave("operazioni sul file! "+ex.getMessage());
         }
     }
 

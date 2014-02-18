@@ -9,7 +9,9 @@
             <div><a href="Homepage.html">Homepage</a></div>
             <h1>Errore</h1>
             <p>Il sistema ha riscontrato il seguente errore processando la sua richiesta:</p>
-            <p><b>${error?html}</b></p>
+            <div class="error">
+                <span>${error?html}</span>
+            </div>
             </div>
         </body>
     </html>

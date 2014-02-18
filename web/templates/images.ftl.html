@@ -16,8 +16,8 @@
                                 <#list images as image>
                                 <div  class="eight columns">
                                     <img   src="${image.thumb}" alt="${image.nome}"/>
-                                    <a class="cover <#if (image.cover)> set</#if>" href="cover?id=${image.id}" id="img1">cover</a>
-                                    <a href="delete?id=${image.id}&image" class="delete_img">x</a>
+                                    <a class="cover <#if (image.cover)> set</#if>" href="cover?id=${image.id}" id="img${image.id}">cover</a>
+                                    <a href="delete?id=${image.id}&image=" class="delete_img">x</a>
                                     <a href="javascript:void(0)" class="add_img">+</a>
                                  </div>
                                 </#list>

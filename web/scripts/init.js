@@ -124,10 +124,10 @@ function smartButtonEditHF(button){
     
     
     this.success=function(data){
-        
+        alert(data.body+" "+data.img_old);
         $("#form_edit input[name=type]").removeAttr("disabled");
         $("#form_edit input[name=type]").val(type);
-        alert(data.body+" "+data.title+" "+data.checked);
+        
         CKEDITOR.instances.editor.insertHtml(data.body);
         showEditor();
     };
@@ -185,7 +185,7 @@ function smartButtonEdit(button){
     var error=this.error;
     
     this.send=function(e){
-        alert(id);
+        
         if( id){
             $.ajax({
                 url: "edit",
@@ -259,8 +259,7 @@ function smartButtonAdd(button){
             data: {
                 id:encodeURIComponent(id),
                 json:encodeURIComponent("true")
-            }
-            ,
+            },
             success: success,
             error: error
             });          
@@ -283,7 +282,7 @@ function smartButtonCss( button ){
  
     
     this.success=function(data){
-                            alert(data.css_old+" "+data.css_current);
+                           
                             var old= $("#css"+data.css_old);
                             var curr=$("#css"+data.css_current);
                             old.removeClass("active");

@@ -53,7 +53,7 @@ public class site extends HttpServlet {
         List<String> title_header_body_footer = new ArrayList();
         //controllo se la pagina richiesta è nell'albero del sito richiesto
         if (p.getSito().getId() == s.getId()) {
-            title_header_body_footer.add(SecurityLayer.stripSlashes(p.getTitolo()));
+            title_header_body_footer.add(SecurityLayer.stripSlashes(s.getNome()+" - "+p.getTitolo()));
             title_header_body_footer.add(SecurityLayer.stripSlashes(s.getHeader()));
             title_header_body_footer.add(SecurityLayer.stripSlashes(p.getBody()));
             title_header_body_footer.add(SecurityLayer.stripSlashes(s.getFooter()));
@@ -78,17 +78,21 @@ public class site extends HttpServlet {
         /*ordinamento
         tempo O(n^2)*/
         for (int i = 0; i < figlie.size(); i++) {
-            int min = i;
+            int min = -1;
             Map item = new HashMap();
-            for (int j = i; j < figlie.size(); j++) {
+            for (int j = 0; j < figlie.size(); j++) {
+                if(figlie.get(j) != null){
                 String el = figlie.get(j).getTitolo();//elemento di confronto
-                if (el.compareTo(figlie.get(min).getTitolo()) < 0) {
+                if (min == -1 || (figlie.get(min) != null && el.compareTo(figlie.get(min).getTitolo()) < 0)) {
                     /*in questo caso la stringa confrontata viene alfabeticamente prima di quella finora considerata minima e l'elemento minimo và quindi aggiornato*/
                     min = j;
+                    
+                }
                 }
             }
             /*inserimento elemento in lista*/
             Pagina el = figlie.get(min);
+            figlie.set(min, null);
             item.put("id", el.getId());
             item.put("titolo",el.getTitolo());
             menu_ordinato_per_titolo.add(item);

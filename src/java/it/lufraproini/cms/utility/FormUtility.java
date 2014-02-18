@@ -46,12 +46,12 @@ public class FormUtility {
 
                 if (valori.length > 0) {
                     if (valori.length == 1) {
-                        if (!valori[0].isEmpty() && valori[0].matches(".*"+regex.get(nome)+".*")) {
+                        if (!valori[0].isEmpty() && valori[0].matches(""+regex.get(nome)+"")) {
                             result.put(nome, valori[0]);
                         }
                     } else {
                         for (int i = 0; i < valori.length; i++) {
-                            if (!valori[i].isEmpty() && valori[i].matches(".*"+regex.get(nome)+".*")) {
+                            if (!valori[i].isEmpty() && valori[i].matches(""+regex.get(nome)+"")) {
                                 result.put(nome + "_" + i, valori[i]);
                             }
                         }

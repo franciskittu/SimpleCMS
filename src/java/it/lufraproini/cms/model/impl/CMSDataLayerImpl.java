@@ -779,7 +779,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
             aSito.setString(1,s_agg.getHeader());
             aSito.setString(2,s_agg.getFooter());
             aSito.setLong(3,s_agg.getUtente().getId());
-            aSito.setString(4,s_agg.getDescrizione());
+            aSito.setString(4,s_agg.getNome());
             aSito.setLong(5,s_agg.getCss().getId());
             chiave = aSito.executeQuery();
             if(chiave.next()){
@@ -813,7 +813,7 @@ public class CMSDataLayerImpl implements CMSDataLayer {
     @Override
     public Sito updateSito(Sito s) {
         try{
-            uSito.setString(1, s.getDescrizione());
+            uSito.setString(1, s.getNome());
             uSito.setString(2, s.getHeader());
             uSito.setString(3, s.getFooter());
             uSito.setLong(4, s.getUtente().getId());

@@ -25,8 +25,8 @@ import java.sql.Date;
 public interface Sito {
     long getId();
     
-    String getDescrizione();
-    void setDescrizione(String s);
+    String getNome();
+    void setNome(String s);
     
     String getHeader();
     void setHeader(String s);
