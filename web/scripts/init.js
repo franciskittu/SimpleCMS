@@ -80,7 +80,7 @@ function initButtonUpload(){
 
 function showEditor(){
         
-        $(".add_img").css("bottom", "0");
+        $(".add_img").css("bottom", "5px");
         $("#tree").css("left", "-100%");
         setTimeout(function(){$("#tree").css("height", "0");$("#form_edit").css("height", "auto");},1000);
 
