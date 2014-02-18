@@ -16,7 +16,7 @@
         <div class="site_menu" >
         <ul>
         <#list menu as item>
-        <a href='site?user=${nomeutente}&page=${item.id}'><li>${item.titolo?html}</li></a>
+        <li><a href='site?user=${nomeutente}&amp;page=${item.id}'>${item.titolo?html}</a></li>
         </#list>
         </ul>
         </div>

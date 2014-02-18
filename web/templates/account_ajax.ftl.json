@@ -1,5 +1,5 @@
 {
-    "body": "${body!""}",
+    "body": "${body?json_string}",
     "title": "${title!""}",
     "checked": "${checked!""}",
     "css_current" : "${css_current!""}",

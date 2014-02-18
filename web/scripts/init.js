@@ -68,7 +68,7 @@ function initButtonUpload(){
           }
         });
     }
-    button_browse.bind("click", function(){in_file.click();});
+    button_browse.bind("click", function(){in_file.trigger('click');});
     button_upload.bind("click", function(){in_upload.click();});
     wrap.append(button_browse);
     wrap.append(button_upload);
@@ -124,7 +124,6 @@ function smartButtonEditHF(button){
     
     
     this.success=function(data){
-        alert(data.body+" "+data.img_old);
         $("#form_edit input[name=type]").removeAttr("disabled");
         $("#form_edit input[name=type]").val(type);
         
@@ -162,16 +161,15 @@ function smartButtonEditHF(button){
 function smartButtonEdit(button){
     
     var id=button.attr("id").replace("edit", "");
-    
     this.success=function(data){
-        
+       
         $("#form_edit fieldset:nth-child(2)").css("display", "block");
         $("#form_edit fieldset:nth-child(4)").css("display", "block");
         $("#form_edit input[name=title]").removeAttr("disabled");
         $("#form_edit input[name=model]").removeAttr("disabled");
         $("#form_edit input[name=id]").removeAttr("disabled");
         $("#form_edit input[name=title]").val(data.title);
-        if(data.checked !== "0"){$("#form_edit input[type=checkbox]").attr(data.checked, data.checked);}
+        if(data.checked !="0"){$("#form_edit input[type=checkbox]").attr("checked", "checked");}
         $("#form_edit input[name=id]").val(id);
         CKEDITOR.instances.editor.insertHtml(data.body);
         
